@@ -209,7 +209,7 @@ class Register(Frame):
 
         #var
         
-        user = IntVar()
+        user = StringVar()
         email = StringVar()
         pasword = StringVar()
         rep = StringVar()
@@ -261,15 +261,27 @@ class Register(Frame):
 
     def register_account(self ,parent ,name ,password ,rep ,email):
 
-        verification = register_user(name ,password ,rep ,email)
-
-        try:
-            Mini(f"Verificacion del email", (400,150,100,50), True, "black", int(verification[0]), self)
-            register_in_db(verification[1])
-            messagebox.showinfo("Usuario registrado" ,"El usuario a sido creado y registrado con exito ingrese sesion en la pagina principal")
-            close(parent)
-        except:
-            messagebox.showwarning("Error al registrar la cuenta" ,verification)
+        if check_conection() is not None:
+            messagebox.showerror("Error" ,str(check_conection()))
+        else:
+            user = register_user(name ,password ,rep ,email)
+            try:
+                number = send_email(user.email)
+                try:
+                    number = int(number)
+                    Mini(f"Verificacion del email", (400,150,100,50), True, "black", number, self)
+                    res = register_in_db(user)
+                    if res is None:
+                        messagebox.showinfo("Usuario registrado" ,"El usuario a sido creado y registrado con exito ingrese sesion en la pagina principal")
+                        close(parent)
+                    else:
+                        messagebox.showerror("Error" ,res)
+                except:
+                    messagebox.showwarning("Error de email" ,number)
+            except:
+                error = str(user)
+                messagebox.showwarning("Error al registrar la cuenta" ,error)
+                       
 
 class MainMenu(Frame):
     def __init__(self, parent, data):
