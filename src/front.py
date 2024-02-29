@@ -62,53 +62,6 @@ class Extra(Toplevel):
 
         self.mainloop()
 
-class Mini(Toplevel):
-    def __init__(self, tittle, size, resize, back_color, verif, register):
-
-        #setup
-
-        super().__init__()
-        setup(self, tittle, size, resize, back_color)
-        self.attributes("-topmost", True)
-        self.grab_set() #Hace que lo que este pasando en la pagina principal se congele
-
-        self.authentication(verif,register)
-
-        #loop
-
-        self.mainloop()
-    
-    def authentication(self ,verif, register):
-
-        #var
-
-        code = IntVar()
-
-        #create
-
-        main_label = Label(self ,bg="red" ,text="Ingrese el codigo que le enviamos al email", wraplength=150)
-        main_input = Entry(self ,textvariable=code)
-        main_button = Button(self, text="Verificar" ,bg="blue" ,fg="white", command=lambda : self.verification(code.get(),verif,register))
-
-        #configure
-
-        self.columnconfigure((0,1,2) ,weight=1)
-        self.rowconfigure((0,1,2) ,weight=1)
-
-        #grid
-
-        main_label.grid(column=0, row=1, sticky="w", padx=10)
-        main_input.grid(column=1, row=1, sticky="we")
-        main_button.grid(column=2, row=2)
-    
-    def verification(self,var,verif,register):
-        
-        if var == verif:
-            register.ok = True
-            close(self)
-        else:
-            messagebox.showerror("Error al verifcar su email","El codigo ingresado es incorrecto")
-
 class Login(Frame):
     def __init__(self, parent):
 
@@ -261,28 +214,17 @@ class Register(Frame):
 
     def register_account(self ,parent ,name ,password ,rep ,email):
 
-        if check_conection() is not None:
-            messagebox.showerror("Error" ,str(check_conection()))
-        else:
-            user = register_user(name ,password ,rep ,email)
-            try:
-                number = send_email(user.email)
-                try:
-                    number = int(number)
-                    Mini(f"Verificacion del email", (400,150,100,50), True, "black", number, self)
-                    res = register_in_db(user)
-                    if res is None:
-                        messagebox.showinfo("Usuario registrado" ,"El usuario a sido creado y registrado con exito ingrese sesion en la pagina principal")
-                        close(parent)
-                    else:
-                        messagebox.showerror("Error" ,res)
-                except:
-                    messagebox.showwarning("Error de email" ,number)
-            except:
-                error = str(user)
-                messagebox.showwarning("Error al registrar la cuenta" ,error)
-                       
+        msg = register_in_db(self, parent ,name ,password ,rep ,email)
+        title = msg[1]
+        body = msg[2]
 
+        if msg[0] == 0:
+            messagebox.showerror(title,body)
+        elif msg[0] == 1:
+            messagebox.showwarning(title,body)
+        elif msg[0] == 2:
+            messagebox.showinfo(title,body)
+            
 class MainMenu(Frame):
     def __init__(self, parent, data):
 
