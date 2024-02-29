@@ -3,6 +3,9 @@ from tkinter import ttk
 from tkinter import messagebox
 from back import *
 
+#   Main es la ventana principal que va a tener el programa mientras se ejecute
+#   solo va a contener las esctructuras Login y MainMenu
+
 class Main(Tk):
     def __init__(self, tittle, size, resize, back_color):
 
@@ -29,6 +32,10 @@ class Main(Tk):
 
         self.mainloop()
 
+#   Extra es una ventana auxiliar que sirve para mostrar esctructuras temporales, estas 
+#   estructuras no estan pensadas para permanecer mucho tiempo y se seleccionan con el 
+#   parametro op
+
 class Extra(Toplevel):
     def __init__(self, tittle, size, resize, back_color, op):
 
@@ -36,7 +43,8 @@ class Extra(Toplevel):
 
         super().__init__()
         setup(self, tittle, size, resize, back_color)
-        self.lift()
+
+        self.lift() #Hace que la ventana este por encima de la ventana Main
         self.grab_set() #Hace que lo que este pasando en la pagina principal se congele
 
         #var
@@ -49,7 +57,7 @@ class Extra(Toplevel):
         self.secc_bg_button = "yellow"
         self.exit_bg_button = "white"
 
-        #window
+        #status
 
         if op == "r":
             self.status = Register(self)
@@ -61,6 +69,13 @@ class Extra(Toplevel):
         #loop
 
         self.mainloop()
+
+#   Login es una esctructura que se utiliza en la ventana principal Main y es la primera en aparecer
+#   al ejecutar el programa, esta estrucutra nos permite iniciar sesion con los 3 tipos de cuenta
+#   que hay en el programa Usuario,Administrador,Desarrollador, y verificando los datos ingresados con
+#   los almacenados en la base de datos se acepta/denega el acceso al menu principal MainMenu.
+#   Esta estructura tambien nos permite registrar una cuenta de usuario en la base de datos si es 
+#   que no teniamos una antes de abrir el programa.
 
 class Login(Frame):
     def __init__(self, parent):
@@ -74,6 +89,8 @@ class Login(Frame):
         #struct
 
         self.createlogin(parent)
+
+    #   La funcion createlogin es la funcion que crea todos los widgets de la estructura Login
     
     def createlogin(self, parent):
 
@@ -85,20 +102,20 @@ class Login(Frame):
 
         #create
 
-        login_title = Label(self, anchor="center",font=("TkMenuFont",18) ,bg=parent.prim_bg_label ,fg=parent.letter_color ,text="Bienvenidos de nuevo a Volpe\nIngrese sesion o registrese")
+        login_title = Label(self, anchor="center", font=("TkMenuFont",18), bg=parent.prim_bg_label, fg=parent.letter_color, text="Bienvenidos de nuevo a Volpe\nIngrese sesion o registrese")
 
-        user_label = Label(self, anchor="w" ,width=18 ,font=("Calibri",14) ,bg=parent.prim_bg_label ,fg=parent.letter_color ,text="Ingrese su Usuario:")
-        lvl_label = Label(self, anchor="w" ,width=18 ,font=("Calibri",14) ,bg=parent.prim_bg_label ,fg=parent.letter_color ,text="Seleccione su Nivel:")
-        password_label = Label(self, anchor="w" ,width=18 ,font=("Calibri",14) ,bg=parent.prim_bg_label ,fg=parent.letter_color ,text="Ingrese su contraseña:")
-        register_label = Label(self, anchor="center" ,font=("Calibri",11) ,bg=parent.secc_bg_label ,fg=parent.url_letter_color ,text="Si no tiene una cuenta registrada, Haga click aqui.")
+        user_label = Label(self, anchor="w" ,width=18, font=("Calibri",14), bg=parent.prim_bg_label, fg=parent.letter_color, text="Ingrese su Usuario:")
+        lvl_label = Label(self, anchor="w" ,width=18, font=("Calibri",14), bg=parent.prim_bg_label, fg=parent.letter_color, text="Seleccione su Nivel:")
+        password_label = Label(self, anchor="w", width=18, font=("Calibri",14), bg=parent.prim_bg_label, fg=parent.letter_color, text="Ingrese su contraseña:")
+        register_label = Label(self, anchor="center", font=("Calibri",11), bg=parent.secc_bg_label, fg=parent.url_letter_color, text="Si no tiene una cuenta registrada, Haga click aqui.")
 
-        user_input = Entry(self ,font=("Calibri",12) ,fg=parent.letter_color ,textvariable=user)
-        password_input = Entry(self ,font=("Calibri",12) ,fg=parent.letter_color ,textvariable=password)
+        user_input = Entry(self, font=("Calibri",12) ,fg=parent.letter_color ,textvariable=user)
+        password_input = Entry(self, font=("Calibri",12) ,fg=parent.letter_color ,textvariable=password)
 
-        lvl_cb = ttk.Combobox(self ,textvariable=lvl)
+        lvl_cb = ttk.Combobox(self, textvariable=lvl)
         
-        login_button = Button(self ,width=8 ,height=1 ,font=("Calibri",11) ,bg=parent.prim_bg_button ,fg="white" ,text="Ingresar" ,command= lambda: self.login(parent,("user","pasword","lvl")))
-        exit_button = Button(self ,width=6 ,height=1 ,font=("Calibri",11) ,bg=parent.exit_bg_button ,fg=parent.letter_color ,text="Salir", command= lambda: close(parent))
+        login_button = Button(self, width=8, height=1, font=("Calibri",11), bg=parent.prim_bg_button, fg="white", text="Ingresar", command= lambda: self.login(parent,("user","pasword","lvl")))
+        exit_button = Button(self, width=6, height=1, font=("Calibri",11), bg=parent.exit_bg_button, fg=parent.letter_color, text="Salir", command= lambda: close(parent))
 
         #configure
 
@@ -108,39 +125,52 @@ class Login(Frame):
 
         #title
 
-        login_title.grid(column=0 ,row=0 ,columnspan=4, sticky="we")
+        login_title.grid(column=0, row=0, columnspan=4, sticky="we")
 
         #label
 
-        user_label.grid(column=0 ,row=2, sticky="e", padx=30)
-        lvl_label.grid(column=0 ,row=3, sticky="e", padx=30)
-        password_label.grid(column=0 ,row=4, sticky="e", padx=30)
-        register_label.grid(column=0 ,row=6, columnspan=4, sticky="s")
+        user_label.grid(column=0, row=2, sticky="e", padx=30)
+        lvl_label.grid(column=0, row=3, sticky="e", padx=30)
+        password_label.grid(column=0, row=4, sticky="e", padx=30)
+        register_label.grid(column=0, row=6, columnspan=4, sticky="s")
         register_label.bind("<Button-1>", lambda e: self.register())
 
         #entry
 
-        user_input.grid(column=1 ,row=2, sticky="we")
-        password_input.grid(column=1 ,row=4, sticky="we")
+        user_input.grid(column=1, row=2, sticky="we")
+        password_input.grid(column=1, row=4, sticky="we")
 
         #combobox
 
-        lvl_cb.grid(column=1 ,row=3 ,sticky="we")
+        lvl_cb.grid(column=1, row=3, sticky="we")
         lvl_cb['values'] = ("Desarollador","Administrador","Usuario")
         lvl_cb['state'] = "readonly"
 
         #button
 
-        login_button.grid(column=0 ,row=7 ,columnspan=3)
-        exit_button.grid(column=2 ,row=7 ,padx=20 ,sticky="e")
-    
+        login_button.grid(column=0, row=7, columnspan=3)
+        exit_button.grid(column=2,row=7 ,padx=20 ,sticky="e")
+
     def login(self, parent, data):
         parent.status.destroy()
-        parent.status = MainMenu(parent,data)
+        parent.status = MainMenu(parent, data)
         
+    #   La funcion register es la funcion que crea una nueva ventana de tipo Extra, la cual se le
+    #   carga como ultimo parametro "r" el cual selecciona la estructura Register
+
     def register(self):
         Extra("Registro de cuenta",[450,600,700,50],True,"white","r")
 
+#   Register es una estrcutrua que se utiliza en una ventana auxiliar Extra, esta estructura nos permite
+#   registrar correctamente una cuenta de usuario nueva con un nombre de usuario (que no debe estar vacio ni
+#   poseer un numero) un gmail (que debe ser un email de google es decir terminar con @gmail.com) y una 
+#   contraseña que no tiene muchas validaciones, al tener todos los datos correctos y poder efectuar otras 
+#   validaciones extras (conexion con la base de datos, datos validos de la cuenta remitente de gmail) se 
+#   envia un email a la direccion ingresada con un codigo numerico y se abre otra pestaña para ingresar dicho
+#   codigo, si el usuario ingresa el codigo correcto se finaliza el proceso de registro, se añade la nueva 
+#   cuenta de usuario a la base de datos y se cierran todas las ventanas emergentes volviendo a la ventana
+#   principal.
+        
 class Register(Frame):
     def __init__(self,parent):
 
@@ -158,6 +188,8 @@ class Register(Frame):
 
         self.create_account(parent)
 
+    #   La funcion create_account crea todos los widgets de la estructura Register
+
     def create_account(self ,parent):
 
         #var
@@ -169,52 +201,59 @@ class Register(Frame):
         
         #create
         
-        main_title = Label(self ,anchor="center" ,font=("TkMenuFont",18) ,bg=parent.prim_bg_label ,fg=parent.letter_color ,text="Ingrese sus datos para\nRegistrar una cuenta")
+        main_title = Label(self, anchor="center", font=("TkMenuFont",18), bg=parent.prim_bg_label, fg=parent.letter_color, text="Ingrese sus datos para\nRegistrar una cuenta")
 
-        user_lb = Label(self, anchor="center" ,font=("Calibri",11) ,bg=parent.prim_bg_label ,fg=parent.letter_color ,text="Ingrese su nombre de usuario: " ,width=18 ,wraplength=150)
-        email_lb = Label(self, anchor="center" ,font=("Calibri",11) ,bg=parent.prim_bg_label ,fg=parent.letter_color ,text="Ingrese su correo electronico: " ,width=18 ,wraplength=150)
-        pass_lb = Label(self, anchor="center" ,font=("Calibri",11) ,bg=parent.prim_bg_label ,fg=parent.letter_color ,text="Ingrese su contraseña: " ,width=18 ,wraplength=150)
-        pass_rep_lb = Label(self, anchor="center" ,font=("Calibri",11) ,bg=parent.prim_bg_label ,fg=parent.letter_color ,text="Vuelva a ingresar su contraseña: " ,width=18 ,wraplength=150)
+        user_lb = Label(self, anchor="center", font=("Calibri",11), bg=parent.prim_bg_label, fg=parent.letter_color, text="Ingrese su nombre de usuario: ", width=18, wraplength=150)
+        email_lb = Label(self, anchor="center", font=("Calibri",11), bg=parent.prim_bg_label, fg=parent.letter_color, text="Ingrese su correo electronico: ", width=18, wraplength=150)
+        pass_lb = Label(self, anchor="center", font=("Calibri",11), bg=parent.prim_bg_label, fg=parent.letter_color, text="Ingrese su contraseña: ", width=18, wraplength=150)
+        pass_rep_lb = Label(self, anchor="center", font=("Calibri",11), bg=parent.prim_bg_label, fg=parent.letter_color, text="Vuelva a ingresar su contraseña: ", width=18, wraplength=150)
 
-        user_entry = Entry(self ,font=("Calibri",9) ,fg=parent.letter_color ,textvariable=user)
-        email_entry = Entry(self ,font=("Calibri",9) ,fg=parent.letter_color ,textvariable=email)
-        pass_entry = Entry(self ,font=("Calibri",9) ,fg=parent.letter_color ,textvariable=pasword ,show="*")
-        pass_rep_entry = Entry(self ,font=("Calibri",9) ,fg=parent.letter_color ,textvariable=rep ,show="*")
+        user_entry = Entry(self, font=("Calibri",9), fg=parent.letter_color, textvariable=user)
+        email_entry = Entry(self, font=("Calibri",9), fg=parent.letter_color, textvariable=email)
+        pass_entry = Entry(self, font=("Calibri",9), fg=parent.letter_color, textvariable=pasword, show="*")
+        pass_rep_entry = Entry(self, font=("Calibri",9), fg=parent.letter_color, textvariable=rep, show="*")
 
-        confirm_btt = Button(self ,fg=parent.exit_bg_button ,bg=parent.prim_bg_button ,text="Registrarse" ,width=8 ,height=1 ,command= lambda: self.register_account(parent,user.get(),pasword.get(),rep.get(),email.get()))
-        exit_btt = Button(self ,fg=parent.letter_color ,bg=parent.exit_bg_button ,text="Volver" ,width=8 ,height=1 ,command= lambda: close(parent))
+        confirm_btt = Button(self, fg=parent.exit_bg_button, bg=parent.prim_bg_button, text="Registrarse", width=8, height=1, command= lambda: self.register_account(parent,user.get(),pasword.get(),rep.get(),email.get()))
+        exit_btt = Button(self, fg=parent.letter_color, bg=parent.exit_bg_button, text="Volver", width=8, height=1, command= lambda: close(parent))
 
         #configure
 
-        self.columnconfigure((0,1,2,3,4) ,weight=1)
-        self.rowconfigure((0,1,2,3,4,5) ,weight=1)
+        self.columnconfigure((0,1,2,3,4), weight=1)
+        self.rowconfigure((0,1,2,3,4,5), weight=1)
 
         #title
 
-        main_title.grid(column=0 ,row=0 ,sticky="we" ,columnspan=5)
+        main_title.grid(column=0, row=0, sticky="we", columnspan=5)
 
         #label
 
-        user_lb.grid(column=0 ,row=1 ,sticky="e" ,padx=20)
-        email_lb.grid(column=0 ,row=2 ,sticky="e", padx=20)
-        pass_lb.grid(column=0 ,row=3 ,sticky="e", padx=20)
-        pass_rep_lb.grid(column=0 ,row=4 ,sticky="e", padx=20) 
+        user_lb.grid(column=0, row=1, sticky="e", padx=20)
+        email_lb.grid(column=0, row=2, sticky="e", padx=20)
+        pass_lb.grid(column=0, row=3, sticky="e", padx=20)
+        pass_rep_lb.grid(column=0, row=4, sticky="e", padx=20) 
 
         #entry
 
-        user_entry.grid(column=1 ,row=1 ,sticky="we")
-        email_entry.grid(column=1 ,row=2 ,sticky="we")
-        pass_entry.grid(column=1 ,row=3 ,sticky="we")
-        pass_rep_entry.grid(column=1 ,row=4 ,sticky="we")
+        user_entry.grid(column=1, row=1, sticky="we")
+        email_entry.grid(column=1, row=2, sticky="we")
+        pass_entry.grid(column=1, row=3, sticky="we")
+        pass_rep_entry.grid(column=1, row=4, sticky="we")
 
         #button
 
-        confirm_btt.grid(column=0 ,row=5, columnspan=2)
-        exit_btt.grid(column=4 ,row=5)
+        confirm_btt.grid(column=0, row=5, columnspan=2)
+        exit_btt.grid(column=4, row=5)
 
-    def register_account(self ,parent ,name ,password ,rep ,email):
+    #   La funcion register_account muestra distintos tipos de ventanas emergentes (messagebox)
+    #   las cuales muestran si hubo algun error de validacion de datos, problemas con el envio
+    #   de emails, problemas con la conexion a la base de datos o problemas con el registro de
+    #   nuevas cuentas a la base de datos, caso contrario si no hubo ninguna complicacion en 
+    #   el registro, muestra una ventana informando el exito de la operacion y esto garantiza
+    #   el definitivo registro en la base de datos.
 
-        msg = register_in_db(self, parent ,name ,password ,rep ,email)
+    def register_account(self, parent, name, password, rep, email):
+
+        msg = register_in_db(self, parent, name, password, rep, email)
         title = msg[1]
         body = msg[2]
 
