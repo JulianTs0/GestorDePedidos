@@ -440,6 +440,7 @@ def setup(self, tittle, size, resize, back_color):
     self.geometry(f"{size[0]}x{size[1]}+{size[2]}+{size[3]}")
     self.resizable(resize, resize)
     self.config(bg=back_color)
+    self.protocol("WM_DELETE_WINDOW", lambda: close(self))
 
 def close(object):
     object.quit()

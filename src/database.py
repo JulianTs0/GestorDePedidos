@@ -8,8 +8,7 @@ def conectBD():
                                          host=config("HOST_DB"),
                                          database=config("DATABASE"),
                                          port=config("PORT_DB"))
-        print("Conexion correcta")
-
+        
         return conection
     except mysql.connector.Error as error:
 
