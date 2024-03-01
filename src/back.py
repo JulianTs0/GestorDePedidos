@@ -6,6 +6,13 @@ from database import *
 from decouple import config
 import random
 
+#   Mini es una ventana que se usa exclusivamente para poder verificar el codigo de verificacion de email
+#   con el ingresado por el usuario en esta misma ventana. A esta ventana ademas de pasarle parametros de
+#   inicializacion se le pasa el parametro verif el cual es el numero que fue enviado al email y parent el
+#   cual hace referencia a la estrucutra register la cual posee una variable booleana llamada ok, que determina
+#   si el proceso de registro definitivo esta terminado, sin ningun inconveniente, y listo para ingresar
+#   en la base de datos.
+
 class Mini(Toplevel):
     def __init__(self, tittle, size, resize, back_color, verif, parent):
 
@@ -28,6 +35,9 @@ class Mini(Toplevel):
 
         self.mainloop()
     
+    #   La funcion aunthrntication es la estructura peronalizada hecha exclusivamente para la ventana Mini
+    #   la cual crea todos los widgets que se van a mostrar.
+
     def authentication(self ,verif, parent):
 
         #var
@@ -36,23 +46,25 @@ class Mini(Toplevel):
 
         #create
 
-        main_label = Label(self ,bg="red" ,text="Ingrese el codigo que le enviamos al email", wraplength=150)
-        main_input = Entry(self ,textvariable=code)
-        main_button = Button(self, text="Verificar" ,bg="blue" ,fg="white", command=lambda : self.verification(code.get(),verif,parent))
-        exit_button = Button(self, text="Cancelar" ,bg="white" ,fg="black", command=lambda : self.close(self))
-
+        main_label = Label(self, bg="red", text="Ingrese el codigo que le enviamos al email", wraplength=150)
+        main_input = Entry(self, textvariable=code)
+        main_button = Button(self, text="Verificar", bg="blue", fg="white", command=lambda : self.verification(code.get(),verif,parent))
+        
         #configure
 
-        self.columnconfigure((0,1,2) ,weight=1)
-        self.rowconfigure((0,1,2) ,weight=1)
+        self.columnconfigure((0,1,2), weight=1)
+        self.rowconfigure((0,1,2), weight=1)
 
         #grid
 
         main_label.grid(column=0, row=1, sticky="w", padx=10)
         main_input.grid(column=1, row=1, sticky="we")
         main_button.grid(column=2, row=2)
-        exit_button.grid(column=0, row=2,sticky="w", padx=10)
     
+    #   La funcion verification lo que hace es comparar el numero ingresado en el entry main_input y la
+    #   variable verif la cual es el numero de verificacion enviado por emial, si coinciden setea en true
+    #   la variable ok y llama a la funcion close, si no simplemente muestra un mensaje de error.
+
     def verification(self,var,verif,parent):
         
         if var == verif:
@@ -61,9 +73,14 @@ class Mini(Toplevel):
         else:
             messagebox.showerror("Error al verifcar su email","El codigo ingresado es incorrecto")
     
+    #   La funcion close cierra y termina definitivamente los procesos de la ventana Mini
+
     def close(self,object):
         object.quit()
         object.destroy()
+
+#   La funcion is_a_number determina si en una palabra esta contiene algun numero, si es asi retorna true
+#   si no false.
 
 def is_a_number(word):
 
@@ -74,6 +91,11 @@ def is_a_number(word):
             output = True
     
     return output
+
+#   La funcion register_user basicamente es la que se encarga de las validaciones iniciales de los valores
+#   ingresados durante el proceso de registro de una nueva cuenta en la estructura Register. Si todo esta 
+#   correcto devuelve un objeto de tipo Usuario, si no devuelve un string el cual contiene el motivo del
+#   fallo de la validacion.
 
 def register_user(name,password,rep,email):
 
@@ -97,6 +119,13 @@ def register_user(name,password,rep,email):
     else:
         return error  
 
+#   La funcion send_email es la que se encarga de enviar un email que contiene el numero de verificacion
+#   al email del usuario que pretende registrarse. El remitente del email y la contraseña de dicha cuenta 
+#   se acceden a traves del archivo .env donde en USER se encuentra el nombre de la cuenta de email del 
+#   remitente y en PASSWORD se encuentra una contraseña de aplicacion generada para acceder a la cuenta
+#   del remitente. Si logra enviar el email devuelve el numero de verificacion generado, si no devuelve
+#   un string de error.
+
 def send_email(mail):
     try:
         autentificacion = random.randint(10000,999999)
@@ -116,40 +145,44 @@ def send_email(mail):
     except:
         return "Error al envial el mail, verifique que el remitente o el destinatario"
 
-def check_conection():
-    if type(conectBD()) == "<class 'str'>":
-        return conectBD()
-    else:
-        return None
+#   La funcion register_in_db es la que se encarga de validar completamente los datos ingresados en la 
+#   operacion de registro de una nueva cuenta, y si todos estan correctos registra los datos en la BD. 
+#   Esta funcion siempre devuelve una tupla de 3 elementos, los cuales son utilizados en la estructura
+#   register para informarle al usuario la situacion del registro de su cuenta, el primer elemento es un
+#   numero que representa si el mensaje es un error, una advertencia o informacion, el segundo elemento
+#   es el titulo del mensaje y el tercero es el cuerpo del mensaje.
+#   Las validaciones se hacen en el siguiente orden:
+#   1. Se verifica si se puede conectar a la base de datos, si se puede se continua
+#   2. Se verifica si los datos ingresados son correctos, si son correctos se continua
+#   3. Se envia el email con el codigo de verifiacion, si se logro enviar el email se continua
+#   4. Se abre la ventana Mini para pedir el codigo de verifiacion, si no se cancela el proceso se continua
+#   5. Se trata de registrar los datos a la BD, si se puede se cierra la ventana Extra asociada al Register
+#   y se finaliza el proceso de registro.
 
 def register_in_db(self,parent,name,password,rep,email):
-    showmsg = None
 
-    if check_conection() is not None:
-        showmsg = (0,"Error", str(check_conection()))
+    check = conectBD()
+
+    if check == "Error al conectarse a la base de datos":
+        return (0,"Error", str(check))
     else:
-        user = register_user(name ,password ,rep ,email)
+        user = register_user(name, password, rep, email)
         try:
             number = send_email(user.email)
             try:
                 number = int(number)
                 Mini(f"Verificacion del email", (400,150,100,50), True, "black", number, self)
                 if self.ok == False:
-                    showmsg = (1,"Registro cancelado","Vuelva a ingresar los datos para registrar una cuenta")
-                    parent.quit()
-                    parent.destroy()
+                    return (1,"Registro cancelado","Vuelva a ingresar los datos para registrar una cuenta")
                 else:
                     res = ingresarUsuarios(user)
                     if res is None:
-                        showmsg = (2,"Usuario registrado","El usuario a sido creado y registrado con exito ingrese sesion en la pagina principal")
                         parent.quit()
                         parent.destroy()
+                        return (2,"Usuario registrado","El usuario a sido creado y registrado con exito ingrese sesion en la pagina principal")
                     else:
-                        showmsg = (0,"Error",res)
+                        return (0,"Error",res)
             except:
-                showmsg = (1,"Error de email", number)
+                return (1,"Error de email", number)
         except:
-            error = str(user)
-            showmsg = (1,"Error al registrar la cuenta", error)
-        
-    return showmsg
+            return (1,"Error al registrar la cuenta", str(user))

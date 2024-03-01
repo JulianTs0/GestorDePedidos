@@ -4,7 +4,7 @@ from tkinter import messagebox
 from back import *
 
 #   Main es la ventana principal que va a tener el programa mientras se ejecute
-#   solo va a contener las esctructuras Login y MainMenu
+#   solo va a contener las esctructuras Login y MainMenu.
 
 class Main(Tk):
     def __init__(self, tittle, size, resize, back_color):
@@ -34,7 +34,7 @@ class Main(Tk):
 
 #   Extra es una ventana auxiliar que sirve para mostrar esctructuras temporales, estas 
 #   estructuras no estan pensadas para permanecer mucho tiempo y se seleccionan con el 
-#   parametro op
+#   parametro op.
 
 class Extra(Toplevel):
     def __init__(self, tittle, size, resize, back_color, op):
@@ -263,7 +263,11 @@ class Register(Frame):
             messagebox.showwarning(title,body)
         elif msg[0] == 2:
             messagebox.showinfo(title,body)
-            
+
+#
+#
+#
+
 class MainMenu(Frame):
     def __init__(self, parent, data):
 
@@ -330,6 +334,10 @@ class MainMenu(Frame):
     def backward(self,parent):
         parent.status.destroy()
         parent.status = Login(parent)
+
+#
+#
+#
 
 class Order(Frame):
     def __init__(self ,parent):
@@ -411,6 +419,10 @@ class Order(Frame):
     def makeOrder(self):
         print("mo")
 
+#
+#
+#
+
 class ShowOrder(Frame):
     def __init__(self ,parent):
 
@@ -474,12 +486,18 @@ class ShowOrder(Frame):
             pedidos.append((f"Ropa {n}", f"Servicio {n}", f"Prioridad {n}"))
         return pedidos
 
+#   La funcion setup basicamente tiene una lista de lineas de codigo que inicializan ciertos parametros de
+#   las ventanas como el titulo, el tamaño, el reescalado, el color, etc.
+
 def setup(self, tittle, size, resize, back_color):
     self.title(tittle)
     self.geometry(f"{size[0]}x{size[1]}+{size[2]}+{size[3]}")
     self.resizable(resize, resize)
     self.config(bg=back_color)
     self.protocol("WM_DELETE_WINDOW", lambda: close(self))
+
+#   La funcion close se usa en todos los botones de salida y basicamente termina definitivamente
+#   el funcionamiento de las ventanas Extra o MainMenu.
 
 def close(object):
     object.quit()
