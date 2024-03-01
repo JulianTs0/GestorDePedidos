@@ -92,6 +92,24 @@ def is_a_number(word):
     
     return output
 
+#
+#
+#
+
+def exist_user(search,parameter):
+    try:
+        data = buscarUsuario()
+
+        if data == "Error al mostrar los datos del ususario":
+            return data
+        else:
+            for row in data:
+                if row[parameter] == search:
+                    return True
+            return False
+    except:
+        return "Error al conectarse a la base de datos"
+
 #   La funcion register_user basicamente es la que se encarga de las validaciones iniciales de los valores
 #   ingresados durante el proceso de registro de una nueva cuenta en la estructura Register. Si todo esta 
 #   correcto devuelve un objeto de tipo Usuario, si no devuelve un string el cual contiene el motivo del
@@ -114,6 +132,10 @@ def register_user(name,password,rep,email):
         error = "Ingrese un nombre de usuario valido"
     
     if error is None:
+        if exist_user(name,0):
+            return "Ese nombre de usuario ya existe escoja otro"
+        if exist_user(email,2):
+            return "Ese email ya esta registrado"
         user = Usuario(name,password,email)
         return user
     else:
@@ -135,9 +157,9 @@ def send_email(mail):
 
         server = SMTP("smtp.gmail.com" ,587)
         server.starttls()
-        server.login(remitente ,contra)
+        server.login(remitente, contra)
 
-        server.sendmail(remitente ,mail ,msg)
+        server.sendmail(remitente, mail, msg)
 
         server.quit()
 

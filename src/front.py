@@ -502,6 +502,10 @@ def setup(self, tittle, size, resize, back_color):
 def close(object):
     object.quit()
     object.destroy()
-    
+
+#
+#
+#
+
 if __name__ == "__main__":
    Main("Volpe project", (800,600,300,50), True, "white")
