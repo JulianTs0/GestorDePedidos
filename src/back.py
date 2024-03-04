@@ -114,38 +114,36 @@ def exist_user(search,parameter):
 
 def register_user(name,password,rep,email):
 
-    error = None
-
-    if password != rep:
-        error = "Las contraseñas no coinciden"
-
-    if password == "":
-        error = "No se ha ingresado la contraseña valida"
-
-    if "@gmail.com" not in email or len(email) <= 10 or email == "":
-        error = "La estructura del email no es correcta"
-
     if name == "" or is_a_number(name):
         error = "Ingrese un nombre de usuario valido"
+        return False,error
     
-    if error is None:
+    if "@gmail.com" not in email or len(email) <= 10 or email == "":
+        error = "La estructura del email no es correcta"
+        return False,error
+    
+    if password == "":
+        error = "No se ha ingresado la contraseña valida"
+        return False,error
+    
+    if password != rep:
+        error = "Las contraseñas no coinciden"
+        return False,error
 
-        search = exist_user(name,0)
-        if not search[0]:
-            return search[1]
-        elif search[0] and search[1] is not None:
-            return "Ese nombre de usuario ya existe escoja otro"
+    search = exist_user(name,0)
+    if not search[0]:
+        return search
+    elif search[1] is not None:
+        return False,"Ese nombre de usuario ya existe escoja otro"
         
-        search = exist_user(email,2)
-        if not search[0]:
-            return search[1]
-        elif search[0] and search[1] is not None:
-            return "Ese email ya esta registrado"
+    search = exist_user(email,2)
+    if not search[0]:
+        return search
+    elif search[1] is not None:
+        return False,"Ese email ya esta registrado"
         
-        user = Usuario(name,password,email)
-        return user
-    else:
-        return error  
+    user = Usuario(name,password,email)
+    return True,user 
 
 #   La funcion send_email es la que se encarga de enviar un email que contiene el numero de verificacion
 #   al email del usuario que pretende registrarse. El remitente del email y la contraseña de dicha cuenta 
@@ -169,9 +167,9 @@ def send_email(mail):
 
         server.quit()
 
-        return autentificacion
+        return True,autentificacion
     except:
-        return "Error al envial el mail, verifique que el remitente o el destinatario"
+        return False,"Error al envial el mail, verifique que el remitente o el destinatario"
 
 #   La funcion register_in_db es la que se encarga de validar completamente los datos ingresados en la 
 #   operacion de registro de una nueva cuenta, y si todos estan correctos registra los datos en la BD. 
@@ -194,26 +192,25 @@ def register_in_db(self,parent,name,password,rep,email):
     if check == "Error al conectarse a la base de datos":
         return (0,"Error", str(check))
     else:
-        user = register_user(name, password, rep, email)
-        try:
-            number = send_email(user.email)
-            try:
-                number = int(number)
-                Mini(f"Verificacion del email", (400,150,100,50), True, "black", number, self)
+        re_user = register_user(name, password, rep, email)
+        if re_user[0]:
+            email_number = send_email(re_user[1].email)
+            if email_number[0]:
+                Mini(f"Verificacion del email", (400,150,100,50), True, "black", email_number[1], self)
                 if self.ok == False:
                     return (1,"Registro cancelado","Vuelva a ingresar los datos para registrar una cuenta")
                 else:
-                    res = ingresarUsuarios(user)
+                    res = ingresarUsuarios(re_user[1])
                     if res is None:
                         parent.quit()
                         parent.destroy()
                         return (2,"Usuario registrado","El usuario a sido creado y registrado con exito ingrese sesion en la pagina principal")
                     else:
                         return (0,"Error",res)
-            except:
-                return (1,"Error de email", number)
-        except:
-            return (1,"Error al registrar la cuenta", str(user))
+            else:
+                return (1,"Error de email", email_number[1])
+        else:
+            return (1,"Error al registrar la cuenta", re_user[1])
 
 #
 #

@@ -38,7 +38,7 @@ def ingresarUsuarios(usuario):
         print(cursor.rowcount,"Usuario ingresado")
         conect.close()
 
-        return
+        return None
     except mysql.connector.Error as error:
         print(f"Error al ingresar el ususario {error}")
 
