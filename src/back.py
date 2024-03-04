@@ -228,8 +228,20 @@ def login_user(user):
     else:
         if data[1] is not None:
             if data[1][1] == user[1]:
-                return True,"Inicio de sesion exitoso"
+                return True,Usuario(data[1][0],data[1][1],data[1][2])
             else:
                 return False,"Contraseña incorrecta"
         else:
             return False,"El usuario no existe"
+
+#
+#
+#
+        
+def verifiy_order(ropa,servicio,prioridad,comentario):
+
+    if ropa == "" or servicio == "" or prioridad == "":
+        return False,"Complete los campos antes de hacer un pedido"
+    else:
+        order = Pedido(ropa,servicio,prioridad,comentario)
+        return True,order

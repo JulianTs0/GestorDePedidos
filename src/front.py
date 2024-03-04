@@ -147,9 +147,9 @@ class Login(Frame):
     def login(self, parent, data):
         login = login_user(data)
         if login[0]:
-            messagebox.showinfo("Inicio de sesion",login[1])
+            messagebox.showinfo("Inicio de sesion","Inicio de sesion exitoso")
             parent.status.destroy()
-            parent.status = MainMenu(parent, data)
+            parent.status = MainMenu(parent, login[1])
         else:
             messagebox.showwarning("Error al inciar sesion",login[1])
          
@@ -267,7 +267,7 @@ class Register(Frame):
 #
 
 class MainMenu(Frame):
-    def __init__(self, parent, data):
+    def __init__(self, parent, user):
 
         #setup
 
@@ -277,7 +277,7 @@ class MainMenu(Frame):
 
         #var
 
-        self.data = data
+        self.user = user
 
         #struct
 
@@ -287,7 +287,7 @@ class MainMenu(Frame):
         
         #create
 
-        main_title = Label(self ,anchor="center" ,font=("TkMenuFont",18) ,fg=parent.letter_color ,bg=parent.prim_bg_label ,text="Bienvenido usuario")
+        main_title = Label(self ,anchor="center" ,font=("TkMenuFont",18) ,fg=parent.letter_color ,bg=parent.prim_bg_label ,text=f"Bienvenido de nuevo {self.user.name}")
 
         first_lb = Label(self ,anchor="center" ,font=("Calibri",14) ,fg=parent.letter_color ,bg=parent.prim_bg_label, text="Realize un pedido", width=20)
         secc_lb = Label(self ,anchor="center" ,font=("Calibri",14) ,fg=parent.letter_color ,bg=parent.prim_bg_label, text="Ver mis pedidos", width=20)
@@ -367,7 +367,7 @@ class Order(Frame):
 
         comentario_input = Text(self,height=8, width=25)
 
-        confirm_btt = Button(self, width=10 ,height=1 ,bg=parent.prim_bg_button ,fg=parent.exit_bg_button ,text="Hacer pedido" ,command= lambda: self.makeOrder())
+        confirm_btt = Button(self, width=10 ,height=1 ,bg=parent.prim_bg_button ,fg=parent.exit_bg_button ,text="Hacer pedido" ,command= lambda: self.makeOrder((ropa_cb.get(),servicio_cb.get(),prioridad_cb.get(),comentario_input.get("1.0","end"))))
         exit_btt = Button(self, width=8 ,height=1 ,bg=parent.exit_bg_button ,fg=parent.letter_color ,text="Volver" ,command= lambda: close(parent))
 
         #configure 
@@ -407,8 +407,12 @@ class Order(Frame):
         confirm_btt.grid(column=0 ,row=5, columnspan=2)
         exit_btt.grid(column=2, row=5)   
 
-    def makeOrder(self):
-        print("mo")
+    def makeOrder(self,data_order):
+        order = verifiy_order(data_order[0],data_order[1],data_order[2],data_order[3])
+        if order[0]:
+            print(order[1])
+        else:
+            messagebox.showwarning("Error al realizar el pedido",order[1])
 
 #
 #
