@@ -97,7 +97,6 @@ class Login(Frame):
         #var
 
         user = StringVar()
-        lvl = StringVar()
         password = StringVar()
 
         #create
@@ -105,16 +104,13 @@ class Login(Frame):
         login_title = Label(self, anchor="center", font=("TkMenuFont",18), bg=parent.prim_bg_label, fg=parent.letter_color, text="Bienvenidos de nuevo a Volpe\nIngrese sesion o registrese")
 
         user_label = Label(self, anchor="w" ,width=18, font=("Calibri",14), bg=parent.prim_bg_label, fg=parent.letter_color, text="Ingrese su Usuario:")
-        lvl_label = Label(self, anchor="w" ,width=18, font=("Calibri",14), bg=parent.prim_bg_label, fg=parent.letter_color, text="Seleccione su Nivel:")
         password_label = Label(self, anchor="w", width=18, font=("Calibri",14), bg=parent.prim_bg_label, fg=parent.letter_color, text="Ingrese su contraseña:")
         register_label = Label(self, anchor="center", font=("Calibri",11), bg=parent.secc_bg_label, fg=parent.url_letter_color, text="Si no tiene una cuenta registrada, Haga click aqui.")
 
         user_input = Entry(self, font=("Calibri",12) ,fg=parent.letter_color ,textvariable=user)
         password_input = Entry(self, font=("Calibri",12) ,fg=parent.letter_color ,textvariable=password)
-
-        lvl_cb = ttk.Combobox(self, textvariable=lvl)
         
-        login_button = Button(self, width=8, height=1, font=("Calibri",11), bg=parent.prim_bg_button, fg="white", text="Ingresar", command= lambda: self.login(parent,(user.get(),password.get(),lvl.get())))
+        login_button = Button(self, width=8, height=1, font=("Calibri",11), bg=parent.prim_bg_button, fg="white", text="Ingresar", command= lambda: self.login(parent,(user.get(),password.get())))
         exit_button = Button(self, width=6, height=1, font=("Calibri",11), bg=parent.exit_bg_button, fg=parent.letter_color, text="Salir", command= lambda: close(parent))
 
         #configure
@@ -130,7 +126,6 @@ class Login(Frame):
         #label
 
         user_label.grid(column=0, row=2, sticky="e", padx=30)
-        lvl_label.grid(column=0, row=3, sticky="e", padx=30)
         password_label.grid(column=0, row=4, sticky="e", padx=30)
         register_label.grid(column=0, row=6, columnspan=4, sticky="s")
         register_label.bind("<Button-1>", lambda e: self.register())
@@ -139,12 +134,6 @@ class Login(Frame):
 
         user_input.grid(column=1, row=2, sticky="we")
         password_input.grid(column=1, row=4, sticky="we")
-
-        #combobox
-
-        lvl_cb.grid(column=1, row=3, sticky="we")
-        lvl_cb['values'] = ("Desarollador","Administrador","Usuario")
-        lvl_cb['state'] = "readonly"
 
         #button
 
@@ -156,7 +145,7 @@ class Login(Frame):
     #
 
     def login(self, parent, data):
-        login = login_user(data[0],data[1])
+        login = login_user(data)
         if login[0]:
             messagebox.showinfo("Inicio de sesion",login[1])
             parent.status.destroy()
@@ -291,13 +280,6 @@ class MainMenu(Frame):
         self.data = data
 
         #struct
-
-        if self.data[2] == "desarollador":
-            pass
-        elif self.data[2] == "administrador":
-            pass
-        elif self.data[2] == "usuario":
-            pass
 
         self.createmenu(parent)
     

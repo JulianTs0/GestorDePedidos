@@ -216,18 +216,18 @@ def register_in_db(self,parent,name,password,rep,email):
 #
 #
 
-def login_user(name,password):
+def login_user(user):
 
-    if name == "" or password == "":
+    if user[0] == "" or user[1] == "":
         return False,"Complete los campos antes de iniciar sesion"
     
-    data = exist_user(name,0)
+    data = exist_user(user[0],0)
 
     if not data[0]:
         return data
     else:
         if data[1] is not None:
-            if data[1][1] == password:
+            if data[1][1] == user[1]:
                 return True,"Inicio de sesion exitoso"
             else:
                 return False,"Contraseña incorrecta"
