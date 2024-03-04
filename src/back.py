@@ -97,18 +97,15 @@ def is_a_number(word):
 #
 
 def exist_user(search,parameter):
-    try:
-        data = buscarUsuario()
+    data = buscarUsuario()
 
-        if data == "Error al mostrar los datos del ususario":
-            return data
-        else:
-            for row in data:
-                if row[parameter] == search:
-                    return row
-            return None
-    except:
-        return "Error al conectarse a la base de datos"
+    if data == "Error al mostrar los datos del ususario":
+        return False,data
+    else:
+        for row in data:
+            if row[parameter] == search:
+                return True,row
+        return True,None
 
 #   La funcion register_user basicamente es la que se encarga de las validaciones iniciales de los valores
 #   ingresados durante el proceso de registro de una nueva cuenta en la estructura Register. Si todo esta 
@@ -132,10 +129,19 @@ def register_user(name,password,rep,email):
         error = "Ingrese un nombre de usuario valido"
     
     if error is None:
-        if exist_user(name,0) is not None:
+
+        search = exist_user(name,0)
+        if not search[0]:
+            return search[1]
+        elif search[0] and search[1] is not None:
             return "Ese nombre de usuario ya existe escoja otro"
-        elif exist_user(email,2) is not None:
+        
+        search = exist_user(email,2)
+        if not search[0]:
+            return search[1]
+        elif search[0] and search[1] is not None:
             return "Ese email ya esta registrado"
+        
         user = Usuario(name,password,email)
         return user
     else:
@@ -209,14 +215,24 @@ def register_in_db(self,parent,name,password,rep,email):
         except:
             return (1,"Error al registrar la cuenta", str(user))
 
+#
+#
+#
+
 def login_user(name,password):
+
     if name == "" or password == "":
         return False,"Complete los campos antes de iniciar sesion"
+    
     data = exist_user(name,0)
-    if data is not None:
-        if data[1] == password:
-            return True,"Inicio de sesion exitoso"
-        else:
-            return False,"Contraseña incorrecta"
+
+    if not data[0]:
+        return data
     else:
-        return False,"El usuario no existe"
+        if data[1] is not None:
+            if data[1][1] == password:
+                return True,"Inicio de sesion exitoso"
+            else:
+                return False,"Contraseña incorrecta"
+        else:
+            return False,"El usuario no existe"
