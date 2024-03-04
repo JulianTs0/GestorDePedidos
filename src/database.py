@@ -62,3 +62,24 @@ def buscarUsuario():
         print(f"Error al mostrar los datos del ususario {error}")
 
         return "Error al mostrar los datos del ususario"
+
+#
+#
+#
+
+def ingresarUsuarios(pedido,usuario):
+    try:
+        conect = conectBD()
+        cursor = conect.cursor()
+        sql = "insert into pedidos values(null,%s,%s,%s,%s,%s);"
+        data = (usuario.name,pedido.ropa,pedido.servicio,pedido.comentario,pedido.precio)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Pedido Creado")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al ingresar el ususario {error}")
+
+        return "Error al ingresar el ususario"

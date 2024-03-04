@@ -50,4 +50,7 @@ class Pedido:
         return final
     
     def __str__(self):
-        return(f"Ropa: {self.ropa} Servicio: {self.servicio} Prioridad: {self.prioridad} Comentario: {self.comentario} Precio: {self.precio} ")
+        if self.comentario == "":
+            return(f"Ropa: {self.ropa} Servicio: {self.servicio} Prioridad: {self.prioridad} Precio: {self.precio} ")
+        else:
+            return(f"Ropa: {self.ropa} Servicio: {self.servicio} Prioridad: {self.prioridad} Comentario: {self.comentario} Precio: {self.precio} ")

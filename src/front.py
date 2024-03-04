@@ -37,7 +37,7 @@ class Main(Tk):
 #   parametro op.
 
 class Extra(Toplevel):
-    def __init__(self, tittle, size, resize, back_color, op):
+    def __init__(self, tittle, size, resize, back_color, op, data_aux=None):
 
         #setup
 
@@ -62,7 +62,7 @@ class Extra(Toplevel):
         if op == "r":
             self.status = Register(self)
         elif op == "o":
-            self.status = Order(self)
+            self.status = Order(self,data_aux)
         elif op == "s":
             self.status = ShowOrder(self)
 
@@ -292,7 +292,7 @@ class MainMenu(Frame):
         first_lb = Label(self ,anchor="center" ,font=("Calibri",14) ,fg=parent.letter_color ,bg=parent.prim_bg_label, text="Realize un pedido", width=20)
         secc_lb = Label(self ,anchor="center" ,font=("Calibri",14) ,fg=parent.letter_color ,bg=parent.prim_bg_label, text="Ver mis pedidos", width=20)
 
-        first_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=parent.exit_bg_button ,bg=parent.prim_bg_button ,text="Seleccionar", command= lambda: self.order())
+        first_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=parent.exit_bg_button ,bg=parent.prim_bg_button ,text="Seleccionar", command= lambda: self.order(self.user))
         secc_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=parent.exit_bg_button ,bg=parent.prim_bg_button ,text="Seleccionar", command= lambda: self.show_orders())
         exit_btt = Button(self ,width=12 ,height=1 ,font=("Calibri",12) ,fg=parent.letter_color ,bg=parent.exit_bg_button, text="Cerrar Sesion", command= lambda: self.backward(parent))
         
@@ -316,8 +316,8 @@ class MainMenu(Frame):
         secc_btt.grid(column=0 ,row=4 ,columnspan=3)
         exit_btt.grid(column=2 ,row=5 ,sticky="e" ,padx=25)
 
-    def order(self):
-        Extra("Generador de pedidos",[500,600,700,50],True,"white","o")
+    def order(self,user):
+        Extra("Generador de pedidos",[500,600,700,50],True,"white","o",user)
     
     def show_orders(self):
         Extra("Lista de pedidos", (800,600,350,100), True, "white", "s")
@@ -331,7 +331,7 @@ class MainMenu(Frame):
 #
 
 class Order(Frame):
-    def __init__(self ,parent):
+    def __init__(self ,parent, user):
 
         #setup
 
@@ -339,18 +339,15 @@ class Order(Frame):
         self.configure(bg="black",padx=10, pady=10)
         self.place(relx=0.5, rely=0.5, relwidth=0.98, relheight=0.95, anchor="center")
 
+        #var
+
+        self.user = user
+
         #struct
 
         self.createorder(parent)
 
     def createorder(self,parent):
-
-        #var
-
-        ropa = StringVar()
-        servicio = StringVar()
-        prioridad = StringVar()
-        comentario = ""
 
         #create
 
@@ -361,13 +358,13 @@ class Order(Frame):
         prioridad_lb = Label(self, anchor="w" ,fg=parent.letter_color ,bg=parent.prim_bg_label ,font=("Calibri",12) ,width=24 ,wraplength=180 ,text="Seleccione la prioridad que desee:")
         comentario_lb = Label(self, anchor="w" ,fg=parent.letter_color ,bg=parent.prim_bg_label ,font=("Calibri",12) ,width=24 ,wraplength=180 ,text="Añada un comentario si desea:")
 
-        ropa_cb = ttk.Combobox(self, textvariable=ropa)
-        servicio_cb = ttk.Combobox(self, textvariable=servicio)
-        prioridad_cb = ttk.Combobox(self, textvariable=prioridad)
+        ropa_cb = ttk.Combobox(self)
+        servicio_cb = ttk.Combobox(self)
+        prioridad_cb = ttk.Combobox(self)
 
         comentario_input = Text(self,height=8, width=25)
 
-        confirm_btt = Button(self, width=10 ,height=1 ,bg=parent.prim_bg_button ,fg=parent.exit_bg_button ,text="Hacer pedido" ,command= lambda: self.makeOrder((ropa_cb.get(),servicio_cb.get(),prioridad_cb.get(),comentario_input.get("1.0","end"))))
+        confirm_btt = Button(self, width=10 ,height=1 ,bg=parent.prim_bg_button ,fg=parent.exit_bg_button ,text="Hacer pedido" ,command= lambda: self.makeOrder([ropa_cb.get(),servicio_cb.get(),prioridad_cb.get(),comentario_input.get("1.0","end")],self.user))
         exit_btt = Button(self, width=8 ,height=1 ,bg=parent.exit_bg_button ,fg=parent.letter_color ,text="Volver" ,command= lambda: close(parent))
 
         #configure 
@@ -407,13 +404,16 @@ class Order(Frame):
         confirm_btt.grid(column=0 ,row=5, columnspan=2)
         exit_btt.grid(column=2, row=5)   
 
-    def makeOrder(self,data_order):
-        order = verifiy_order(data_order[0],data_order[1],data_order[2],data_order[3])
-        if order[0]:
-            print(order[1])
-        else:
-            messagebox.showwarning("Error al realizar el pedido",order[1])
+    def makeOrder(self,data_order,user):
 
+        msg = create_order_db(data_order,user)
+
+        if msg[0] == 0:
+            messagebox.showerror(msg[1],msg[2])
+        elif msg[0] == 1:
+            messagebox.showwarning(msg[1],msg[2])
+        elif msg[0] == 2:
+            messagebox.showinfo(msg[1],msg[2]) 
 #
 #
 #

@@ -245,3 +245,27 @@ def verifiy_order(ropa,servicio,prioridad,comentario):
     else:
         order = Pedido(ropa,servicio,prioridad,comentario)
         return True,order
+
+#
+#
+#
+
+def create_order_db(data_order,user):
+
+    if data_order[3][-1] == "\n":
+            data_order[3] = data_order[3][:-1]
+
+    order = verifiy_order(data_order[0],data_order[1],data_order[2],data_order[3])
+
+    if order[0]:
+        opcion = messagebox.askyesno("Ultima confirmacion",f"El precio del pedido es de {order[1].precio} desea continuar?")
+        if opcion:
+            value = ingresarUsuarios(order[1],user)
+            if value is None:
+                return 2,"Pedido creado","Se pudo realizar el pedido exitosamente"
+            else:
+                return 0,"Error",value
+        else:
+            return 2,"Pedido cancelado","Se cancelo el pedido"
+    else:
+        return 1,"Error al realizar el pedido",order[1]
