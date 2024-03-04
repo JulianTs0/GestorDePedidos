@@ -105,8 +105,8 @@ def exist_user(search,parameter):
         else:
             for row in data:
                 if row[parameter] == search:
-                    return True
-            return False
+                    return row
+            return None
     except:
         return "Error al conectarse a la base de datos"
 
@@ -132,9 +132,9 @@ def register_user(name,password,rep,email):
         error = "Ingrese un nombre de usuario valido"
     
     if error is None:
-        if exist_user(name,0):
+        if exist_user(name,0) is not None:
             return "Ese nombre de usuario ya existe escoja otro"
-        if exist_user(email,2):
+        elif exist_user(email,2) is not None:
             return "Ese email ya esta registrado"
         user = Usuario(name,password,email)
         return user
@@ -208,3 +208,15 @@ def register_in_db(self,parent,name,password,rep,email):
                 return (1,"Error de email", number)
         except:
             return (1,"Error al registrar la cuenta", str(user))
+
+def login_user(name,password):
+    if name == "" or password == "":
+        return False,"Complete los campos antes de iniciar sesion"
+    data = exist_user(name,0)
+    if data is not None:
+        if data[1] == password:
+            return True,"Inicio de sesion exitoso"
+        else:
+            return False,"Contraseña incorrecta"
+    else:
+        return False,"El usuario no existe"

@@ -114,7 +114,7 @@ class Login(Frame):
 
         lvl_cb = ttk.Combobox(self, textvariable=lvl)
         
-        login_button = Button(self, width=8, height=1, font=("Calibri",11), bg=parent.prim_bg_button, fg="white", text="Ingresar", command= lambda: self.login(parent,("user","pasword","lvl")))
+        login_button = Button(self, width=8, height=1, font=("Calibri",11), bg=parent.prim_bg_button, fg="white", text="Ingresar", command= lambda: self.login(parent,(user.get(),password.get(),lvl.get())))
         exit_button = Button(self, width=6, height=1, font=("Calibri",11), bg=parent.exit_bg_button, fg=parent.letter_color, text="Salir", command= lambda: close(parent))
 
         #configure
@@ -152,9 +152,14 @@ class Login(Frame):
         exit_button.grid(column=2,row=7 ,padx=20 ,sticky="e")
 
     def login(self, parent, data):
-        parent.status.destroy()
-        parent.status = MainMenu(parent, data)
-        
+        login = login_user(data[0],data[1])
+        if login[0]:
+            messagebox.showinfo("Inicio de sesion",login[1])
+            parent.status.destroy()
+            parent.status = MainMenu(parent, data)
+        else:
+            messagebox.showwarning("Error al inciar sesion",login[1])
+         
     #   La funcion register es la funcion que crea una nueva ventana de tipo Extra, la cual se le
     #   carga como ultimo parametro "r" el cual selecciona la estructura Register
 
