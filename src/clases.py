@@ -10,12 +10,20 @@ class Usuario:
 
     def __str__(self):
         return(f"Usuario: {self.name} Contraseña: {self.password} Email: {self.email}")
-    
+
+#
+#
+#
+
 class Bien:
     def __init__(self,ident,precio):
 
         self.ident = ident
         self.precio = precio
+
+#
+#
+#
 
 class Pedido:
     def __init__(self, ropa, servicio, prioridad, comentario):

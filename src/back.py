@@ -197,6 +197,7 @@ def register_in_db(self,parent,name,password,rep,email):
         if re_user[0]:
             email_number = send_email(re_user[1].email)
             if email_number[0]:
+                print(email_number[1])
                 Mini(f"Verificacion del email", (400,150,100,50), True, "black", email_number[1], self)
                 if self.ok == False:
                     return (1,"Registro cancelado","Vuelva a ingresar los datos para registrar una cuenta")
@@ -228,6 +229,10 @@ def verify_user(name,password):
     else:
         return True,None
 
+#
+#
+#
+
 def login_user(user):
 
     verify_key  = verify_user(user[0],user[1])
@@ -240,13 +245,34 @@ def login_user(user):
         else:
             if data[1] is not None:
                 if data[1][1] == user[1]:
-                    return True,Usuario(data[1][0],data[1][1],data[1][2])
+                    if data[1][3] == "desconectado":
+                        cambiarEstadoUsuario(data[1][0],True)
+                        return True,Usuario(data[1][0],data[1][1],data[1][2])
+                    else:
+                        return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
                 else:
                     return False,"Contraseña incorrecta"
             else:
                 return False,"El usuario no existe"
     else:
         return False, verify_key[1]
+
+#
+#
+# 
+
+def de_login(user_name):
+
+    data = exist_user(user_name,0)
+
+    if not data[0]:
+        return False,"El usuario que incio sesion dejo de estar registrado en la base de datos"
+    else:
+        if data[1][3] == "conectado":
+            cambiarEstadoUsuario(user_name,False)
+            return True,"La sesion fue cerrada con exito"
+        else:
+            return False,"La sesion no se puede cerrar porque el usuario no esta conectado"
 
 #
 #
@@ -298,7 +324,7 @@ def get_user_orders(usuario):
     else:
         for ped in pedidos:
             if ped[1] == usuario.name:
-                ped = [ped[0],ped[2],ped[3],ped[4],ped[5]]
+                ped = [ped[0],ped[2],ped[3],ped[4],ped[5],ped[6]]
                 user_pedidos.append(ped)
         return True,user_pedidos
 

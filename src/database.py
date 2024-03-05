@@ -28,11 +28,12 @@ def conectBD():
 #   retorna una string de error.
 
 def ingresarUsuarios(usuario):
+    state_register_user = "desconectado"
     try:
         conect = conectBD()
         cursor = conect.cursor()
-        sql = "insert into usuarios values(null,%s,%s,%s);"
-        data = (usuario.name, usuario.password, usuario.email)
+        sql = "insert into usuarios values(null,%s,%s,%s,%s);"
+        data = (usuario.name, usuario.password, usuario.email, state_register_user)
         cursor.execute(sql,data)
         conect.commit()
         print(cursor.rowcount,"Usuario ingresado")
@@ -52,7 +53,7 @@ def buscarUsuario():
     try:
         conect = conectBD()
         cursor = conect.cursor()
-        cursor.execute("select nombre, contra, email from usuarios;")
+        cursor.execute("select nombre, contra, email, estado from usuarios;")
         data = cursor.fetchall()
         conect.commit()
         conect.close()
@@ -68,11 +69,12 @@ def buscarUsuario():
 #
 
 def ingresarPedidos(pedido,usuario):
+    state_order_user = "Espera"
     try:
         conect = conectBD()
         cursor = conect.cursor()
-        sql = "insert into pedidos values(null,%s,%s,%s,%s,%s,%s);"
-        data = (usuario.name,pedido.ropa,pedido.servicio,pedido.prioridad,pedido.comentario,pedido.precio)
+        sql = "insert into pedidos values(null,%s,%s,%s,%s,%s,%s,%s);"
+        data = (usuario.name,pedido.ropa,pedido.servicio,pedido.prioridad,pedido.comentario,pedido.precio,state_order_user)
         cursor.execute(sql,data)
         conect.commit()
         print(cursor.rowcount,"Pedido Creado")
@@ -92,7 +94,7 @@ def buscarPedido():
     try:
         conect = conectBD()
         cursor = conect.cursor()
-        cursor.execute("select id, usuario, ropa, servicio, prioridad, precio from pedidos;")
+        cursor.execute("select id, usuario, ropa, servicio, prioridad, precio, estado from pedidos;")
         data = cursor.fetchall()
         conect.commit()
         conect.close()
@@ -123,3 +125,24 @@ def eliminarPedido(id):
         print(f"Error al Eliminar el pedido {error}")
 
         return "Error al Eliminar el pedido"
+
+#
+#
+#
+    
+def cambiarEstadoUsuario(user_name,state):
+    if state:
+        state = "conectado"
+    else:
+        state = "desconectado"
+
+    conect = conectBD()
+    cursor = conect.cursor()
+    sql = "update usuarios set usuarios.estado = %s WHERE usuarios.nombre = %s;"
+    data = (state,user_name)
+    cursor.execute(sql,data)
+    conect.commit()
+    print(cursor.rowcount,f"Usuario {state}")
+    conect.close()
+
+    return

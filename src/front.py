@@ -298,7 +298,7 @@ class MainMenu(Frame):
 
         first_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=parent.exit_bg_button ,bg=parent.prim_bg_button ,text="Seleccionar", command= lambda: self.order(self.user))
         secc_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=parent.exit_bg_button ,bg=parent.prim_bg_button ,text="Seleccionar", command= lambda: self.show_orders(self.user))
-        exit_btt = Button(self ,width=12 ,height=1 ,font=("Calibri",12) ,fg=parent.letter_color ,bg=parent.exit_bg_button, text="Cerrar Sesion", command= lambda: self.backward(parent))
+        exit_btt = Button(self ,width=12 ,height=1 ,font=("Calibri",12) ,fg=parent.letter_color ,bg=parent.exit_bg_button, text="Cerrar Sesion", command= lambda: self.backward(parent,self.user.name))
         
         #configure
 
@@ -338,9 +338,14 @@ class MainMenu(Frame):
     #
     #
     
-    def backward(self,parent):
-        parent.status.destroy()
-        parent.status = Login(parent)
+    def backward(self,parent,user_name):
+        res = de_login(user_name)
+        if res[0]:
+            messagebox.showinfo("Sesion cerrada",res[1])
+            parent.status.destroy()
+            parent.status = Login(parent)
+        else:
+            messagebox.showerror("Error",res[1])
 
 #
 #
@@ -468,7 +473,7 @@ class ShowOrder(Frame):
 
         #var
 
-        columnas = ("num_pedido","ropa","servicio","prioridad","precio")
+        columnas = ("num_pedido","ropa","servicio","prioridad","precio","estado")
 
         #create
 
@@ -480,11 +485,13 @@ class ShowOrder(Frame):
         pedidios_tree.heading("servicio" ,text="Servicio")
         pedidios_tree.heading("prioridad" ,text="Prioridad")
         pedidios_tree.heading("precio" ,text="Precio")
+        pedidios_tree.heading("estado" ,text="Estado")
         pedidios_tree.column("num_pedido", width=20, anchor="center")
-        pedidios_tree.column("ropa" ,width=100)
+        pedidios_tree.column("ropa" ,width=80)
         pedidios_tree.column("servicio" ,width=120)
         pedidios_tree.column("prioridad" ,width=80)
         pedidios_tree.column("precio" ,width=80)
+        pedidios_tree.column("estado" ,width=120)
         self.update_tree(pedidios_tree)
 
         scroll = Scrollbar(self ,orient=VERTICAL ,command=pedidios_tree.yview)
