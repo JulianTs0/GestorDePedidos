@@ -82,13 +82,14 @@ class Mini(Toplevel):
 #   La funcion is_a_number determina si en una palabra esta contiene algun numero, si es asi retorna true
 #   si no false.
 
-def is_a_number(word):
+def is_a_valid_char(word):
 
-    output = False
+    output = True
+    valid_char = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZÀÈÌÒÙàèìòù "
 
     for i in word:
-        if i in "0123456789":
-            output = True
+        if i not in valid_char:
+            output = False
     
     return output
 
@@ -114,15 +115,15 @@ def exist_user(search,parameter):
 
 def register_user(name,password,rep,email):
 
-    if name == "" or is_a_number(name):
+    if name == "" or not is_a_valid_char(name) or len(name) > 30:
         error = "Ingrese un nombre de usuario valido"
         return False,error
     
-    if "@gmail.com" not in email or len(email) <= 10 or email == "":
+    if "@gmail.com" not in email or len(email) <= 10 or email == "" or len(email) > 40:
         error = "La estructura del email no es correcta"
         return False,error
     
-    if password == "":
+    if password == "" or len(password) > 20:
         error = "No se ha ingresado la contraseña valida"
         return False,error
     
@@ -216,23 +217,36 @@ def register_in_db(self,parent,name,password,rep,email):
 #
 #
 
+def verify_user(name,password):
+
+    if name == "" or password == "":
+        return False,"Complete los campos antes de iniciar sesion"
+    elif not is_a_valid_char(name) or len(name) > 30 :
+        return False,"Ingrese un nombre de usuario valido"
+    elif len(password) > 20:
+        return False,"Ingrese una contraseña valida"
+    else:
+        return True,None
+
 def login_user(user):
 
-    if user[0] == "" or user[1] == "":
-        return False,"Complete los campos antes de iniciar sesion"
-    
-    data = exist_user(user[0],0)
+    verify_key  = verify_user(user[0],user[1])
 
-    if not data[0]:
-        return data
-    else:
-        if data[1] is not None:
-            if data[1][1] == user[1]:
-                return True,Usuario(data[1][0],data[1][1],data[1][2])
-            else:
-                return False,"Contraseña incorrecta"
+    if verify_key[0]:
+        data = exist_user(user[0],0)
+        
+        if not data[0]:
+            return data
         else:
-            return False,"El usuario no existe"
+            if data[1] is not None:
+                if data[1][1] == user[1]:
+                    return True,Usuario(data[1][0],data[1][1],data[1][2])
+                else:
+                    return False,"Contraseña incorrecta"
+            else:
+                return False,"El usuario no existe"
+    else:
+        return False, verify_key[1]
 
 #
 #
