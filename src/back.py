@@ -260,7 +260,7 @@ def create_order_db(data_order,user):
     if order[0]:
         opcion = messagebox.askyesno("Ultima confirmacion",f"El precio del pedido es de {order[1].precio} desea continuar?")
         if opcion:
-            value = ingresarUsuarios(order[1],user)
+            value = ingresarPedidos(order[1],user)
             if value is None:
                 return 2,"Pedido creado","Se pudo realizar el pedido exitosamente"
             else:

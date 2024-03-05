@@ -283,6 +283,10 @@ class MainMenu(Frame):
 
         self.createmenu(parent)
     
+    #
+    #
+    #
+    
     def createmenu(self,parent):
         
         #create
@@ -315,13 +319,25 @@ class MainMenu(Frame):
         first_btt.grid(column=0 ,row=2 ,columnspan=3)
         secc_btt.grid(column=0 ,row=4 ,columnspan=3)
         exit_btt.grid(column=2 ,row=5 ,sticky="e" ,padx=25)
-
+    
+    #
+    #
+    #
+    
     def order(self,user):
         Extra("Generador de pedidos",[500,600,700,50],True,"white","o",user)
     
+    #
+    #
+    #
+     
     def show_orders(self):
         Extra("Lista de pedidos", (800,600,350,100), True, "white", "s")
-
+    
+    #
+    #
+    #
+    
     def backward(self,parent):
         parent.status.destroy()
         parent.status = Login(parent)
@@ -346,6 +362,10 @@ class Order(Frame):
         #struct
 
         self.createorder(parent)
+
+    #
+    #
+    #
 
     def createorder(self,parent):
 
@@ -404,6 +424,10 @@ class Order(Frame):
         confirm_btt.grid(column=0 ,row=5, columnspan=2)
         exit_btt.grid(column=2, row=5)   
 
+    #
+    #
+    #
+
     def makeOrder(self,data_order,user):
 
         msg = create_order_db(data_order,user)
@@ -414,6 +438,7 @@ class Order(Frame):
             messagebox.showwarning(msg[1],msg[2])
         elif msg[0] == 2:
             messagebox.showinfo(msg[1],msg[2]) 
+
 #
 #
 #

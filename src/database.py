@@ -67,7 +67,7 @@ def buscarUsuario():
 #
 #
 
-def ingresarUsuarios(pedido,usuario):
+def ingresarPedidos(pedido,usuario):
     try:
         conect = conectBD()
         cursor = conect.cursor()
