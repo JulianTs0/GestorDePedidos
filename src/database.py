@@ -71,8 +71,8 @@ def ingresarPedidos(pedido,usuario):
     try:
         conect = conectBD()
         cursor = conect.cursor()
-        sql = "insert into pedidos values(null,%s,%s,%s,%s,%s);"
-        data = (usuario.name,pedido.ropa,pedido.servicio,pedido.comentario,pedido.precio)
+        sql = "insert into pedidos values(null,%s,%s,%s,%s,%s,%s);"
+        data = (usuario.name,pedido.ropa,pedido.servicio,pedido.prioridad,pedido.comentario,pedido.precio)
         cursor.execute(sql,data)
         conect.commit()
         print(cursor.rowcount,"Pedido Creado")
@@ -80,6 +80,46 @@ def ingresarPedidos(pedido,usuario):
 
         return None
     except mysql.connector.Error as error:
-        print(f"Error al ingresar el ususario {error}")
+        print(f"Error al ingresar el Pedido {error}")
 
-        return "Error al ingresar el ususario"
+        return "Error al ingresar el Pedido"
+
+#
+#
+#
+
+def buscarPedido():
+    try:
+        conect = conectBD()
+        cursor = conect.cursor()
+        cursor.execute("select id, usuario, ropa, servicio, prioridad, precio from pedidos;")
+        data = cursor.fetchall()
+        conect.commit()
+        conect.close()
+        return data
+
+    except mysql.connector.Error as error:
+        print(f"Error al mostrar los peiddos del ususario {error}")
+
+        return "Error al mostrar los pedidos del ususario"
+
+#
+#
+#
+
+def eliminarPedido(id):
+    try:
+        conect = conectBD()
+        cursor = conect.cursor()
+        sql = "delete from pedidos where pedidos.id = %s;"
+        data = (id,)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Pedido Eliminado")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al Eliminar el pedido {error}")
+
+        return "Error al Eliminar el pedido"

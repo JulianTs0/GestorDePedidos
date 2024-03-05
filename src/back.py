@@ -269,3 +269,39 @@ def create_order_db(data_order,user):
             return 2,"Pedido cancelado","Se cancelo el pedido"
     else:
         return 1,"Error al realizar el pedido",order[1]
+
+#
+#
+#
+
+def get_user_orders(usuario):
+
+    pedidos = buscarPedido()
+    user_pedidos = []
+
+    if pedidos == "Error al mostrar los pedidos del ususario":
+        return False,pedidos
+    else:
+        for ped in pedidos:
+            if ped[1] == usuario.name:
+                ped = [ped[0],ped[2],ped[3],ped[4],ped[5]]
+                user_pedidos.append(ped)
+        return True,user_pedidos
+
+#
+#
+#
+
+def delete_order(id_order):
+
+    opcion = messagebox.askyesno("Ultima confirmacion",f"Desea cancelar su pedido?")
+    if opcion:
+        delete = eliminarPedido(id_order)
+        if delete is None:
+            return True,"Su pedido fue cancelado con exito"
+        else:
+            return False,delete
+    else:
+        return True,"Se aborto la operacion con exito"
+
+    

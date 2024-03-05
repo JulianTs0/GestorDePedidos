@@ -64,7 +64,7 @@ class Extra(Toplevel):
         elif op == "o":
             self.status = Order(self,data_aux)
         elif op == "s":
-            self.status = ShowOrder(self)
+            self.status = ShowOrder(self,data_aux)
 
         #loop
 
@@ -297,7 +297,7 @@ class MainMenu(Frame):
         secc_lb = Label(self ,anchor="center" ,font=("Calibri",14) ,fg=parent.letter_color ,bg=parent.prim_bg_label, text="Ver mis pedidos", width=20)
 
         first_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=parent.exit_bg_button ,bg=parent.prim_bg_button ,text="Seleccionar", command= lambda: self.order(self.user))
-        secc_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=parent.exit_bg_button ,bg=parent.prim_bg_button ,text="Seleccionar", command= lambda: self.show_orders())
+        secc_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=parent.exit_bg_button ,bg=parent.prim_bg_button ,text="Seleccionar", command= lambda: self.show_orders(self.user))
         exit_btt = Button(self ,width=12 ,height=1 ,font=("Calibri",12) ,fg=parent.letter_color ,bg=parent.exit_bg_button, text="Cerrar Sesion", command= lambda: self.backward(parent))
         
         #configure
@@ -331,8 +331,8 @@ class MainMenu(Frame):
     #
     #
      
-    def show_orders(self):
-        Extra("Lista de pedidos", (800,600,350,100), True, "white", "s")
+    def show_orders(self,user):
+        Extra("Lista de pedidos", (800,600,350,100), True, "white", "s",user)
     
     #
     #
@@ -444,7 +444,7 @@ class Order(Frame):
 #
 
 class ShowOrder(Frame):
-    def __init__(self ,parent):
+    def __init__(self ,parent,user):
 
         #setup
 
@@ -452,6 +452,10 @@ class ShowOrder(Frame):
         self.configure(bg="black",padx=10, pady=10)
         self.place(relx=0.5, rely=0.5, relwidth=0.98, relheight=0.95, anchor="center")
     
+        #var
+        
+        self.user = user
+
         #struct
 
         self.showdisplay(parent)
@@ -460,23 +464,24 @@ class ShowOrder(Frame):
 
         #var
 
-        columnas = ("ropa","servicio","prioridad")
-        pedidos = self.getorder()
+        columnas = ("num_pedido","ropa","servicio","prioridad","precio")
 
         #create
 
         main_title = Label(self ,anchor="center" ,fg=parent.letter_color ,bg=parent.prim_bg_label ,font=("TkMenuFont",18) ,text="Sus pedidos")
    
         pedidios_tree = ttk.Treeview(self ,columns=columnas ,show="headings")
+        pedidios_tree.heading("num_pedido", text="Nº Pedido")
         pedidios_tree.heading("ropa" ,text="Ropa")
         pedidios_tree.heading("servicio" ,text="Servicio")
         pedidios_tree.heading("prioridad" ,text="Prioridad")
-        for item in pedidos:
-            pedidios_tree.insert("" ,END ,values=item)
+        pedidios_tree.heading("precio" ,text="Precio")
+        self.update_tree(pedidios_tree)
 
         scroll = Scrollbar(self ,orient=VERTICAL ,command=pedidios_tree.yview)
         pedidios_tree.configure(yscroll=scroll.set)
 
+        delete_btt = Button(self,height=1 ,width=8 ,fg=parent.letter_color ,bg=parent.secc_bg_button ,text="Cancelar" ,command=lambda: self.select_tree(pedidios_tree))
         exit_btt = Button(self ,height=1 ,width=8 ,fg=parent.letter_color ,bg=parent.exit_bg_button ,text="Volver" ,command=lambda: close(parent))
 
         #configure
@@ -490,21 +495,41 @@ class ShowOrder(Frame):
 
         #display
 
-        pedidios_tree.grid(column=1 ,row=1 ,sticky="nswe")
+        pedidios_tree.grid(column=0 ,row=1 ,sticky="nswe", columnspan=3)
 
         #scroll
 
-        scroll.grid(column=2 ,row=1 ,sticky="nsw")
+        scroll.grid(column=2 ,row=1 ,sticky="nse")
 
         #button
 
-        exit_btt.grid(column=2 ,row=2 )
- 
-    def getorder(self):
-        pedidos = []
-        for n in range(16):
-            pedidos.append((f"Ropa {n}", f"Servicio {n}", f"Prioridad {n}"))
-        return pedidos
+        exit_btt.grid(column=2 ,row=2, sticky="e")
+        delete_btt.grid(column=0 ,row=2)
+    
+    def select_tree(self,tree):
+        select = tree.focus()
+
+        if select:
+            values = tree.item(select)["values"]
+            result = delete_order(values[0])
+            if result[0]:
+                messagebox.showinfo("Accion exitosa",result[1])
+            else:
+                messagebox.showerror("Error",result[1])
+        else:
+            messagebox.showwarning("No se pudo cancelar el pedido","Seleccione un pedido para cancelarlo")
+        
+        self.update_tree(tree)
+    
+    def update_tree(self,tree):
+        tree.delete(*tree.get_children())
+        pedidos = get_user_orders(self.user)
+        if pedidos[0]:
+            for item in pedidos[1]:
+                tree.insert("" ,END ,values=item)
+        else:
+            messagebox.showerror("Error",pedidos[1])
+
 
 #   La funcion setup basicamente tiene una lista de lineas de codigo que inicializan ciertos parametros de
 #   las ventanas como el titulo, el tamaño, el reescalado, el color, etc.
