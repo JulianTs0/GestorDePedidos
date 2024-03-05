@@ -460,6 +460,10 @@ class ShowOrder(Frame):
 
         self.showdisplay(parent)
 
+    #
+    #
+    #
+
     def showdisplay(self ,parent):
 
         #var
@@ -476,6 +480,11 @@ class ShowOrder(Frame):
         pedidios_tree.heading("servicio" ,text="Servicio")
         pedidios_tree.heading("prioridad" ,text="Prioridad")
         pedidios_tree.heading("precio" ,text="Precio")
+        pedidios_tree.column("num_pedido", width=20, anchor="center")
+        pedidios_tree.column("ropa" ,width=100)
+        pedidios_tree.column("servicio" ,width=120)
+        pedidios_tree.column("prioridad" ,width=80)
+        pedidios_tree.column("precio" ,width=80)
         self.update_tree(pedidios_tree)
 
         scroll = Scrollbar(self ,orient=VERTICAL ,command=pedidios_tree.yview)
@@ -505,7 +514,11 @@ class ShowOrder(Frame):
 
         exit_btt.grid(column=2 ,row=2, sticky="e")
         delete_btt.grid(column=0 ,row=2)
-    
+  
+    #
+    #
+    #
+  
     def select_tree(self,tree):
         select = tree.focus()
 
@@ -521,6 +534,10 @@ class ShowOrder(Frame):
         
         self.update_tree(tree)
     
+    #
+    #
+    #
+
     def update_tree(self,tree):
         tree.delete(*tree.get_children())
         pedidos = get_user_orders(self.user)
@@ -549,7 +566,7 @@ def close(object):
     object.destroy()
 
 #
-#
+# 
 #
 
 if __name__ == "__main__":
