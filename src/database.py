@@ -7,13 +7,13 @@ from decouple import config
 #   PORT_DB el puerto de dicha conexion. Si logra realizar una conexion exitosa, la funcion
 #   devuelve dicha conexion de tipo mysql.connector si no devuelve un string de error.
 
-def conectBD():
+def conect_DB():
     try:
         conection = mysql.connector.connect(user=config("USER_DB"),
-                                         password=config("PASSWORD_DB"),
-                                         host=config("HOST_DB"),
-                                         database=config("DATABASE"),
-                                         port=config("PORT_DB"))
+                                            password=config("PASSWORD_DB"),
+                                            host=config("HOST_DB"),
+                                            database=config("DATABASE"),
+                                            port=config("PORT_DB"))
         
         return conection
     except mysql.connector.Error as error:
@@ -27,13 +27,13 @@ def conectBD():
 #   en la variable sql. Si logra insertar los datos exitosamente en la BD retorna None, caso contrario
 #   retorna una string de error.
 
-def ingresarUsuarios(usuario):
+def insert_user(user):
     state_register_user = "desconectado"
     try:
-        conect = conectBD()
+        conect = conect_DB()
         cursor = conect.cursor()
         sql = "insert into usuarios values(null,%s,%s,%s,%s);"
-        data = (usuario.name, usuario.password, usuario.email, state_register_user)
+        data = (user.name, user.password, user.email, state_register_user)
         cursor.execute(sql,data)
         conect.commit()
         print(cursor.rowcount,"Usuario ingresado")
@@ -49,9 +49,9 @@ def ingresarUsuarios(usuario):
 #
 #
 
-def buscarUsuario():
+def select_user():
     try:
-        conect = conectBD()
+        conect = conect_DB()
         cursor = conect.cursor()
         cursor.execute("select nombre, contra, email, estado from usuarios;")
         data = cursor.fetchall()
@@ -68,13 +68,13 @@ def buscarUsuario():
 #
 #
 
-def ingresarPedidos(pedido,usuario):
+def insert_order(order,user):
     state_order_user = "Espera"
     try:
-        conect = conectBD()
+        conect = conect_DB()
         cursor = conect.cursor()
         sql = "insert into pedidos values(null,%s,%s,%s,%s,%s,%s,%s);"
-        data = (usuario.name,pedido.ropa,pedido.servicio,pedido.prioridad,pedido.comentario,pedido.precio,state_order_user)
+        data = (user.name,order.ropa,order.servicio,order.prioridad,order.comentario,order.precio,state_order_user)
         cursor.execute(sql,data)
         conect.commit()
         print(cursor.rowcount,"Pedido Creado")
@@ -90,9 +90,9 @@ def ingresarPedidos(pedido,usuario):
 #
 #
 
-def buscarPedido():
+def select_order():
     try:
-        conect = conectBD()
+        conect = conect_DB()
         cursor = conect.cursor()
         cursor.execute("select id, usuario, ropa, servicio, prioridad, precio, estado from pedidos;")
         data = cursor.fetchall()
@@ -109,9 +109,9 @@ def buscarPedido():
 #
 #
 
-def eliminarPedido(id):
+def delete_order_db(id):
     try:
-        conect = conectBD()
+        conect = conect_DB()
         cursor = conect.cursor()
         sql = "delete from pedidos where pedidos.id = %s;"
         data = (id,)
@@ -130,13 +130,13 @@ def eliminarPedido(id):
 #
 #
     
-def cambiarEstadoUsuario(user_name,state):
+def user_state_switch(user_name,state):
     if state:
         state = "conectado"
     else:
         state = "desconectado"
 
-    conect = conectBD()
+    conect = conect_DB()
     cursor = conect.cursor()
     sql = "update usuarios set usuarios.estado = %s WHERE usuarios.nombre = %s;"
     data = (state,user_name)

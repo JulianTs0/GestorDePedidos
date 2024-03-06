@@ -98,7 +98,7 @@ def is_a_valid_char(word):
 #
 
 def exist_user(search,parameter):
-    data = buscarUsuario()
+    data = select_user()
 
     if data == "Error al mostrar los datos del ususario":
         return False,data
@@ -188,7 +188,7 @@ def send_email(mail):
 
 def register_in_db(self,parent,name,password,rep,email):
 
-    check = conectBD()
+    check = conect_DB()
 
     if check == "Error al conectarse a la base de datos":
         return (0,"Error", str(check))
@@ -202,7 +202,7 @@ def register_in_db(self,parent,name,password,rep,email):
                 if self.ok == False:
                     return (1,"Registro cancelado","Vuelva a ingresar los datos para registrar una cuenta")
                 else:
-                    res = ingresarUsuarios(re_user[1])
+                    res = insert_user(re_user[1])
                     if res is None:
                         parent.quit()
                         parent.destroy()
@@ -246,7 +246,7 @@ def login_user(user):
             if data[1] is not None:
                 if data[1][1] == user[1]:
                     if data[1][3] == "desconectado":
-                        cambiarEstadoUsuario(data[1][0],True)
+                        user_state_switch(data[1][0],True)
                         return True,Usuario(data[1][0],data[1][1],data[1][2])
                     else:
                         return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
@@ -269,7 +269,7 @@ def de_login(user_name):
         return False,"El usuario que incio sesion dejo de estar registrado en la base de datos"
     else:
         if data[1][3] == "conectado":
-            cambiarEstadoUsuario(user_name,False)
+            user_state_switch(user_name,False)
             return True,"La sesion fue cerrada con exito"
         else:
             return False,"La sesion no se puede cerrar porque el usuario no esta conectado"
@@ -300,7 +300,7 @@ def create_order_db(data_order,user):
     if order[0]:
         opcion = messagebox.askyesno("Ultima confirmacion",f"El precio del pedido es de {order[1].precio} desea continuar?")
         if opcion:
-            value = ingresarPedidos(order[1],user)
+            value = insert_order(order[1],user)
             if value is None:
                 return 2,"Pedido creado","Se pudo realizar el pedido exitosamente"
             else:
@@ -316,7 +316,7 @@ def create_order_db(data_order,user):
 
 def get_user_orders(usuario):
 
-    pedidos = buscarPedido()
+    pedidos = select_order()
     user_pedidos = []
 
     if pedidos == "Error al mostrar los pedidos del ususario":
@@ -336,7 +336,7 @@ def delete_order(id_order):
 
     opcion = messagebox.askyesno("Ultima confirmacion",f"Desea cancelar su pedido?")
     if opcion:
-        delete = eliminarPedido(id_order)
+        delete = delete_order_db(id_order)
         if delete is None:
             return True,"Su pedido fue cancelado con exito"
         else:
