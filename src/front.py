@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import font
 from back import *
 
 #   Main es la ventana principal que va a tener el programa mientras se ejecute
@@ -16,13 +17,15 @@ class Main(Tk):
 
         #var
 
-        self.letter_color = "black"
-        self.url_letter_color = "lightblue"
-        self.prim_bg_label = "red"
-        self.secc_bg_label = "green"
-        self.prim_bg_button = "blue"
-        self.secc_bg_button = "yellow"
-        self.exit_bg_button = "white"
+        self.secc_bg = "#000000"
+        self.letter_color = "#DAFAD2"
+        self.secc_letter_color = "#0928B4"
+        self.url_letter_color = "#31F8EF"
+        self.prim_bg_label = "#AB0D43"
+        self.secc_bg_label = "#890a36"
+        self.prim_bg_button = "#2D2F5A"
+        self.secc_bg_button = "#1b1c36"
+        self.exit_bg_button = "#712664"
 
         #status
 
@@ -45,7 +48,7 @@ class Login(Frame):
         #setup
 
         super().__init__(main_window)
-        self.configure(bg="black",padx=10, pady=10)
+        self.configure(bg=main_window.secc_bg,padx=10, pady=10)
         self.place(relx=0.5, rely=0.5, relwidth=0.98, relheight=0.95, anchor="center")
 
         #struct
@@ -65,14 +68,17 @@ class Login(Frame):
 
         login_title = Label(self, anchor="center", font=("TkMenuFont",18), bg=main_window.prim_bg_label, fg=main_window.letter_color, text="Bienvenidos de nuevo a Volpe\nIngrese sesion o registrese")
 
+        url_font = font.Font(underline=True,size=11)
+        input_font = font.Font(weight="bold",size=12)
+
         user_label = Label(self, anchor="w" ,width=18, font=("Calibri",14), bg=main_window.prim_bg_label, fg=main_window.letter_color, text="Ingrese su Usuario:")
         password_label = Label(self, anchor="w", width=18, font=("Calibri",14), bg=main_window.prim_bg_label, fg=main_window.letter_color, text="Ingrese su contraseña:")
-        register_label = Label(self, anchor="center", font=("Calibri",11), bg=main_window.secc_bg_label, fg=main_window.url_letter_color, text="Si no tiene una cuenta registrada, Haga click aqui.")
+        register_label = Label(self, anchor="center", font=url_font, bg=main_window.secc_bg, fg=main_window.url_letter_color,cursor="mouse", text="Si no tiene una cuenta registrada, Haga click aqui.")
 
-        user_input = Entry(self, font=("Calibri",12) ,fg=main_window.letter_color ,textvariable=user_name)
-        password_input = Entry(self, font=("Calibri",12) ,fg=main_window.letter_color ,textvariable=user_password)
+        user_input = Entry(self, font=input_font ,fg=main_window.prim_bg_label ,textvariable=user_name)
+        password_input = Entry(self, font=input_font ,fg=main_window.prim_bg_label ,textvariable=user_password ,show="*")
         
-        login_button = Button(self, width=8, height=1, font=("Calibri",11), bg=main_window.prim_bg_button, fg="white", text="Ingresar", command= lambda: self.login(main_window,user_name.get(),user_password.get()))
+        login_button = Button(self, width=8, height=1, font=("Calibri",11), bg=main_window.prim_bg_button, fg=main_window.letter_color, text="Ingresar", command= lambda: self.login(main_window,user_name.get(),user_password.get()))
         exit_button = Button(self, width=6, height=1, font=("Calibri",11), bg=main_window.exit_bg_button, fg=main_window.letter_color, text="Salir", command= lambda: close(main_window))
 
         #configure
@@ -89,7 +95,7 @@ class Login(Frame):
 
         user_label.grid(column=0, row=2, sticky="e", padx=30)
         password_label.grid(column=0, row=4, sticky="e", padx=30)
-        register_label.grid(column=0, row=6, columnspan=4, sticky="s")
+        register_label.grid(column=0, row=5, columnspan=4, sticky="s",padx=20)
         register_label.bind("<Button-1>", lambda e: self.register())
 
         #entry
@@ -131,7 +137,7 @@ class MainMenu(Frame):
         #setup
 
         super().__init__(main_window)
-        self.configure(bg="black",padx=10, pady=10)
+        self.configure(bg=main_window.secc_bg,padx=10, pady=10)
         self.place(relx=0.5, rely=0.5, relwidth=0.98, relheight=0.95, anchor="center")
         main_window.protocol("WM_DELETE_WINDOW", lambda: self.close_and_delogin(main_window,user.name))
 
@@ -156,8 +162,8 @@ class MainMenu(Frame):
         first_lb = Label(self ,anchor="center" ,font=("Calibri",14) ,fg=main_window.letter_color ,bg=main_window.prim_bg_label, text="Realize un pedido", width=20)
         secc_lb = Label(self ,anchor="center" ,font=("Calibri",14) ,fg=main_window.letter_color ,bg=main_window.prim_bg_label, text="Ver mis pedidos", width=20)
 
-        first_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=main_window.exit_bg_button ,bg=main_window.prim_bg_button ,text="Seleccionar", command= lambda: self.order(self.user))
-        secc_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=main_window.exit_bg_button ,bg=main_window.prim_bg_button ,text="Seleccionar", command= lambda: self.show_orders(self.user))
+        first_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=main_window.letter_color ,bg=main_window.prim_bg_button ,text="Seleccionar", command= lambda: self.order(self.user))
+        secc_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=main_window.letter_color ,bg=main_window.prim_bg_button ,text="Seleccionar", command= lambda: self.show_orders(self.user))
         exit_btt = Button(self ,width=12 ,height=1 ,font=("Calibri",12) ,fg=main_window.letter_color ,bg=main_window.exit_bg_button, text="Cerrar Sesion", command= lambda: self.backward(main_window,self.user.name))
         
         #configure
@@ -586,4 +592,4 @@ def close(object):
 #
 
 if __name__ == "__main__":
-   Main("Volpe project", (800,600,300,50), True, "white")
+   Main("Volpe project", (800,600,300,50), True, "#D7D6D2")
