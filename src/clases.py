@@ -8,9 +8,6 @@ class Usuario:
         self.password = password
         self.email = email
 
-    def __str__(self):
-        return(f"Usuario: {self.name} Contraseña: {self.password} Email: {self.email}")
-
 #
 #
 #
@@ -56,9 +53,3 @@ class Pedido:
                 break
         
         return final
-    
-    def __str__(self):
-        if self.comentario == "":
-            return(f"Ropa: {self.ropa} Servicio: {self.servicio} Prioridad: {self.prioridad} Precio: {self.precio} ")
-        else:
-            return(f"Ropa: {self.ropa} Servicio: {self.servicio} Prioridad: {self.prioridad} Comentario: {self.comentario} Precio: {self.precio} ")
