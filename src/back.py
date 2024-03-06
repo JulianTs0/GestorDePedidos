@@ -14,7 +14,7 @@ import random
 #   en la base de datos.
 
 class Mini(Toplevel):
-    def __init__(self, tittle, size, resize, back_color, verif, parent):
+    def __init__(self, tittle, size, resize, back_color, verif_number, register_struct):
 
         #setup
 
@@ -25,11 +25,11 @@ class Mini(Toplevel):
         self.config(bg=back_color)
         self.attributes("-topmost", True)
         self.grab_set() #Hace que lo que este pasando en la pagina principal se congele
-        self.protocol("WM_DELETE_WINDOW", lambda: self.close(self))
+        self.protocol("WM_DELETE_WINDOW", lambda: self.close_mini_window(self))
 
         #strcut
 
-        self.authentication(verif,parent)
+        self.authentication(verif_number,register_struct)
 
         #loop
 
@@ -38,17 +38,17 @@ class Mini(Toplevel):
     #   La funcion aunthrntication es la estructura peronalizada hecha exclusivamente para la ventana Mini
     #   la cual crea todos los widgets que se van a mostrar.
 
-    def authentication(self ,verif, parent):
+    def authentication(self ,verif_number, register_struct):
 
         #var
 
-        code = IntVar()
+        input_code = IntVar()
 
         #create
 
         main_label = Label(self, bg="red", text="Ingrese el codigo que le enviamos al email", wraplength=150)
-        main_input = Entry(self, textvariable=code)
-        main_button = Button(self, text="Verificar", bg="blue", fg="white", command=lambda : self.verification(code.get(),verif,parent))
+        main_input = Entry(self, textvariable=input_code)
+        main_button = Button(self, text="Verificar", bg="blue", fg="white", command=lambda : self.verification(input_code.get(),verif_number,register_struct))
         
         #configure
 
@@ -65,17 +65,17 @@ class Mini(Toplevel):
     #   variable verif la cual es el numero de verificacion enviado por emial, si coinciden setea en true
     #   la variable ok y llama a la funcion close, si no simplemente muestra un mensaje de error.
 
-    def verification(self,var,verif,parent):
+    def verification(self,input_code,verif_number,register_struct):
         
-        if var == verif:
-            parent.ok = True
-            self.close(self)
+        if input_code == verif_number:
+            register_struct.ok = True
+            self.close_mini_window(self)
         else:
             messagebox.showerror("Error al verifcar su email","El codigo ingresado es incorrecto")
     
     #   La funcion close cierra y termina definitivamente los procesos de la ventana Mini
 
-    def close(self,object):
+    def close_mini_window(self,object):
         object.quit()
         object.destroy()
 
@@ -97,15 +97,15 @@ def is_a_valid_char(word):
 #
 #
 
-def exist_user(search,parameter):
-    data = select_user()
+def exist_user(user_data_search,parameter):
+    users_data = select_user()
 
-    if data == "Error al mostrar los datos del ususario":
-        return False,data
+    if users_data == "Error al mostrar los datos del ususario":
+        return False,users_data
     else:
-        for row in data:
-            if row[parameter] == search:
-                return True,row
+        for user in users_data:
+            if user[parameter] == user_data_search:
+                return True,user
         return True,None
 
 #   La funcion register_user basicamente es la que se encarga de las validaciones iniciales de los valores
@@ -113,34 +113,39 @@ def exist_user(search,parameter):
 #   correcto devuelve un objeto de tipo Usuario, si no devuelve un string el cual contiene el motivo del
 #   fallo de la validacion.
 
-def register_user(name,password,rep,email):
+def verif_new_user_data(name,password,password_rep,email):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
-        error = "Ingrese un nombre de usuario valido"
-        return False,error
+        error_msg = "Ingrese un nombre de usuario valido"
+        return False,error_msg
     
-    if "@gmail.com" not in email or len(email) <= 10 or email == "" or len(email) > 40:
-        error = "La estructura del email no es correcta"
-        return False,error
+    elif "@gmail.com" not in email or len(email) <= 10 or email == "" or len(email) > 40:
+        error_msg = "La estructura del email no es correcta"
+        return False,error_msg
     
-    if password == "" or len(password) > 20:
-        error = "No se ha ingresado la contraseña valida"
-        return False,error
+    elif password == "" or len(password) > 20:
+        error_msg = "No se ha ingresado la contraseña valida"
+        return False,error_msg
     
-    if password != rep:
-        error = "Las contraseñas no coinciden"
-        return False,error
+    elif password != password_rep:
+        error_msg = "Las contraseñas no coinciden"
+        return False,error_msg
 
-    search = exist_user(name,0)
-    if not search[0]:
-        return search
-    elif search[1] is not None:
+
+    status_search,res_search = exist_user(name,0)
+
+    if not status_search:
+        return status_search,res_search
+    
+    elif res_search is not None:
         return False,"Ese nombre de usuario ya existe escoja otro"
         
-    search = exist_user(email,2)
-    if not search[0]:
-        return search
-    elif search[1] is not None:
+    status_search,res_search = exist_user(email,2)
+
+    if not status_search:
+        return status_search,res_search
+    
+    elif res_search is not None:
         return False,"Ese email ya esta registrado"
         
     user = Usuario(name,password,email)
@@ -153,10 +158,10 @@ def register_user(name,password,rep,email):
 #   del remitente. Si logra enviar el email devuelve el numero de verificacion generado, si no devuelve
 #   un string de error.
 
-def send_email(mail):
+def send_email_autenti(mail):
     try:
-        autentificacion = random.randint(10000,999999)
-        msg = f"Subject: Mensaje de autentificacion de mail\n\nIngrese el siguiente codigo para terminar de registrar su cuenta en el sistema\nEl codigo es : {autentificacion}"
+        autenti_number = random.randint(10000,999999)
+        msg = f"Subject: Mensaje de autentificacion de mail\n\nIngrese el siguiente codigo para terminar de registrar su cuenta en el sistema\nEl codigo es : {autenti_number}"
         remitente = config("USER_GMAIL")
         contra = config("PASSWORD_GMAIL")
 
@@ -168,7 +173,7 @@ def send_email(mail):
 
         server.quit()
 
-        return True,autentificacion
+        return True,autenti_number
     except:
         return False,"Error al envial el mail, verifique que el remitente o el destinatario"
 
@@ -186,34 +191,44 @@ def send_email(mail):
 #   5. Se trata de registrar los datos a la BD, si se puede se cierra la ventana Extra asociada al Register
 #   y se finaliza el proceso de registro.
 
-def register_in_db(self,parent,name,password,rep,email):
+def register_in_db(register_struct,main_window,name,password,rep,email):
 
-    check = conect_DB()
+    check_conection = conect_DB()
 
-    if check == "Error al conectarse a la base de datos":
-        return (0,"Error", str(check))
+    if check_conection == "Error al conectarse a la base de datos":
+        return (0,"Error", str(check_conection))
+    
     else:
-        re_user = register_user(name, password, rep, email)
-        if re_user[0]:
-            email_number = send_email(re_user[1].email)
-            if email_number[0]:
-                print(email_number[1])
-                Mini(f"Verificacion del email", (400,150,100,50), True, "black", email_number[1], self)
-                if self.ok == False:
-                    return (1,"Registro cancelado","Vuelva a ingresar los datos para registrar una cuenta")
-                else:
-                    res = insert_user(re_user[1])
-                    if res is None:
-                        parent.quit()
-                        parent.destroy()
-                        return (2,"Usuario registrado","El usuario a sido creado y registrado con exito ingrese sesion en la pagina principal")
-                    else:
-                        return (0,"Error",res)
-            else:
-                return (1,"Error de email", email_number[1])
-        else:
-            return (1,"Error al registrar la cuenta", re_user[1])
+        verif_state,verif_res = verif_new_user_data(name, password, rep, email)
 
+        if not verif_state:
+            return (1,"Error al registrar la cuenta", verif_res)
+        
+        else:
+            email_state,email_res = send_email_autenti(verif_res.email)
+
+            if not email_state:
+                return (1,"Error de email", email_res)
+            
+            else:
+                print(email_res)
+                Mini(f"Verificacion del email", (400,150,100,50), True, "black", email_res, register_struct)
+                register_struct.lift()
+
+                if register_struct.ok == False:
+                    return (1,"Registro cancelado","Vuelva a ingresar los datos para registrar una cuenta")
+                
+                else:
+                    insert_db_res = insert_user(verif_res)
+
+                    if insert_db_res is not None:
+                       return (0,"Error",insert_db_res)
+                    
+                    else:
+                        main_window.quit()
+                        main_window.destroy()
+                        return (2,"Usuario registrado","El usuario a sido creado y registrado con exito ingrese sesion en la pagina principal")
+                           
 #
 #
 #
@@ -222,10 +237,13 @@ def verify_user(name,password):
 
     if name == "" or password == "":
         return False,"Complete los campos antes de iniciar sesion"
+    
     elif not is_a_valid_char(name) or len(name) > 30 :
         return False,"Ingrese un nombre de usuario valido"
+    
     elif len(password) > 20:
         return False,"Ingrese una contraseña valida"
+    
     else:
         return True,None
 
@@ -233,29 +251,36 @@ def verify_user(name,password):
 #
 #
 
-def login_user(user):
+def login_user(user_name,user_password):
 
-    verify_key  = verify_user(user[0],user[1])
+    verif_state,verif_res  = verify_user(user_name,user_password)
 
-    if verify_key[0]:
-        data = exist_user(user[0],0)
-        
-        if not data[0]:
-            return data
-        else:
-            if data[1] is not None:
-                if data[1][1] == user[1]:
-                    if data[1][3] == "desconectado":
-                        user_state_switch(data[1][0],True)
-                        return True,Usuario(data[1][0],data[1][1],data[1][2])
-                    else:
-                        return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
-                else:
-                    return False,"Contraseña incorrecta"
-            else:
-                return False,"El usuario no existe"
+    if not verif_state:
+        return False, verif_res
+    
     else:
-        return False, verify_key[1]
+        state_search,res_search = exist_user(user_name,0)
+        
+        if not state_search:
+            return state_search,res_search
+        
+        else:
+            if res_search is None:
+                return False,"El usuario no existe"
+            
+            else:
+                if res_search[1] != user_password:
+                    return False,"Contraseña incorrecta"
+                
+                else:
+                    if res_search[3] == "conectado":
+                        return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
+                    
+                    else:
+                        user_state_switch(res_search[0],True)
+                        return True,Usuario(res_search[0],res_search[1],res_search[2])
+                    
+                           
 
 #
 #
@@ -263,16 +288,16 @@ def login_user(user):
 
 def de_login(user_name):
 
-    data = exist_user(user_name,0)
+    state_search,res_search = exist_user(user_name,0)
 
-    if not data[0]:
+    if not state_search:
         return False,"El usuario que incio sesion dejo de estar registrado en la base de datos"
     else:
-        if data[1][3] == "conectado":
+        if res_search[3] == "desconectado":
+            return False,"La sesion no se puede cerrar porque el usuario no esta conectado"
+        else:
             user_state_switch(user_name,False)
             return True,"La sesion fue cerrada con exito"
-        else:
-            return False,"La sesion no se puede cerrar porque el usuario no esta conectado"
 
 #
 #
@@ -282,6 +307,7 @@ def verifiy_order(ropa,servicio,prioridad,comentario):
 
     if ropa == "" or servicio == "" or prioridad == "":
         return False,"Complete los campos antes de hacer un pedido"
+    
     else:
         order = Pedido(ropa,servicio,prioridad,comentario)
         return True,order
@@ -290,43 +316,47 @@ def verifiy_order(ropa,servicio,prioridad,comentario):
 #
 #
 
-def create_order_db(data_order,user):
+def create_order_db(ropa,servicio,prioridad,conentario,user):
 
-    if data_order[3][-1] == "\n":
-            data_order[3] = data_order[3][:-1]
+    if conentario[-1] == "\n":
+            conentario = conentario[:-1]
 
-    order = verifiy_order(data_order[0],data_order[1],data_order[2],data_order[3])
+    state_order,res_order = verifiy_order(ropa,servicio,prioridad,conentario)
 
-    if order[0]:
-        opcion = messagebox.askyesno("Ultima confirmacion",f"El precio del pedido es de {order[1].precio} desea continuar?")
-        if opcion:
-            value = insert_order(order[1],user)
-            if value is None:
-                return 2,"Pedido creado","Se pudo realizar el pedido exitosamente"
-            else:
-                return 0,"Error",value
-        else:
+    if not state_order:
+       return 1,"Error al realizar el pedido",res_order
+    
+    else:
+        option = messagebox.askyesno("Ultima confirmacion",f"El precio del pedido es de {res_order.precio} desea continuar?")
+        if not option:
             return 2,"Pedido cancelado","Se cancelo el pedido"
+        
+        else:
+            insert_res = insert_order(res_order,user)
+            if insert_res is not None:
+                return 0,"Error",insert_res
+            
+            else:
+                return 2,"Pedido creado","Se pudo realizar el pedido exitosamente"
+
+#
+#
+#
+
+def get_user_orders(user):
+
+    all_orders = select_order()
+    display_orders = []
+
+    if all_orders == "Error al mostrar los pedidos del ususario":
+        return False,all_orders
+    
     else:
-        return 1,"Error al realizar el pedido",order[1]
-
-#
-#
-#
-
-def get_user_orders(usuario):
-
-    pedidos = select_order()
-    user_pedidos = []
-
-    if pedidos == "Error al mostrar los pedidos del ususario":
-        return False,pedidos
-    else:
-        for ped in pedidos:
-            if ped[1] == usuario.name:
-                ped = [ped[0],ped[2],ped[3],ped[4],ped[5],ped[6]]
-                user_pedidos.append(ped)
-        return True,user_pedidos
+        for order in all_orders:
+            if order[1] == user.name:
+                order = [order[0],order[2],order[3],order[4],order[5],order[6]]
+                display_orders.append(order)
+        return True,display_orders
 
 #
 #
@@ -334,14 +364,14 @@ def get_user_orders(usuario):
 
 def delete_order(id_order):
 
-    opcion = messagebox.askyesno("Ultima confirmacion",f"Desea cancelar su pedido?")
-    if opcion:
-        delete = delete_order_db(id_order)
-        if delete is None:
-            return True,"Su pedido fue cancelado con exito"
-        else:
-            return False,delete
-    else:
+    option = messagebox.askyesno("Ultima confirmacion",f"Desea cancelar su pedido?")
+    if not option:
         return True,"Se aborto la operacion con exito"
+    else:
+        delete_res = delete_order_db(id_order)
+        if delete_res is not None:
+            return False,delete_res
+        else:
+            return True,"Su pedido fue cancelado con exito"
 
     

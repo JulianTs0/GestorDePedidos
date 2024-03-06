@@ -145,7 +145,7 @@ class Login(Frame):
     #
 
     def login(self, parent, data):
-        login = login_user(data)
+        login = login_user(data[0],data[1])
         if login[0]:
             messagebox.showinfo("Inicio de sesion","Inicio de sesion exitoso")
             parent.status.destroy()
@@ -274,6 +274,7 @@ class MainMenu(Frame):
         super().__init__(parent)
         self.configure(bg="black",padx=10, pady=10)
         self.place(relx=0.5, rely=0.5, relwidth=0.98, relheight=0.95, anchor="center")
+        parent.protocol("WM_DELETE_WINDOW", lambda: self.close_and_delogin(parent,user.name))
 
         #var
 
@@ -346,6 +347,14 @@ class MainMenu(Frame):
             parent.status = Login(parent)
         else:
             messagebox.showerror("Error",res[1])
+    
+    #
+    #
+    #
+            
+    def close_and_delogin(self,parent,user_name):
+        de_login(user_name)
+        close(parent)
 
 #
 #
@@ -389,7 +398,7 @@ class Order(Frame):
 
         comentario_input = Text(self,height=8, width=25)
 
-        confirm_btt = Button(self, width=10 ,height=1 ,bg=parent.prim_bg_button ,fg=parent.exit_bg_button ,text="Hacer pedido" ,command= lambda: self.makeOrder([ropa_cb.get(),servicio_cb.get(),prioridad_cb.get(),comentario_input.get("1.0","end")],self.user))
+        confirm_btt = Button(self, width=10 ,height=1 ,bg=parent.prim_bg_button ,fg=parent.exit_bg_button ,text="Hacer pedido" ,command= lambda: self.makeOrder(ropa_cb.get(),servicio_cb.get(),prioridad_cb.get(),comentario_input.get("1.0","end"),self.user))
         exit_btt = Button(self, width=8 ,height=1 ,bg=parent.exit_bg_button ,fg=parent.letter_color ,text="Volver" ,command= lambda: close(parent))
 
         #configure 
@@ -433,9 +442,9 @@ class Order(Frame):
     #
     #
 
-    def makeOrder(self,data_order,user):
+    def makeOrder(self,ropa,servicio,prioridad,conentario,user):
 
-        msg = create_order_db(data_order,user)
+        msg = create_order_db(ropa,servicio,prioridad,conentario,user)
 
         if msg[0] == 0:
             messagebox.showerror(msg[1],msg[2])
