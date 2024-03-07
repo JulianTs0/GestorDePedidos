@@ -259,29 +259,33 @@ def login_user(user_name,user_password):
         return False, verif_res
     
     else:
-        state_search,res_search = exist_user(user_name,0)
-        
-        if not state_search:
-            return state_search,res_search
+        check_conection = conect_DB()
+
+        if check_conection == "Error al conectarse a la base de datos":
+            return False,check_conection
         
         else:
-            if res_search is None:
-                return False,"El usuario no existe"
-            
+            state_search,res_search = exist_user(user_name,0)
+        
+            if not state_search:
+                return state_search,res_search
+        
             else:
-                if res_search[1] != user_password:
-                    return False,"Contraseña incorrecta"
-                
+                if res_search is None:
+                    return False,"El usuario no existe"
+            
                 else:
-                    if res_search[3] == "conectado":
-                        return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
-                    
+                    if res_search[1] != user_password:
+                        return False,"Contraseña incorrecta"
+                
                     else:
-                        user_state_switch(res_search[0],True)
-                        return True,Usuario(res_search[0],res_search[1],res_search[2])
+                        if res_search[3] == "conectado":
+                            return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
                     
+                        else:
+                            user_state_switch(res_search[0],True)
+                            return True,Usuario(res_search[0],res_search[1],res_search[2])               
                            
-
 #
 #
 # 

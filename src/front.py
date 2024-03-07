@@ -15,17 +15,21 @@ class Main(Tk):
         super().__init__()
         setup(self, tittle, size, resize, back_color)
 
-        #var
+        #var    "#2D2F5A"
 
+        self.extra_bg = "#D7D6D2"
         self.secc_bg = "#000000"
         self.letter_color = "#DAFAD2"
         self.secc_letter_color = "#0928B4"
         self.url_letter_color = "#31F8EF"
-        self.prim_bg_label = "#AB0D43"
+        self.prim_bg_label = "#141416"
         self.secc_bg_label = "#890a36"
-        self.prim_bg_button = "#2D2F5A"
+        self.prim_bg_button = "#AB0D43"
         self.secc_bg_button = "#1b1c36"
         self.exit_bg_button = "#712664"
+        self.prim_hl_button = "#670828"
+        self.secc_hl_button = "#101120"
+        self.exit_hl_button = "#44173c"
 
         #status
 
@@ -69,7 +73,7 @@ class Login(Frame):
         login_title = Label(self, anchor="center", font=("TkMenuFont",18), bg=main_window.prim_bg_label, fg=main_window.letter_color, text="Bienvenidos de nuevo a Volpe\nIngrese sesion o registrese")
 
         url_font = font.Font(underline=True,size=11)
-        input_font = font.Font(weight="bold",size=12)
+        input_font = font.Font(weight="bold",size=9)
 
         user_label = Label(self, anchor="w" ,width=18, font=("Calibri",14), bg=main_window.prim_bg_label, fg=main_window.letter_color, text="Ingrese su Usuario:")
         password_label = Label(self, anchor="w", width=18, font=("Calibri",14), bg=main_window.prim_bg_label, fg=main_window.letter_color, text="Ingrese su contraseña:")
@@ -78,8 +82,8 @@ class Login(Frame):
         user_input = Entry(self, font=input_font ,fg=main_window.prim_bg_label ,textvariable=user_name)
         password_input = Entry(self, font=input_font ,fg=main_window.prim_bg_label ,textvariable=user_password ,show="*")
         
-        login_button = Button(self, width=8, height=1, font=("Calibri",11), bg=main_window.prim_bg_button, fg=main_window.letter_color, text="Ingresar", command= lambda: self.login(main_window,user_name.get(),user_password.get()))
-        exit_button = Button(self, width=6, height=1, font=("Calibri",11), bg=main_window.exit_bg_button, fg=main_window.letter_color, text="Salir", command= lambda: close(main_window))
+        login_button = Button(self, width=8, height=1, font=("Calibri",11), bg=main_window.prim_bg_button, fg=main_window.letter_color, activeforeground=main_window.letter_color, activebackground=main_window.prim_hl_button, relief="flat", text="Ingresar", command= lambda: self.login(main_window,user_name.get(),user_password.get()))
+        exit_button = Button(self, width=6, height=1, font=("Calibri",11), bg=main_window.exit_bg_button, fg=main_window.letter_color, activeforeground=main_window.letter_color, activebackground=main_window.exit_hl_button, relief="flat", text="Salir", command= lambda: close(main_window))
 
         #configure
 
@@ -96,7 +100,7 @@ class Login(Frame):
         user_label.grid(column=0, row=2, sticky="e", padx=30)
         password_label.grid(column=0, row=4, sticky="e", padx=30)
         register_label.grid(column=0, row=5, columnspan=4, sticky="s",padx=20)
-        register_label.bind("<Button-1>", lambda e: self.register())
+        register_label.bind("<Button-1>", lambda e: self.register(main_window.extra_bg))
 
         #entry
 
@@ -124,8 +128,8 @@ class Login(Frame):
     #   La funcion register es la funcion que crea una nueva ventana de tipo Extra, la cual se le
     #   carga como ultimo parametro "r" el cual selecciona la estructura Register
 
-    def register(self):
-        Extra("Registro de cuenta",[450,600,700,50],True,"white","r")
+    def register(self,back_color):
+        Extra("Registro de cuenta",[450,600,700,50],True,back_color,"r")
 
 #
 #
@@ -162,9 +166,9 @@ class MainMenu(Frame):
         first_lb = Label(self ,anchor="center" ,font=("Calibri",14) ,fg=main_window.letter_color ,bg=main_window.prim_bg_label, text="Realize un pedido", width=20)
         secc_lb = Label(self ,anchor="center" ,font=("Calibri",14) ,fg=main_window.letter_color ,bg=main_window.prim_bg_label, text="Ver mis pedidos", width=20)
 
-        first_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=main_window.letter_color ,bg=main_window.prim_bg_button ,text="Seleccionar", command= lambda: self.order(self.user))
-        secc_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=main_window.letter_color ,bg=main_window.prim_bg_button ,text="Seleccionar", command= lambda: self.show_orders(self.user))
-        exit_btt = Button(self ,width=12 ,height=1 ,font=("Calibri",12) ,fg=main_window.letter_color ,bg=main_window.exit_bg_button, text="Cerrar Sesion", command= lambda: self.backward(main_window,self.user.name))
+        first_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=main_window.letter_color ,bg=main_window.prim_bg_button ,activeforeground=main_window.letter_color, activebackground=main_window.prim_hl_button, relief="flat" ,text="Seleccionar", command= lambda: self.order(self.user,main_window.extra_bg))
+        secc_btt = Button(self ,width=9 ,height=1 ,font=("Calibri",12) ,fg=main_window.letter_color ,bg=main_window.prim_bg_button ,activeforeground=main_window.letter_color, activebackground=main_window.prim_hl_button, relief="flat" ,text="Seleccionar", command= lambda: self.show_orders(self.user,main_window.extra_bg))
+        exit_btt = Button(self ,width=12 ,height=1 ,font=("Calibri",12) ,fg=main_window.letter_color ,bg=main_window.exit_bg_button,activeforeground=main_window.letter_color, activebackground=main_window.exit_hl_button, relief="flat" ,text="Cerrar Sesion", command= lambda: self.backward(main_window,self.user.name))
         
         #configure
 
@@ -190,15 +194,15 @@ class MainMenu(Frame):
     #
     #
     
-    def order(self,user):
-        Extra("Generador de pedidos",[500,600,700,50],True,"white","o",user)
+    def order(self,user,back_color):
+        Extra("Generador de pedidos",[500,600,700,50],True,back_color,"o",user)
     
     #
     #
     #
      
-    def show_orders(self,user):
-        Extra("Lista de pedidos", (800,600,350,100), True, "white", "s",user)
+    def show_orders(self,user,back_color):
+        Extra("Lista de pedidos", (800,600,350,100), True, back_color, "s",user)
     
     #
     #
@@ -238,13 +242,18 @@ class Extra(Toplevel):
 
         #var
 
-        self.letter_color = "black"
-        self.url_letter_color = "lightblue"
-        self.prim_bg_label = "red"
-        self.secc_bg_label = "green"
-        self.prim_bg_button = "blue"
-        self.secc_bg_button = "yellow"
-        self.exit_bg_button = "white"
+        self.secc_bg = "#000000"
+        self.letter_color = "#DAFAD2"
+        self.secc_letter_color = "#0928B4"
+        self.url_letter_color = "#31F8EF"
+        self.prim_bg_label = "#141416"
+        self.secc_bg_label = "#890a36"
+        self.prim_bg_button = "#AB0D43"
+        self.secc_bg_button = "#1b1c36"
+        self.exit_bg_button = "#712664"
+        self.prim_hl_button = "#670828"
+        self.secc_hl_button = "#101120"
+        self.exit_hl_button = "#44173c"
 
         #status
 
@@ -275,7 +284,7 @@ class Register(Frame):
         #setup
 
         super().__init__(extra_window)
-        self.configure(bg="black",padx=10, pady=10)
+        self.configure(bg=extra_window.secc_bg,padx=10, pady=10)
         self.place(relx=0.5, rely=0.5, relwidth=0.95, relheight=0.98, anchor="center")
 
         #var
@@ -306,13 +315,13 @@ class Register(Frame):
         pass_lb = Label(self, anchor="center", font=("Calibri",11), bg=extra_window.prim_bg_label, fg=extra_window.letter_color, text="Ingrese su contraseña: ", width=18, wraplength=150)
         pass_rep_lb = Label(self, anchor="center", font=("Calibri",11), bg=extra_window.prim_bg_label, fg=extra_window.letter_color, text="Vuelva a ingresar su contraseña: ", width=18, wraplength=150)
 
-        user_entry = Entry(self, font=("Calibri",9), fg=extra_window.letter_color, textvariable=user_name)
-        email_entry = Entry(self, font=("Calibri",9), fg=extra_window.letter_color, textvariable=user_email)
-        pass_entry = Entry(self, font=("Calibri",9), fg=extra_window.letter_color, textvariable=user_pasword, show="*")
-        pass_rep_entry = Entry(self, font=("Calibri",9), fg=extra_window.letter_color, textvariable=password_rep, show="*")
+        user_entry = Entry(self, font=("Calibri",9), fg=extra_window.prim_bg_label, textvariable=user_name,)
+        email_entry = Entry(self, font=("Calibri",9), fg=extra_window.prim_bg_label, textvariable=user_email)
+        pass_entry = Entry(self, font=("Calibri",9), fg=extra_window.prim_bg_label, textvariable=user_pasword, show="*")
+        pass_rep_entry = Entry(self, font=("Calibri",9), fg=extra_window.prim_bg_label, textvariable=password_rep, show="*")
 
-        confirm_btt = Button(self, fg=extra_window.exit_bg_button, bg=extra_window.prim_bg_button, text="Registrarse", width=8, height=1, command= lambda: self.register_account(extra_window,user_name.get(),user_pasword.get(),password_rep.get(),user_email.get()))
-        exit_btt = Button(self, fg=extra_window.letter_color, bg=extra_window.exit_bg_button, text="Volver", width=8, height=1, command= lambda: close(extra_window))
+        confirm_btt = Button(self, fg=extra_window.letter_color, bg=extra_window.prim_bg_button, activeforeground=extra_window.letter_color, activebackground=extra_window.prim_hl_button, relief="flat", text="Registrarse", width=8, height=1, command= lambda: self.register_account(extra_window,user_name.get(),user_pasword.get(),password_rep.get(),user_email.get()))
+        exit_btt = Button(self, fg=extra_window.letter_color, bg=extra_window.exit_bg_button, activeforeground=extra_window.letter_color, activebackground=extra_window.exit_hl_button, relief="flat", text="Volver", width=8, height=1, command= lambda: close(extra_window))
 
         #configure
 
@@ -372,7 +381,7 @@ class Order(Frame):
         #setup
 
         super().__init__(extra_window)
-        self.configure(bg="black",padx=10, pady=10)
+        self.configure(bg=extra_window.secc_bg,padx=10, pady=10)
         self.place(relx=0.5, rely=0.5, relwidth=0.98, relheight=0.95, anchor="center")
 
         #var
@@ -393,19 +402,19 @@ class Order(Frame):
 
         main_title = Label(self ,anchor="center" ,fg=extra_window.letter_color ,bg=extra_window.prim_bg_label ,font=("TkMenuFont",18) ,text="Realize su pedido")
 
-        ropa_lb = Label(self, anchor="w" ,fg=extra_window.letter_color ,bg=extra_window.prim_bg_label ,font=("Calibri",12) ,width=24 ,wraplength=180 ,text="Seleccione la ropa del pedido:")
-        servicio_lb = Label(self, anchor="w" ,fg=extra_window.letter_color ,bg=extra_window.prim_bg_label ,font=("Calibri",12) ,width=24 ,wraplength=180 ,text="Seleccione el servicio deseado:")
-        prioridad_lb = Label(self, anchor="w" ,fg=extra_window.letter_color ,bg=extra_window.prim_bg_label ,font=("Calibri",12) ,width=24 ,wraplength=180 ,text="Seleccione la prioridad que desee:")
-        comentario_lb = Label(self, anchor="w" ,fg=extra_window.letter_color ,bg=extra_window.prim_bg_label ,font=("Calibri",12) ,width=24 ,wraplength=180 ,text="Añada un comentario si desea:")
+        ropa_lb = Label(self, anchor="center" ,fg=extra_window.letter_color ,bg=extra_window.prim_bg_label ,font=("Calibri",12) ,width=24 ,wraplength=180 ,text="Seleccione la ropa del pedido:")
+        servicio_lb = Label(self, anchor="center" ,fg=extra_window.letter_color ,bg=extra_window.prim_bg_label ,font=("Calibri",12) ,width=24 ,wraplength=180 ,text="Seleccione el servicio deseado:")
+        prioridad_lb = Label(self, anchor="center" ,fg=extra_window.letter_color ,bg=extra_window.prim_bg_label ,font=("Calibri",12) ,width=24 ,wraplength=180 ,text="Seleccione la prioridad que desee:")
+        comentario_lb = Label(self, anchor="center" ,fg=extra_window.letter_color ,bg=extra_window.prim_bg_label ,font=("Calibri",12) ,width=24 ,wraplength=180 ,text="Añada un comentario si desea:")
 
         ropa_cb = ttk.Combobox(self)
         servicio_cb = ttk.Combobox(self)
         prioridad_cb = ttk.Combobox(self)
 
-        comentario_input = Text(self,height=8, width=25)
+        comentario_input = Text(self,height=6, width=25, wrap="word", spacing3="5",fg=extra_window.prim_bg_label)
 
-        confirm_btt = Button(self, width=10 ,height=1 ,bg=extra_window.prim_bg_button ,fg=extra_window.exit_bg_button ,text="Hacer pedido" ,command= lambda: self.make_order(ropa_cb.get(),servicio_cb.get(),prioridad_cb.get(),comentario_input.get("1.0","end"),self.user))
-        exit_btt = Button(self, width=8 ,height=1 ,bg=extra_window.exit_bg_button ,fg=extra_window.letter_color ,text="Volver" ,command= lambda: close(extra_window))
+        confirm_btt = Button(self, width=10 ,height=1 ,bg=extra_window.prim_bg_button ,fg=extra_window.letter_color ,activeforeground=extra_window.letter_color, activebackground=extra_window.prim_hl_button, relief="flat" ,text="Hacer pedido" ,command= lambda: self.make_order(ropa_cb.get(),servicio_cb.get(),prioridad_cb.get(),comentario_input.get("1.0","end"),self.user))
+        exit_btt = Button(self, width=8 ,height=1 ,bg=extra_window.exit_bg_button ,fg=extra_window.letter_color, activeforeground=extra_window.letter_color, activebackground=extra_window.exit_hl_button, relief="flat",text="Volver" ,command= lambda: close(extra_window))
 
         #configure 
 
@@ -469,7 +478,7 @@ class ShowOrder(Frame):
         #setup
 
         super().__init__(extra_window)
-        self.configure(bg="black",padx=10, pady=10)
+        self.configure(bg=extra_window.secc_bg,padx=10, pady=10)
         self.place(relx=0.5, rely=0.5, relwidth=0.98, relheight=0.95, anchor="center")
     
         #var
@@ -495,25 +504,36 @@ class ShowOrder(Frame):
         main_title = Label(self ,anchor="center" ,fg=extra_window.letter_color ,bg=extra_window.prim_bg_label ,font=("TkMenuFont",18) ,text="Sus pedidos")
    
         orders_tree = ttk.Treeview(self ,columns=tree_columns ,show="headings")
-        orders_tree.heading("num_pedido", text="Nº Pedido")
-        orders_tree.heading("ropa" ,text="Ropa")
-        orders_tree.heading("servicio" ,text="Servicio")
-        orders_tree.heading("prioridad" ,text="Prioridad")
-        orders_tree.heading("precio" ,text="Precio")
-        orders_tree.heading("estado" ,text="Estado")
         orders_tree.column("num_pedido", width=20, anchor="center")
         orders_tree.column("ropa" ,width=80)
         orders_tree.column("servicio" ,width=120)
         orders_tree.column("prioridad" ,width=80)
         orders_tree.column("precio" ,width=80)
         orders_tree.column("estado" ,width=120)
+
+        orders_tree.heading("num_pedido", text="Nº Pedido",)
+        orders_tree.heading("ropa" ,text="Ropa")
+        orders_tree.heading("servicio" ,text="Servicio")
+        orders_tree.heading("prioridad" ,text="Prioridad")
+        orders_tree.heading("precio" ,text="Precio")
+        orders_tree.heading("estado" ,text="Estado")
+        
         self.update_tree(orders_tree)
 
         scroll = Scrollbar(self ,orient=VERTICAL ,command=orders_tree.yview)
         orders_tree.configure(yscroll=scroll.set)
 
-        delete_btt = Button(self,height=1 ,width=8 ,fg=extra_window.letter_color ,bg=extra_window.secc_bg_button ,text="Cancelar" ,command=lambda: self.select_tree(orders_tree))
-        exit_btt = Button(self ,height=1 ,width=8 ,fg=extra_window.letter_color ,bg=extra_window.exit_bg_button ,text="Volver" ,command=lambda: close(extra_window))
+        delete_btt = Button(self,height=1 ,width=8 ,fg=extra_window.letter_color ,bg=extra_window.secc_bg_button, activeforeground=extra_window.letter_color, activebackground=extra_window.secc_hl_button, relief="flat" ,text="Cancelar" ,command=lambda: self.select_tree(orders_tree))
+        exit_btt = Button(self ,height=1 ,width=8 ,fg=extra_window.letter_color ,bg=extra_window.exit_bg_button ,activeforeground=extra_window.letter_color, activebackground=extra_window.exit_hl_button, relief="flat" ,text="Volver" ,command=lambda: close(extra_window))
+
+        style = ttk.Style(self)
+        style.theme_use("clam")
+        style.configure("Treeview",background=extra_window.prim_bg_label,fieldbackground=extra_window.prim_bg_label,foreground=extra_window.letter_color)
+        style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
+        style.map("Treeview",background=[("selected",extra_window.secc_bg)])
+        
+        style.configure("Treeview.Heading",background=extra_window.prim_bg_button,foreground=extra_window.letter_color,relief="flat")
+        style.map("Treeview.Heading",background=[("active","#44051b")])
 
         #configure
 
