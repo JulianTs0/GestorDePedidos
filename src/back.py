@@ -378,4 +378,30 @@ def delete_order(id_order):
         else:
             return True,"Su pedido fue cancelado con exito"
 
+#
+#
+#
+        
+def get_fields_name():
+    ropas = []
+    servicios = []
+    prioridades = []
+    error = "Error al mostrar el stock"
+
+    ropas_data = get_service_stock_data("ropas")
+    servicios_data = get_service_stock_data("servicios")
+    prioridades_data = get_service_stock_data("prioridades")
+
+    if ropas_data == error or servicios_data == error or prioridades_data == error:
+        return "Error","Error","Error"
+    
+    else:
+        for ropa in ropas_data:
+            ropas.append(ropa[0])
+        for servicio in servicios_data:
+            servicios.append(servicio[0])
+        for prioridad in prioridades_data:
+            prioridades.append(prioridad[0])   
+    
+        return ropas,servicios,prioridades
     

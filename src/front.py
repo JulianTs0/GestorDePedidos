@@ -580,6 +580,10 @@ class Order(Frame):
 
     def create_order(self,extra_window):
 
+        #var
+
+        ropa_stock,servicio_stock,prioridad_available = get_fields_name()
+
         #create
 
         main_title = Label(self,
@@ -681,13 +685,13 @@ class Order(Frame):
         #combobox
 
         ropa_cb.grid(column=1, row=1, sticky="w" ,padx=20)
-        ropa_cb["values"] = ("Ropa 1","Ropa 2","Ropa 3","Ropa 4")
+        ropa_cb["values"] = ropa_stock
         ropa_cb["state"] = "readonly"
         servicio_cb.grid(column=1, row=2, sticky="w" ,padx=20)
-        servicio_cb["values"] = ("Servicio 1","Servicio 2","Servicio 3","Servicio 4")
+        servicio_cb["values"] = servicio_stock
         servicio_cb["state"] = "readonly"
         prioridad_cb.grid(column=1, row=3, sticky="w" ,padx=20)
-        prioridad_cb["values"] = ("Alta","Media","Baja")
+        prioridad_cb["values"] = prioridad_available
         prioridad_cb["state"] = "readonly"
 
         #entry

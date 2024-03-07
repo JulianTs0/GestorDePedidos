@@ -1,3 +1,4 @@
+from database import *
 
 #   Clase Usuario, usada para crear objetos tipo Usuario y tenes mas comodamente los 3 campos que contiene
 
@@ -33,9 +34,9 @@ class Pedido:
 
     def calc_precio(self):
         final = 0
-        Ropas = (Bien("Ropa 1",100),Bien("Ropa 2",200),Bien("Ropa 3",300),Bien("Ropa 4",400))
-        Servicios = (Bien("Servicio 1",50),Bien("Servicio 2",100),Bien("Servicio 3",150),Bien("Servicio 4",200))
-        Prioridades = (Bien("Alta",500),Bien("Media",300),Bien("Baja",100))
+        Ropas = self.get_field_stock("ropas")
+        Servicios = self.get_field_stock("servicios")
+        Prioridades = self.get_field_stock("prioridades")
 
         for ropa in Ropas:
             if ropa.ident == self.ropa:
@@ -53,3 +54,13 @@ class Pedido:
                 break
         
         return final
+
+    def get_field_stock(self,field):
+        bienes = []
+        field_stock = get_service_stock_data(field)
+        if field_stock == "Error al mostrar el stock":
+            return ""
+        else:
+            for stock in field_stock:
+                bienes.append(Bien(stock[0],stock[1]))
+            return bienes

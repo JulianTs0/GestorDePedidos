@@ -146,3 +146,23 @@ def user_state_switch(user_name,state):
     conect.close()
 
     return
+
+#
+#
+#
+
+def get_service_stock_data(stock_table):
+
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        cursor.execute(f"select nombre, precio from {stock_table};")
+        data = cursor.fetchall()
+        conect.commit()
+        conect.close()
+        return data
+
+    except mysql.connector.Error as error:
+        print(f"Error al mostrar los datos del ususario {error}")
+
+        return "Error al mostrar el stock"
