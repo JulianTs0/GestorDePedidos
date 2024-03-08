@@ -228,7 +228,7 @@ def register_in_db(register_struct,main_window,name,password,rep,email):
                         main_window.quit()
                         main_window.destroy()
                         return (2,"Usuario registrado","El usuario a sido creado y registrado con exito ingrese sesion en la pagina principal")
-                           
+
 #
 #
 #
@@ -285,7 +285,7 @@ def login_user(user_name,user_password):
                         else:
                             user_state_switch(res_search[0],True)
                             return True,Usuario(res_search[0],res_search[1],res_search[2])               
-                           
+
 #
 #
 # 
