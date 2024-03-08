@@ -208,7 +208,83 @@ class MainMenu(Frame):
                            bg=main_window.prim_bg_label,
                            text=f"Bienvenido de nuevo {self.user.name}"
                            )
+        first_label = Label(self, 
+                           anchor="center",
+                           width=20,
+                           font=("Calibri",14), 
+                           bg=main_window.prim_bg_label, 
+                           fg=main_window.letter_color, 
+                           text="Añadir administradores"
+                           )
+        secc_label = Label(self, 
+                           anchor="center",
+                           width=23,
+                           font=("Calibri",14), 
+                           bg=main_window.prim_bg_label, 
+                           fg=main_window.letter_color, 
+                           text="Modificar base de servicios"
+                           )
+        thirt_label = Label(self, 
+                           anchor="center",
+                           width=18,
+                           font=("Calibri",14), 
+                           bg=main_window.prim_bg_label, 
+                           fg=main_window.letter_color, 
+                           text="Modificar usuarios"
+                           )
+        four_label = Label(self, 
+                           anchor="center",
+                           width=18,
+                           font=("Calibri",14), 
+                           bg=main_window.prim_bg_label, 
+                           fg=main_window.letter_color, 
+                           text="Modificar pedidos"
+                           )
 
+        first_btt = Button(self,
+                          width=10,
+                          height=1,
+                          font=("Calibri",12),
+                          fg=main_window.letter_color,
+                          bg=main_window.prim_bg_button,
+                          activeforeground=main_window.letter_color,
+                          activebackground=main_window.prim_hl_button, 
+                          relief="flat" ,text="Seleccionar", 
+                          command= lambda: self.first()
+                          )
+        secc_btt = Button(self,
+                          width=10,
+                          height=1,
+                          font=("Calibri",12),
+                          fg=main_window.letter_color,
+                          bg=main_window.prim_bg_button,
+                          activeforeground=main_window.letter_color,
+                          activebackground=main_window.prim_hl_button, 
+                          relief="flat" ,text="Seleccionar", 
+                          command= lambda: self.secc()
+                          )
+        thirt_btt = Button(self,
+                          width=10,
+                          height=1,
+                          font=("Calibri",12),
+                          fg=main_window.letter_color,
+                          bg=main_window.prim_bg_button,
+                          activeforeground=main_window.letter_color,
+                          activebackground=main_window.prim_hl_button, 
+                          relief="flat" ,text="Seleccionar", 
+                          command= lambda: self.thirt()
+                          )
+        four_btt = Button(self,
+                          width=10,
+                          height=1,
+                          font=("Calibri",12),
+                          fg=main_window.letter_color,
+                          bg=main_window.prim_bg_button,
+                          activeforeground=main_window.letter_color,
+                          activebackground=main_window.prim_hl_button, 
+                          relief="flat" ,text="Seleccionar", 
+                          command= lambda: self.four()
+                          )
         exit_btt = Button(self,
                           width=12,
                           height=1,
@@ -223,16 +299,27 @@ class MainMenu(Frame):
         
         #configure
 
-        self.columnconfigure((0,1,2) ,weight=1)
-        self.rowconfigure((0,1,2,3,4,5) ,weight=1)
+        self.columnconfigure((0,1,2,3) ,weight=1)
+        self.rowconfigure((0,1,2,3,4,5,6,7,8) ,weight=1)
 
         #title
 
-        main_title.grid(column=0 ,row=0 ,columnspan=3 ,sticky="we")
+        main_title.grid(column=0 ,row=0 ,columnspan=4 ,sticky="we")
+
+        #label
+
+        first_label.grid(column=1,row=2)
+        secc_label.grid(column=2,row=2)
+        thirt_label.grid(column=1,row=5)
+        four_label.grid(column=2,row=5)
 
         #button
 
-        exit_btt.grid(column=2 ,row=5 ,sticky="e" ,padx=25)
+        first_btt.grid(column=1,row=3)
+        secc_btt.grid(column=2,row=3)
+        thirt_btt.grid(column=1,row=6)
+        four_btt.grid(column=2,row=6)
+        exit_btt.grid(column=0 ,row=8 ,columnspan=4,sticky="e" ,padx=25)
     
     #
     #
@@ -246,6 +333,34 @@ class MainMenu(Frame):
             main_window.status = Login(main_window)
         else:
             messagebox.showerror("Error",delogin_res)
+    
+    #
+    #
+    #
+    
+    def first(self):
+        pass
+    
+    #
+    #
+    #
+    
+    def secc(self):
+        pass
+    
+    #
+    #
+    #
+    
+    def thirt(self):
+        pass
+    
+    #
+    #
+    #
+    
+    def four(self):
+        pass
     
     #
     #
