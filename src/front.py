@@ -15,7 +15,7 @@ class Main(Tk):
         super().__init__()
         setup(self, tittle, size, resize, back_color)
 
-        #var    "#2D2F5A"
+        #var
 
         self.extra_bg = "#D7D6D2"
         self.secc_bg = "#000000"
@@ -383,7 +383,7 @@ class Extra(Toplevel):
 #   codigo, si el usuario ingresa el codigo correcto se finaliza el proceso de registro, se añade la nueva 
 #   cuenta de usuario a la base de datos y se cierran todas las ventanas emergentes volviendo a la ventana
 #   principal.
- 
+
 class Register(Frame):
     def __init__(self,extra_window):
 
