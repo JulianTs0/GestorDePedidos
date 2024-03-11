@@ -751,7 +751,6 @@ class ShowOrder(Frame):
 
         #create
 
-        
         style = ttk.Style(self)
         style.theme_use("clam")
         style.configure("Treeview",

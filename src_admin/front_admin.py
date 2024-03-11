@@ -222,7 +222,7 @@ class MainMenu(Frame):
                            font=("Calibri",14), 
                            bg=main_window.prim_bg_label, 
                            fg=main_window.letter_color, 
-                           text="Modificar base de servicios"
+                           text="Modificar base de precios"
                            )
         thirt_label = Label(self, 
                            anchor="center",
@@ -250,7 +250,7 @@ class MainMenu(Frame):
                           activeforeground=main_window.letter_color,
                           activebackground=main_window.prim_hl_button, 
                           relief="flat" ,text="Seleccionar", 
-                          command= lambda: self.first()
+                          command= lambda: self.register_account(main_window.extra_bg)
                           )
         secc_btt = Button(self,
                           width=10,
@@ -261,7 +261,7 @@ class MainMenu(Frame):
                           activeforeground=main_window.letter_color,
                           activebackground=main_window.prim_hl_button, 
                           relief="flat" ,text="Seleccionar", 
-                          command= lambda: self.secc()
+                          command= lambda: self.price_data(main_window.extra_bg)
                           )
         thirt_btt = Button(self,
                           width=10,
@@ -272,7 +272,7 @@ class MainMenu(Frame):
                           activeforeground=main_window.letter_color,
                           activebackground=main_window.prim_hl_button, 
                           relief="flat" ,text="Seleccionar", 
-                          command= lambda: self.thirt()
+                          command= lambda: self.modify_users(main_window.extra_bg)
                           )
         four_btt = Button(self,
                           width=10,
@@ -338,22 +338,22 @@ class MainMenu(Frame):
     #
     #
     
-    def first(self):
-        pass
+    def register_account(self,back_color):
+        Extra("Registro de cuenta",[600,600,400,50],True,back_color,"r")
     
     #
     #
     #
     
-    def secc(self):
-        pass
+    def price_data(self,back_color):
+        Extra("Base de precios",[700,600,400,50],True,back_color,"p")
     
     #
     #
     #
     
-    def thirt(self):
-        pass
+    def modify_users(self,back_color):
+        Extra("Base de usuarios",[600,600,400,50],True,back_color,"u")
     
     #
     #
@@ -403,15 +403,468 @@ class Extra(Toplevel):
         #status
 
         if op == "r":
-            self.status = None
-        elif op == "o":
-            self.status = None
-        elif op == "s":
-            self.status = None
+            self.status = Register(self)
+        elif op == "p":
+            self.status = Price(self)
+        elif op == "u":
+            self.status = Users(self)
 
         #loop
 
         self.mainloop()
+
+#
+#
+#
+
+class Register(Frame):
+    def __init__(self,extra_window):
+
+        #setup
+
+        super().__init__(extra_window)
+        self.configure(bg=extra_window.secc_bg,padx=10, pady=10)
+        self.place(relx=0.5, rely=0.5, relwidth=0.95, relheight=0.98, anchor="center")
+
+        #struct
+
+        self.create_register(extra_window)
+    
+    def create_register(self,extra_window):
+
+        #var
+
+        admin_name = StringVar()
+        admin_pass = StringVar()
+        admin_rep = StringVar()
+        tree_columns = ("nombre","contra")
+        
+        #create
+
+        style = ttk.Style(self)
+        style.theme_use("clam")
+        style.configure("Treeview",
+                        background=extra_window.prim_bg_label,
+                        fieldbackground=extra_window.prim_bg_label,
+                        foreground=extra_window.letter_color
+                        )
+        style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
+        style.map("Treeview",background=[("selected",extra_window.secc_bg)])
+        
+        style.configure("Treeview.Heading",
+                        background=extra_window.prim_bg_button,
+                        foreground=extra_window.letter_color,
+                        relief="flat")
+        style.map("Treeview.Heading",background=[("active","#44051b")])
+
+        admins_tree = ttk.Treeview(self,columns=tree_columns,show="headings")
+        admins_tree.column("nombre" ,width=80)
+        admins_tree.column("contra" ,width=80)
+
+        admins_tree.heading("nombre",text="Nombre")
+        admins_tree.heading("contra",text="Contraseña")
+
+        main_title = Label(self,
+                            anchor="center", 
+                            font=("TkMenuFont",18), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Crear cuenta de administrador")
+
+        user_label = Label(self, 
+                            anchor="center", 
+                            font=("Calibri",11), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Ingrese un nombre de usuario: ", 
+                            width=20, 
+                            wraplength=150)
+        password_label = Label(self,
+                                anchor="center", 
+                                font=("Calibri",11), 
+                                bg=extra_window.prim_bg_label, 
+                                fg=extra_window.letter_color, 
+                                text="Ingrese una contraseña: ", 
+                                width=20, 
+                                wraplength=150)
+        rep_label = Label(self,
+                            anchor="center", 
+                            font=("Calibri",11), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Vuelva a ingresar su contraseña: ", 
+                            width=20, 
+                            wraplength=150)
+
+        user_entry = Entry(self,
+                            font=("Calibri",9), 
+                            fg=extra_window.prim_bg_label, 
+                            textvariable=admin_name)
+        password_entry = Entry(self,
+                            font=("Calibri",9), 
+                            fg=extra_window.prim_bg_label, 
+                            textvariable=admin_pass)
+        rep_entry = Entry(self,
+                            font=("Calibri",9), 
+                            fg=extra_window.prim_bg_label, 
+                            textvariable=admin_rep)
+
+        confirm_btt = Button(self,
+                            fg=extra_window.letter_color, 
+                            bg=extra_window.prim_bg_button, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.prim_hl_button, 
+                            relief="flat", 
+                            text="Registrarse", 
+                            width=8, 
+                            height=1, 
+                            command= lambda: self.register_admin()
+                            )
+        edit_btt = Button(self,
+                            fg=extra_window.letter_color, 
+                            bg=extra_window.secc_bg_button, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.secc_hl_button, 
+                            relief="flat", 
+                            text="Modificar", 
+                            width=8, 
+                            height=1, 
+                            command= lambda: self.edit_admin()
+                            )
+        exit_btt = Button(self,
+                            fg=extra_window.letter_color, 
+                            bg=extra_window.exit_bg_button, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.exit_hl_button, 
+                            relief="flat", 
+                            text="Volver", 
+                            width=8, 
+                            height=1, 
+                            command= lambda: close(extra_window)
+                            )
+
+        #configure
+
+        self.columnconfigure((0,1,2,3,4),weight=1)
+        self.rowconfigure((0,1,2,3,4,5),weight=1)
+
+        #title
+
+        main_title.grid(column=0,row=0,columnspan=5,sticky="we")
+
+        #label
+
+        user_label.grid(column=2,row=1)
+        password_label.grid(column=2,row=2)
+        rep_label.grid(column=2,row=3)
+
+        #entry
+
+        user_entry.grid(column=3,row=1,columnspan=2)
+        password_entry.grid(column=3,row=2,columnspan=2)
+        rep_entry.grid(column=3,row=3,columnspan=2)
+
+        #button
+
+        confirm_btt.grid(column=2,row=5,sticky="e",padx=10)
+        edit_btt.grid(column=3,row=5,sticky="w",padx=10)
+        exit_btt.grid(column=4,row=5)
+
+        #tree
+
+        admins_tree.grid(column=0,row=1,columnspan=2,rowspan=3,sticky="ns")
+
+    def register_admin(self):
+        pass
+
+    def edit_admin(self):
+        pass
+
+#
+#
+#
+
+class Price(Frame):
+    def __init__(self,extra_window):
+        
+        #setup
+
+        super().__init__(extra_window)
+        self.configure(bg=extra_window.secc_bg,padx=10, pady=10)
+        self.place(relx=0.5, rely=0.5, relwidth=0.95, relheight=0.98, anchor="center")
+
+        #struct
+
+        self.create_price(extra_window)
+    
+    def create_price(self,extra_window):
+
+        #var
+
+        param_var = StringVar()
+        price_var = StringVar()
+        tree_columns = ("nombre","precio")
+
+        #create
+
+        style = ttk.Style(self)
+        style.theme_use("clam")
+        style.configure("Treeview",
+                        background=extra_window.prim_bg_label,
+                        fieldbackground=extra_window.prim_bg_label,
+                        foreground=extra_window.letter_color
+                        )
+        style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
+        style.map("Treeview",background=[("selected",extra_window.secc_bg)])
+        
+        style.configure("Treeview.Heading",
+                        background=extra_window.prim_bg_button,
+                        foreground=extra_window.letter_color,
+                        relief="flat")
+        style.map("Treeview.Heading",background=[("active","#44051b")])
+
+        price_tree = ttk.Treeview(self,columns=tree_columns,show="headings")
+        price_tree.column("nombre",width=80)
+        price_tree.column("precio",width=80)
+
+        price_tree.heading("nombre",text="Nombre")
+        price_tree.heading("precio",text="Precio")
+
+        main_title = Label(self, 
+                            anchor="center", 
+                            font=("TkMenuFont",18), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Base de precios")
+
+        param_label = Label(self, 
+                            anchor="w",
+                            width=18,
+                            font=("Calibri",14), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Nombre del parametro:")
+        price_label = Label(self, 
+                            anchor="w",
+                            width=18,
+                            font=("Calibri",14), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Precio del parametro:")
+        cb_label = Label(self, 
+                            anchor="w",
+                            width=18,
+                            font=("Calibri",14), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Eliga un parametro:")
+
+        param_entry = Entry(self,
+                            font=("Calibri",9), 
+                            fg=extra_window.prim_bg_label, 
+                            textvariable=param_var)
+        price_entry = Entry(self,
+                            font=("Calibri",9), 
+                            fg=extra_window.prim_bg_label, 
+                            textvariable=price_var)
+
+        data_cb = ttk.Combobox(self)
+
+        edit_btt = Button(self, 
+                            width=6, 
+                            height=1, 
+                            font=("Calibri",11), 
+                            bg=extra_window.prim_bg_button, 
+                            fg=extra_window.letter_color, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.prim_hl_button, 
+                            relief="flat", 
+                            text="Editar", 
+                            command= lambda: self.edit_price())
+        exit_btt = Button(self, 
+                            width=6, 
+                            height=1, 
+                            font=("Calibri",11), 
+                            bg=extra_window.exit_bg_button, 
+                            fg=extra_window.letter_color, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.exit_hl_button, 
+                            relief="flat", 
+                            text="Volver", 
+                            command= lambda: close(extra_window))
+
+        #configure
+
+        self.columnconfigure((0,1,2,3,4),weight=1)
+        self.rowconfigure((0,1,2,3,4,5),weight=1)
+
+        #title
+
+        main_title.grid(column=0,row=0,columnspan=5,sticky="we")
+
+        #label
+
+        param_label.grid(column=4,row=2,sticky="n")
+        price_label.grid(column=4,row=3,sticky="n")
+        cb_label.grid(column=0,row=1)
+
+        #entry
+
+        param_entry.grid(column=4,row=2)
+        price_entry.grid(column=4,row=3)
+
+        #combobox
+
+        data_cb.grid(column=1,row=1)
+        data_cb["values"] = ("Ropas","Servicios","Prioridades")
+        data_cb["state"] = "readonly"
+
+        #treeview
+
+        price_tree.grid(column=0,row=2,columnspan=4,rowspan=3,sticky="nswe",padx=10)
+
+        #button
+
+        edit_btt.grid(column=4,row=4)
+        exit_btt.grid(column=4,row=5,sticky="e")
+    
+    def edit_price(self):
+        pass
+
+#
+#
+#
+
+class Users(Frame):
+    def __init__(self,extra_window):
+        
+        #setup
+
+        super().__init__(extra_window)
+        self.configure(bg=extra_window.secc_bg,padx=10, pady=10)
+        self.place(relx=0.5, rely=0.5, relwidth=0.95, relheight=0.98, anchor="center")
+
+        #struct
+
+        self.create_user(extra_window)
+    
+    def create_user(self,extra_window):
+
+        #var
+
+        name_user = StringVar()
+        email_user = StringVar()
+        user_columns = ("nombre","email")
+
+        #create
+
+        style = ttk.Style(self)
+        style.theme_use("clam")
+        style.configure("Treeview",
+                        background=extra_window.prim_bg_label,
+                        fieldbackground=extra_window.prim_bg_label,
+                        foreground=extra_window.letter_color
+                        )
+        style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
+        style.map("Treeview",background=[("selected",extra_window.secc_bg)])
+        
+        style.configure("Treeview.Heading",
+                        background=extra_window.prim_bg_button,
+                        foreground=extra_window.letter_color,
+                        relief="flat")
+        style.map("Treeview.Heading",background=[("active","#44051b")])
+
+        users_tree = ttk.Treeview(self,columns=user_columns,show="headings")
+        users_tree.column("nombre",width=60)
+        users_tree.column("email",width=140)
+
+        users_tree.heading("nombre",text="Nombre")
+        users_tree.heading("email",text="Email")
+
+        main_title = Label(self, 
+                            anchor="center", 
+                            font=("TkMenuFont",18), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Base de usuarios")
+
+        name_label = Label(self, 
+                            anchor="w",
+                            width=16,
+                            font=("Calibri",14), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Nombre del usuario:")
+        email_label = Label(self, 
+                            anchor="w",
+                            width=16,
+                            font=("Calibri",14), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Email del usuario:")
+
+        name_entry = Entry(self,
+                            font=("Calibri",9), 
+                            fg=extra_window.prim_bg_label, 
+                            textvariable=name_user)
+        email_entry = Entry(self,
+                            font=("Calibri",9), 
+                            fg=extra_window.prim_bg_label, 
+                            textvariable=email_user)
+
+        edit_btt = Button(self, 
+                            width=6, 
+                            height=1, 
+                            font=("Calibri",11), 
+                            bg=extra_window.prim_bg_button, 
+                            fg=extra_window.letter_color, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.prim_hl_button, 
+                            relief="flat", 
+                            text="Editar", 
+                            command= lambda: self.edit_user())
+        exit_btt = Button(self, 
+                            width=6, 
+                            height=1, 
+                            font=("Calibri",11), 
+                            bg=extra_window.exit_bg_button, 
+                            fg=extra_window.letter_color, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.exit_hl_button, 
+                            relief="flat", 
+                            text="Volver", 
+                            command= lambda: close(extra_window))
+
+        #configure 
+
+        self.columnconfigure((0,1,2,3),weight=1)
+        self.rowconfigure((0,1,2,3,4),weight=1)
+
+        #title
+
+        main_title.grid(column=0,row=0,columnspan=4,sticky="we")
+
+        #tree
+
+        users_tree.grid(column=0,row=1,columnspan=4,rowspan=2,sticky="nswe",padx=15,pady=15)
+
+        #label
+
+        name_label.grid(column=0,row=3,sticky="n")
+        email_label.grid(column=1,row=3,sticky="n")
+
+        #entry
+
+        name_entry.grid(column=0,row=3,sticky="s")
+        email_entry.grid(column=1,row=3,sticky="s")
+
+        #button
+
+        edit_btt.grid(column=2,row=3,columnspan=2)
+        exit_btt.grid(column=3,row=4,sticky="e",padx=10)
+    
+    def edit_user(self):
+        pass
 
 #
 #
