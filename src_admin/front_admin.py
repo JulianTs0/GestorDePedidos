@@ -283,7 +283,7 @@ class MainMenu(Frame):
                           activeforeground=main_window.letter_color,
                           activebackground=main_window.prim_hl_button, 
                           relief="flat" ,text="Seleccionar", 
-                          command= lambda: self.four()
+                          command= lambda: self.modify_orders(main_window.extra_bg)
                           )
         exit_btt = Button(self,
                           width=12,
@@ -339,7 +339,7 @@ class MainMenu(Frame):
     #
     
     def register_account(self,back_color):
-        Extra("Registro de cuenta",[600,600,400,50],True,back_color,"r")
+        Extra("Registro de cuenta",[650,600,400,50],True,back_color,"r")
     
     #
     #
@@ -359,8 +359,8 @@ class MainMenu(Frame):
     #
     #
     
-    def four(self):
-        pass
+    def modify_orders(self,back_color):
+        Extra("Base de pedidos",[1000,600,200,50],True,back_color,"o")
     
     #
     #
@@ -408,6 +408,8 @@ class Extra(Toplevel):
             self.status = Price(self)
         elif op == "u":
             self.status = Users(self)
+        elif op == "o":
+            self.status = Orders(self)
 
         #loop
 
@@ -463,6 +465,9 @@ class Register(Frame):
 
         admins_tree.heading("nombre",text="Nombre")
         admins_tree.heading("contra",text="Contraseña")
+
+        scroll = Scrollbar(self ,orient=VERTICAL ,command=admins_tree.yview)
+        admins_tree.configure(yscroll=scroll.set)
 
         main_title = Label(self,
                             anchor="center", 
@@ -572,7 +577,11 @@ class Register(Frame):
 
         #tree
 
-        admins_tree.grid(column=0,row=1,columnspan=2,rowspan=3,sticky="ns")
+        admins_tree.grid(column=0,row=1,columnspan=2,rowspan=3,sticky="nswe")
+
+        #scroll
+
+        scroll.grid(column=0,row=1,columnspan=2,rowspan=3,sticky="nse")
 
     def register_admin(self):
         pass
@@ -629,6 +638,9 @@ class Price(Frame):
 
         price_tree.heading("nombre",text="Nombre")
         price_tree.heading("precio",text="Precio")
+
+        scroll = Scrollbar(self ,orient=VERTICAL ,command=price_tree.yview)
+        price_tree.configure(yscroll=scroll.set)
 
         main_title = Label(self, 
                             anchor="center", 
@@ -723,6 +735,10 @@ class Price(Frame):
 
         price_tree.grid(column=0,row=2,columnspan=4,rowspan=3,sticky="nswe",padx=10)
 
+        #scroll
+
+        scroll.grid(column=0,row=2,columnspan=4,rowspan=3,sticky="nse")
+
         #button
 
         edit_btt.grid(column=4,row=4)
@@ -780,6 +796,9 @@ class Users(Frame):
 
         users_tree.heading("nombre",text="Nombre")
         users_tree.heading("email",text="Email")
+
+        scroll = Scrollbar(self ,orient=VERTICAL ,command=users_tree.yview)
+        users_tree.configure(yscroll=scroll.set)
 
         main_title = Label(self, 
                             anchor="center", 
@@ -846,17 +865,21 @@ class Users(Frame):
 
         #tree
 
-        users_tree.grid(column=0,row=1,columnspan=4,rowspan=2,sticky="nswe",padx=15,pady=15)
+        users_tree.grid(column=0,row=1,columnspan=4,rowspan=2,sticky="nswe")
+
+        #scroll
+
+        scroll.grid(column=0,row=1,columnspan=4,rowspan=2,sticky="nse")
 
         #label
 
-        name_label.grid(column=0,row=3,sticky="n")
-        email_label.grid(column=1,row=3,sticky="n")
+        name_label.grid(column=0,row=3,sticky="n",pady=15)
+        email_label.grid(column=1,row=3,sticky="n",pady=15)
 
         #entry
 
-        name_entry.grid(column=0,row=3,sticky="s")
-        email_entry.grid(column=1,row=3,sticky="s")
+        name_entry.grid(column=0,row=3,sticky="s",pady=15)
+        email_entry.grid(column=1,row=3,sticky="s",pady=15)
 
         #button
 
@@ -864,6 +887,142 @@ class Users(Frame):
         exit_btt.grid(column=3,row=4,sticky="e",padx=10)
     
     def edit_user(self):
+        pass
+
+#
+#
+#
+
+class Orders(Frame):
+    def __init__(self,extra_window):
+        
+        #setup
+
+        super().__init__(extra_window)
+        self.configure(bg=extra_window.secc_bg,padx=10, pady=10)
+        self.place(relx=0.5, rely=0.5, relwidth=0.95, relheight=0.98, anchor="center")
+
+        #struct
+
+        self.create_order_struct(extra_window)
+
+    def create_order_struct(self,extra_window):
+
+        #var
+
+        order_columns = ("usuario","ropa","servicio","prioridad","comentario","precio","estado")
+
+        #create
+
+        style = ttk.Style(self)
+        style.theme_use("clam")
+        style.configure("Treeview",
+                        background=extra_window.prim_bg_label,
+                        fieldbackground=extra_window.prim_bg_label,
+                        foreground=extra_window.letter_color
+                        )
+        style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
+        style.map("Treeview",background=[("selected",extra_window.secc_bg)])
+        
+        style.configure("Treeview.Heading",
+                        background=extra_window.prim_bg_button,
+                        foreground=extra_window.letter_color,
+                        relief="flat")
+        style.map("Treeview.Heading",background=[("active","#44051b")])
+
+        tree_orders = ttk.Treeview(self,columns=order_columns,show="headings")
+        tree_orders.column("usuario",width=70)
+        tree_orders.column("ropa",width=120)
+        tree_orders.column("servicio",width=120)
+        tree_orders.column("prioridad",width=50)
+        tree_orders.column("comentario",width=150)
+        tree_orders.column("precio",width=60)
+        tree_orders.column("estado",width=70)
+
+        tree_orders.heading("usuario",text="Usuario")
+        tree_orders.heading("ropa",text="Ropa")
+        tree_orders.heading("servicio",text="Servicio")
+        tree_orders.heading("prioridad",text="Prio.")
+        tree_orders.heading("comentario",text="Comen.")
+        tree_orders.heading("precio",text="Precio")
+        tree_orders.heading("estado",text="Estado")
+
+        scroll = Scrollbar(self ,orient=VERTICAL ,command=tree_orders.yview)
+        tree_orders.configure(yscroll=scroll.set)
+
+        main_title = Label(self, 
+                            anchor="center", 
+                            font=("TkMenuFont",18), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Base de pedidos")
+
+        state_label = Label(self, 
+                            anchor="w",
+                            width=18,
+                            font=("Calibri",14), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Establezca el estado:")
+
+        state_cb = ttk.Combobox(self)
+
+        confirm_btt = Button(self, 
+                            width=8, 
+                            height=1, 
+                            font=("Calibri",11), 
+                            bg=extra_window.prim_bg_button, 
+                            fg=extra_window.letter_color, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.prim_hl_button, 
+                            relief="flat", 
+                            text="Establecer", 
+                            command= lambda: self.change_state())
+        exit_btt = Button(self, 
+                            width=6, 
+                            height=1, 
+                            font=("Calibri",11), 
+                            bg=extra_window.exit_bg_button, 
+                            fg=extra_window.letter_color, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.exit_hl_button, 
+                            relief="flat", 
+                            text="Volver", 
+                            command= lambda: close(extra_window))
+
+        #configure
+        
+        self.columnconfigure((0,1,2,3),weight=1)
+        self.rowconfigure((0,1,2,3,4,5),weight=1)
+
+        #title
+
+        main_title.grid(column=0,row=0,columnspan=4,sticky="we")
+
+        #tree
+
+        tree_orders.grid(column=0,row=1,columnspan=4,rowspan=3,sticky="nswe")
+
+        #scroll
+
+        scroll.grid(column=0,row=1,columnspan=4,rowspan=3,sticky="nse")
+
+        #label
+
+        state_label.grid(column=0,row=4,sticky="e")
+
+        #combobox
+
+        state_cb.grid(column=1,row=4)
+        state_cb["values"] = ("Pausado","En espera","Finalizado")
+        state_cb["state"] = "readonly"
+
+        #button
+
+        confirm_btt.grid(column=2,row=4,columnspan=2)
+        exit_btt.grid(column=3,row=5)
+    
+    def change_state(self):
         pass
 
 #
