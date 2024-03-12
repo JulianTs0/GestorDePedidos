@@ -339,7 +339,7 @@ class MainMenu(Frame):
     #
     
     def register_account(self,back_color):
-        Extra("Registro de cuenta",[650,600,400,50],True,back_color,"r")
+        Extra("Registro de cuenta",[650,600,400,50],True,back_color,"r",self.user)
     
     #
     #
@@ -403,7 +403,7 @@ class Extra(Toplevel):
         #status
 
         if op == "r":
-            self.status = Register(self)
+            self.status = Register(self,user_data)
         elif op == "p":
             self.status = Price(self)
         elif op == "u":
@@ -420,13 +420,17 @@ class Extra(Toplevel):
 #
 
 class Register(Frame):
-    def __init__(self,extra_window):
+    def __init__(self,extra_window,user):
 
         #setup
 
         super().__init__(extra_window)
         self.configure(bg=extra_window.secc_bg,padx=10, pady=10)
         self.place(relx=0.5, rely=0.5, relwidth=0.95, relheight=0.98, anchor="center")
+
+        #var
+
+        self.user = user
 
         #struct
 
@@ -465,6 +469,8 @@ class Register(Frame):
 
         admins_tree.heading("nombre",text="Nombre")
         admins_tree.heading("contra",text="Contraseña")
+
+        self.update_tree(admins_tree)
 
         scroll = Scrollbar(self ,orient=VERTICAL ,command=admins_tree.yview)
         admins_tree.configure(yscroll=scroll.set)
@@ -523,7 +529,7 @@ class Register(Frame):
                             text="Registrarse", 
                             width=8, 
                             height=1, 
-                            command= lambda: self.register_admin()
+                            command= lambda: self.register_admin(admin_name.get(),admin_pass.get(),admin_rep.get())
                             )
         edit_btt = Button(self,
                             fg=extra_window.letter_color, 
@@ -551,7 +557,7 @@ class Register(Frame):
         #configure
 
         self.columnconfigure((0,1,2,3,4),weight=1)
-        self.rowconfigure((0,1,2,3,4,5),weight=1)
+        self.rowconfigure((0,1,2,3,4),weight=1)
 
         #title
 
@@ -559,21 +565,21 @@ class Register(Frame):
 
         #label
 
-        user_label.grid(column=2,row=1)
-        password_label.grid(column=2,row=2)
-        rep_label.grid(column=2,row=3)
+        user_label.grid(column=3,row=1,sticky="n")
+        password_label.grid(column=3,row=2,sticky="n")
+        rep_label.grid(column=3,row=3,sticky="n")
 
         #entry
 
-        user_entry.grid(column=3,row=1,columnspan=2)
-        password_entry.grid(column=3,row=2,columnspan=2)
-        rep_entry.grid(column=3,row=3,columnspan=2)
+        user_entry.grid(column=3,row=1)
+        password_entry.grid(column=3,row=2)
+        rep_entry.grid(column=3,row=3)
 
         #button
 
-        confirm_btt.grid(column=2,row=5,sticky="e",padx=10)
-        edit_btt.grid(column=3,row=5,sticky="w",padx=10)
-        exit_btt.grid(column=4,row=5)
+        confirm_btt.grid(column=2,row=4,sticky="e",padx=10)
+        edit_btt.grid(column=3,row=4,sticky="w",padx=10)
+        exit_btt.grid(column=4,row=4)
 
         #tree
 
@@ -581,14 +587,23 @@ class Register(Frame):
 
         #scroll
 
-        scroll.grid(column=0,row=1,columnspan=2,rowspan=3,sticky="nse")
+        scroll.grid(column=2,row=1,rowspan=3,sticky="nsw")
 
-    def register_admin(self):
+    def register_admin(self,name,password,rep):
         pass
 
     def edit_admin(self):
         pass
 
+    def update_tree(self,tree):
+        tree.delete(*tree.get_children())
+        admins_state, admins_result = get_admins(self.user)
+
+        if admins_state:
+            for item in admins_result:
+                tree.insert("" ,END ,values=item)
+        else:
+            messagebox.showerror("Error",admins_result)
 #
 #
 #

@@ -106,3 +106,21 @@ def de_login(user_name):
         else:
             user_state_switch(user_name,False)
             return True,"La sesion fue cerrada con exito"
+
+#
+#
+# 
+
+def get_admins(user):
+    all_admins = select_user()
+    admins_data = []
+
+    if all_admins == "Error al mostrar los datos del admin":
+        return False,all_admins
+    
+    else:
+        for admin in all_admins:
+            if admin[0] != user.name:
+                admin = (admin[0],admin[1])
+                admins_data.append(admin)
+        return True,admins_data
