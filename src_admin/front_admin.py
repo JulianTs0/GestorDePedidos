@@ -448,20 +448,7 @@ class Register(Frame):
         #create
 
         style = ttk.Style(self)
-        style.theme_use("clam")
-        style.configure("Treeview",
-                        background=extra_window.prim_bg_label,
-                        fieldbackground=extra_window.prim_bg_label,
-                        foreground=extra_window.letter_color
-                        )
-        style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
-        style.map("Treeview",background=[("selected",extra_window.secc_bg)])
-        
-        style.configure("Treeview.Heading",
-                        background=extra_window.prim_bg_button,
-                        foreground=extra_window.letter_color,
-                        relief="flat")
-        style.map("Treeview.Heading",background=[("active","#44051b")])
+        config_style(style,extra_window)
 
         admins_tree = ttk.Treeview(self,columns=tree_columns,show="headings")
         admins_tree.column("nombre" ,width=80)
@@ -470,7 +457,7 @@ class Register(Frame):
         admins_tree.heading("nombre",text="Nombre")
         admins_tree.heading("contra",text="Contraseña")
 
-        self.update_tree(admins_tree)
+        admins_tree.bind("<<TreeviewSelect>>",lambda e: self.select_tree(admins_tree,user_entry,password_entry))
 
         scroll = Scrollbar(self ,orient=VERTICAL ,command=admins_tree.yview)
         admins_tree.configure(yscroll=scroll.set)
@@ -514,11 +501,13 @@ class Register(Frame):
         password_entry = Entry(self,
                             font=("Calibri",9), 
                             fg=extra_window.prim_bg_label, 
-                            textvariable=admin_pass)
+                            textvariable=admin_pass,
+                            show="*")
         rep_entry = Entry(self,
                             font=("Calibri",9), 
                             fg=extra_window.prim_bg_label, 
-                            textvariable=admin_rep)
+                            textvariable=admin_rep,
+                            show="*")
 
         confirm_btt = Button(self,
                             fg=extra_window.letter_color, 
@@ -529,7 +518,7 @@ class Register(Frame):
                             text="Registrarse", 
                             width=8, 
                             height=1, 
-                            command= lambda: self.register_admin(admin_name.get(),admin_pass.get(),admin_rep.get())
+                            command= lambda: self.register_admin(user_entry,password_entry,rep_entry,admins_tree)
                             )
         edit_btt = Button(self,
                             fg=extra_window.letter_color, 
@@ -540,7 +529,7 @@ class Register(Frame):
                             text="Modificar", 
                             width=8, 
                             height=1, 
-                            command= lambda: self.edit_admin()
+                            command= lambda: self.edit_admin(user_entry,password_entry,rep_entry,admins_tree)
                             )
         exit_btt = Button(self,
                             fg=extra_window.letter_color, 
@@ -553,6 +542,8 @@ class Register(Frame):
                             height=1, 
                             command= lambda: close(extra_window)
                             )
+
+        self.update_tree(admins_tree,user_entry,password_entry,rep_entry)
 
         #configure
 
@@ -589,22 +580,74 @@ class Register(Frame):
 
         scroll.grid(column=2,row=1,rowspan=3,sticky="nsw")
 
-    def register_admin(self,name,password,rep):
-        pass
+    def register_admin(self,name,password,rep,tree):
 
-    def edit_admin(self):
-        pass
+        msg = register_admin_db(name.get(), password.get(), rep.get())
+        title = msg[1]
+        body = msg[2]
 
-    def update_tree(self,tree):
+        if msg[0] == 0:
+            messagebox.showerror(title,body)
+        elif msg[0] == 1:
+            messagebox.showwarning(title,body)
+        elif msg[0] == 2:
+            messagebox.showinfo(title,body)
+            self.update_tree(tree,name,password,rep)
+
+    def edit_admin(self,name,password,rep,tree):
+        
+        msg = modify_admin(name.get(), password.get(), rep.get())
+        title = msg[1]
+        body = msg[2]
+
+        if msg[0] == 0:
+            messagebox.showerror(title,body)
+        elif msg[0] == 1:
+            messagebox.showwarning(title,body)
+        elif msg[0] == 2:
+            messagebox.showinfo(title,body)
+            self.update_tree(tree,name,password,rep)
+
+    def update_tree(self,tree,user_field,pass_field,rep_field):
+
+        for children in tree.get_children():
+            tree.selection_remove(children)
+
         tree.delete(*tree.get_children())
         admins_state, admins_result = get_admins(self.user)
 
         if admins_state:
             for item in admins_result:
                 tree.insert("" ,END ,values=item)
+            self.delete_fields(user_field,pass_field,rep_field)
         else:
             messagebox.showerror("Error",admins_result)
-#
+
+    def select_tree(event,tree,name_entry,pass_entry):
+
+        select = tree.focus()
+
+        try:
+
+            selected_value = tree.item(select)["values"]
+
+            name = selected_value[0]
+            password = selected_value[1]
+
+            name_entry.delete(0,END)
+            name_entry.insert(0,name)
+            pass_entry.delete(0,END)
+            pass_entry.insert(0,password)
+
+        except:
+            pass
+
+    def delete_fields(self,user_field,pass_field,rep_field):
+        user_field.delete(0,END)
+        pass_field.delete(0,END)
+        rep_field.delete(0,END)
+
+#  
 #
 #
 
@@ -632,20 +675,7 @@ class Price(Frame):
         #create
 
         style = ttk.Style(self)
-        style.theme_use("clam")
-        style.configure("Treeview",
-                        background=extra_window.prim_bg_label,
-                        fieldbackground=extra_window.prim_bg_label,
-                        foreground=extra_window.letter_color
-                        )
-        style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
-        style.map("Treeview",background=[("selected",extra_window.secc_bg)])
-        
-        style.configure("Treeview.Heading",
-                        background=extra_window.prim_bg_button,
-                        foreground=extra_window.letter_color,
-                        relief="flat")
-        style.map("Treeview.Heading",background=[("active","#44051b")])
+        config_style(style,extra_window)
 
         price_tree = ttk.Treeview(self,columns=tree_columns,show="headings")
         price_tree.column("nombre",width=80)
@@ -790,20 +820,7 @@ class Users(Frame):
         #create
 
         style = ttk.Style(self)
-        style.theme_use("clam")
-        style.configure("Treeview",
-                        background=extra_window.prim_bg_label,
-                        fieldbackground=extra_window.prim_bg_label,
-                        foreground=extra_window.letter_color
-                        )
-        style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
-        style.map("Treeview",background=[("selected",extra_window.secc_bg)])
-        
-        style.configure("Treeview.Heading",
-                        background=extra_window.prim_bg_button,
-                        foreground=extra_window.letter_color,
-                        relief="flat")
-        style.map("Treeview.Heading",background=[("active","#44051b")])
+        config_style(style,extra_window)
 
         users_tree = ttk.Treeview(self,columns=user_columns,show="headings")
         users_tree.column("nombre",width=60)
@@ -930,20 +947,7 @@ class Orders(Frame):
         #create
 
         style = ttk.Style(self)
-        style.theme_use("clam")
-        style.configure("Treeview",
-                        background=extra_window.prim_bg_label,
-                        fieldbackground=extra_window.prim_bg_label,
-                        foreground=extra_window.letter_color
-                        )
-        style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
-        style.map("Treeview",background=[("selected",extra_window.secc_bg)])
-        
-        style.configure("Treeview.Heading",
-                        background=extra_window.prim_bg_button,
-                        foreground=extra_window.letter_color,
-                        relief="flat")
-        style.map("Treeview.Heading",background=[("active","#44051b")])
+        config_style(style,extra_window)
 
         tree_orders = ttk.Treeview(self,columns=order_columns,show="headings")
         tree_orders.column("usuario",width=70)
@@ -1061,6 +1065,22 @@ def close(object):
 #
 #
 #
+
+def config_style(style,extra_window):
+    style.theme_use("clam")
+    style.configure("Treeview",
+                    background=extra_window.prim_bg_label,
+                    fieldbackground=extra_window.prim_bg_label,
+                    foreground=extra_window.letter_color
+                    )
+    style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
+    style.map("Treeview",background=[("selected",extra_window.secc_bg)])
+        
+    style.configure("Treeview.Heading",
+                    background=extra_window.prim_bg_button,
+                    foreground=extra_window.letter_color,
+                    relief="flat")
+    style.map("Treeview.Heading",background=[("active","#44051b")])
 
 if __name__ == "__main__":
     Main("Volpe project", (800,600,300,50), True, "#D7D6D2")

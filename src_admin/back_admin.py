@@ -124,3 +124,99 @@ def get_admins(user):
                 admin = (admin[0],admin[1])
                 admins_data.append(admin)
         return True,admins_data
+
+#
+#
+#
+
+def verif_new_admin_data(name,password,password_rep):
+
+    if name == "" or not is_a_valid_char(name) or len(name) > 30:
+        error_msg = "Ingrese un nombre de usuario valido"
+        return False,error_msg
+    
+    elif password == "" or len(password) > 20:
+        error_msg = "No se ha ingresado la contraseña valida"
+        return False,error_msg
+    
+    elif password != password_rep:
+        error_msg = "Las contraseñas no coinciden"
+        return False,error_msg
+
+
+    status_search,res_search = exist_user(name,0)
+
+    if not status_search:
+        return status_search,res_search
+    
+    elif res_search is not None:
+        return False,"Ese nombre de usuario ya existe escoja otro"
+    
+    user = Admin(name,password)
+    return True,user 
+
+#
+#
+#
+
+def register_admin_db(name,password,rep):
+
+    check_conection = conect_DB()
+
+    if check_conection == "Error al conectarse a la base de datos":
+        return (0,"Error", str(check_conection))
+    
+    else:
+        verif_state,verif_res = verif_new_admin_data(name, password, rep)
+
+        if not verif_state:
+            return (1,"Error al registrar la cuenta", verif_res)
+        
+        else:
+            insert_db_res = insert_admin(verif_res)
+
+            if insert_db_res is not None:
+                return (0,"Error",insert_db_res)
+                    
+            else:
+                return (2,"Administrador registrado","El Administrador a sido creado y registrado con exito")
+
+#
+#
+#
+
+def name_for_id(name):
+    ides = get_admin_id()
+
+    for data in ides:
+        if data[1] == name:
+            return data[0]
+
+#
+#
+#
+
+def modify_admin(name,password,rep):
+    check_conection = conect_DB()
+
+    if check_conection == "Error al conectarse a la base de datos":
+        return (0,"Error", str(check_conection))
+    
+    else:
+        verif_state,verif_res = verif_new_admin_data(name, password, rep)
+
+        if verif_state:
+            return (1,"Error al modificar la cuenta", "No se puede modificar un usuario que no existe")
+        
+        elif verif_res != "Ese nombre de usuario ya existe escoja otro":
+            return (1,"Error al modificar la cuenta", verif_res)
+        
+        else:
+            admin = Admin(name,password)
+            modify_admin_res = update_admin(admin,name_for_id(admin.name))
+
+            if modify_admin_res is not None:
+                return (0,"Error",modify_admin_res)
+                    
+            else:
+                return (2,"Administrador modificado","Los datos del administrador fueron modificados con exito")

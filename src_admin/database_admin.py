@@ -63,17 +63,63 @@ def user_state_switch(user_name,state):
 
     return
 
+#
+#
+#
 
+def insert_admin(user):
+    state_register_user = "desconectado"
     try:
         conect = conect_DB()
         cursor = conect.cursor()
-        cursor.execute(f"select nombre, precio from {stock_table};")
+        sql = "insert into admins values(null,%s,%s,%s);"
+        data = (user.name, user.password, state_register_user)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Usuario ingresado")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al ingresar el ususario {error}")
+
+        return "Error al ingresar el ususario"
+
+#
+#
+#
+
+def get_admin_id():
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        cursor.execute("select id, nombre from admins;")
         data = cursor.fetchall()
         conect.commit()
         conect.close()
         return data
 
     except mysql.connector.Error as error:
-        print(f"Error al mostrar los datos del ususario {error}")
+        print(f"Error al mostrar los datos del admin {error}")
 
-        return "Error al mostrar el stock"
+        return "Error al mostrar los datos del admin"
+
+#
+#
+#
+def update_admin(user,ide):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "update admins set admins.nombre = %s, admins.contra = %s WHERE admins.id = %s;"
+        data = (user.name, user.password,ide)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Usuario ingresado")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al ingresar el ususario {error}")
+
+        return "Error al ingresar el ususario"
