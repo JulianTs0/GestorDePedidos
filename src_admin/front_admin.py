@@ -443,7 +443,7 @@ class Register(Frame):
         admin_name = StringVar()
         admin_pass = StringVar()
         admin_rep = StringVar()
-        tree_columns = ("nombre","contra")
+        tree_columns = ("id","nombre","contra")
         
         #create
 
@@ -451,13 +451,13 @@ class Register(Frame):
         config_style(style,extra_window)
 
         admins_tree = ttk.Treeview(self,columns=tree_columns,show="headings")
+        admins_tree.column("id" ,width=30)
         admins_tree.column("nombre" ,width=80)
         admins_tree.column("contra" ,width=80)
 
+        admins_tree.heading("id",text="Id")
         admins_tree.heading("nombre",text="Nombre")
         admins_tree.heading("contra",text="Contraseña")
-
-        admins_tree.bind("<<TreeviewSelect>>",lambda e: self.select_tree(admins_tree,user_entry,password_entry))
 
         scroll = Scrollbar(self ,orient=VERTICAL ,command=admins_tree.yview)
         admins_tree.configure(yscroll=scroll.set)
@@ -469,6 +469,14 @@ class Register(Frame):
                             fg=extra_window.letter_color, 
                             text="Crear cuenta de administrador")
 
+        id_label = Label(self, 
+                            anchor="center", 
+                            font=("Calibri",11), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Id del usuario: ", 
+                            width=10, 
+                            wraplength=80)
         user_label = Label(self, 
                             anchor="center", 
                             font=("Calibri",11), 
@@ -494,6 +502,12 @@ class Register(Frame):
                             width=20, 
                             wraplength=150)
 
+        id_text = Text(self,
+                        height=1, 
+                        width=2,
+                        fg=extra_window.prim_bg_label
+                        )
+
         user_entry = Entry(self,
                             font=("Calibri",9), 
                             fg=extra_window.prim_bg_label, 
@@ -518,7 +532,7 @@ class Register(Frame):
                             text="Registrarse", 
                             width=8, 
                             height=1, 
-                            command= lambda: self.register_admin(user_entry,password_entry,rep_entry,admins_tree)
+                            command= lambda: self.register_admin(user_entry,password_entry,rep_entry,id_text,admins_tree)
                             )
         edit_btt = Button(self,
                             fg=extra_window.letter_color, 
@@ -529,7 +543,7 @@ class Register(Frame):
                             text="Modificar", 
                             width=8, 
                             height=1, 
-                            command= lambda: self.edit_admin(user_entry,password_entry,rep_entry,admins_tree)
+                            command= lambda: self.edit_admin(user_entry,password_entry,rep_entry,id_text,admins_tree)
                             )
         exit_btt = Button(self,
                             fg=extra_window.letter_color, 
@@ -543,11 +557,11 @@ class Register(Frame):
                             command= lambda: close(extra_window)
                             )
 
-        self.update_tree(admins_tree,user_entry,password_entry,rep_entry)
+        self.update_tree(admins_tree,user_entry,password_entry,rep_entry,id_text)
 
         #configure
 
-        self.columnconfigure((0,1,2,3,4),weight=1)
+        self.columnconfigure((0,1,2,3,4,5),weight=1)
         self.rowconfigure((0,1,2,3,4),weight=1)
 
         #title
@@ -556,31 +570,38 @@ class Register(Frame):
 
         #label
 
-        user_label.grid(column=3,row=1,sticky="n")
-        password_label.grid(column=3,row=2,sticky="n")
-        rep_label.grid(column=3,row=3,sticky="n")
+        id_label.grid(column=4,row=1,sticky="n",padx=5)
+        user_label.grid(column=3,row=1,sticky="n",padx=5)
+        password_label.grid(column=3,row=2,sticky="n",columnspan=2)
+        rep_label.grid(column=3,row=3,sticky="n",columnspan=2)
+
+        #text
+
+        id_text.grid(column=4,row=1,padx=5)
+        id_text["state"] = "disabled"
 
         #entry
 
-        user_entry.grid(column=3,row=1)
-        password_entry.grid(column=3,row=2)
-        rep_entry.grid(column=3,row=3)
+        user_entry.grid(column=3,row=1,padx=5)
+        password_entry.grid(column=3,row=2,columnspan=2)
+        rep_entry.grid(column=3,row=3,columnspan=2)
 
         #button
 
         confirm_btt.grid(column=2,row=4,sticky="e",padx=10)
         edit_btt.grid(column=3,row=4,sticky="w",padx=10)
-        exit_btt.grid(column=4,row=4)
+        exit_btt.grid(column=5,row=4)
 
         #tree
 
         admins_tree.grid(column=0,row=1,columnspan=2,rowspan=3,sticky="nswe")
+        admins_tree.bind("<<TreeviewSelect>>",lambda e: self.select_tree(admins_tree,user_entry,password_entry,id_text))
 
         #scroll
 
         scroll.grid(column=2,row=1,rowspan=3,sticky="nsw")
 
-    def register_admin(self,name,password,rep,tree):
+    def register_admin(self,name,password,rep,id,tree):
 
         msg = register_admin_db(name.get(), password.get(), rep.get())
         title = msg[1]
@@ -592,11 +613,13 @@ class Register(Frame):
             messagebox.showwarning(title,body)
         elif msg[0] == 2:
             messagebox.showinfo(title,body)
-            self.update_tree(tree,name,password,rep)
+            self.update_tree(tree,name,password,rep,id)
 
-    def edit_admin(self,name,password,rep,tree):
-        
-        msg = modify_admin(name.get(), password.get(), rep.get())
+    def edit_admin(self,name,password,rep,id,tree):
+
+        id_content = id.get("1.0","1.1")
+
+        msg = modify_admin(name.get(), password.get(), rep.get(),id_content)
         title = msg[1]
         body = msg[2]
 
@@ -606,9 +629,9 @@ class Register(Frame):
             messagebox.showwarning(title,body)
         elif msg[0] == 2:
             messagebox.showinfo(title,body)
-            self.update_tree(tree,name,password,rep)
+            self.update_tree(tree,name,password,rep,id)
 
-    def update_tree(self,tree,user_field,pass_field,rep_field):
+    def update_tree(self,tree,user_field,pass_field,rep_field,id_field):
 
         for children in tree.get_children():
             tree.selection_remove(children)
@@ -619,11 +642,11 @@ class Register(Frame):
         if admins_state:
             for item in admins_result:
                 tree.insert("" ,END ,values=item)
-            self.delete_fields(user_field,pass_field,rep_field)
+            self.delete_fields(user_field,pass_field,rep_field,id_field)
         else:
             messagebox.showerror("Error",admins_result)
 
-    def select_tree(event,tree,name_entry,pass_entry):
+    def select_tree(event,tree,name_entry,pass_entry,id_text):
 
         select = tree.focus()
 
@@ -631,9 +654,14 @@ class Register(Frame):
 
             selected_value = tree.item(select)["values"]
 
-            name = selected_value[0]
-            password = selected_value[1]
+            id = selected_value[0]
+            name = selected_value[1]
+            password = selected_value[2]
 
+            id_text["state"] = "normal"
+            id_text.delete("1.0",END)
+            id_text.insert("1.0",id)
+            id_text["state"] = "disabled"
             name_entry.delete(0,END)
             name_entry.insert(0,name)
             pass_entry.delete(0,END)
@@ -642,7 +670,8 @@ class Register(Frame):
         except:
             pass
 
-    def delete_fields(self,user_field,pass_field,rep_field):
+    def delete_fields(self,user_field,pass_field,rep_field,id_field):
+        id_field.delete("1.0",END)
         user_field.delete(0,END)
         pass_field.delete(0,END)
         rep_field.delete(0,END)

@@ -31,7 +31,7 @@ def select_user():
     try:
         conect = conect_DB()
         cursor = conect.cursor()
-        cursor.execute("select nombre, contra, estado from admins;")
+        cursor.execute("select id, nombre, contra, estado from admins;")
         data = cursor.fetchall()
         conect.commit()
         conect.close()

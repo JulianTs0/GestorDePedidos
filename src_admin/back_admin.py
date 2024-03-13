@@ -69,7 +69,7 @@ def login_user(user_name,user_password):
             return False,check_conection
         
         else:
-            state_search,res_search = exist_user(user_name,0)
+            state_search,res_search = exist_user(user_name,1)
         
             if not state_search:
                 return state_search,res_search
@@ -79,16 +79,16 @@ def login_user(user_name,user_password):
                     return False,"El usuario no existe"
             
                 else:
-                    if res_search[1] != user_password:
+                    if res_search[2] != user_password:
                         return False,"Contraseña incorrecta"
                 
                     else:
-                        if res_search[2] == "conectado":
+                        if res_search[3] == "conectado":
                             return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
                     
                         else:
-                            user_state_switch(res_search[0],True)
-                            return True,Admin(res_search[0],res_search[1])               
+                            user_state_switch(res_search[1],True)
+                            return True,Admin(res_search[1],res_search[2])               
 
 #
 #
@@ -96,7 +96,7 @@ def login_user(user_name,user_password):
 
 def de_login(user_name):
 
-    state_search,res_search = exist_user(user_name,0)
+    state_search,res_search = exist_user(user_name,1)
 
     if not state_search:
         return False,"El usuario que incio sesion dejo de estar registrado en la base de datos"
@@ -120,8 +120,8 @@ def get_admins(user):
     
     else:
         for admin in all_admins:
-            if admin[0] != user.name:
-                admin = (admin[0],admin[1])
+            if admin[1] != user.name:
+                admin = (admin[0],admin[1],admin[2])
                 admins_data.append(admin)
         return True,admins_data
 
@@ -129,7 +129,7 @@ def get_admins(user):
 #
 #
 
-def verif_new_admin_data(name,password,password_rep):
+def verif_admin_data(name,password,password_rep,ide=None):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
         error_msg = "Ingrese un nombre de usuario valido"
@@ -143,14 +143,16 @@ def verif_new_admin_data(name,password,password_rep):
         error_msg = "Las contraseñas no coinciden"
         return False,error_msg
 
-
-    status_search,res_search = exist_user(name,0)
+    status_search,res_search = exist_user(name,1)
 
     if not status_search:
         return status_search,res_search
     
     elif res_search is not None:
         return False,"Ese nombre de usuario ya existe escoja otro"
+    
+    if ide is not None:
+        return exist_user(ide,0)
     
     user = Admin(name,password)
     return True,user 
@@ -167,7 +169,7 @@ def register_admin_db(name,password,rep):
         return (0,"Error", str(check_conection))
     
     else:
-        verif_state,verif_res = verif_new_admin_data(name, password, rep)
+        verif_state,verif_res = verif_admin_data(name, password, rep)
 
         if not verif_state:
             return (1,"Error al registrar la cuenta", verif_res)
@@ -196,24 +198,20 @@ def name_for_id(name):
 #
 #
 
-def modify_admin(name,password,rep):
+def modify_admin(name,password,rep,ide):
     check_conection = conect_DB()
 
     if check_conection == "Error al conectarse a la base de datos":
         return (0,"Error", str(check_conection))
     
     else:
-        verif_state,verif_res = verif_new_admin_data(name, password, rep)
+        verif_state,verif_res = verif_admin_data(name, password, rep, ide)
 
-        if verif_state:
-            return (1,"Error al modificar la cuenta", "No se puede modificar un usuario que no existe")
-        
-        elif verif_res != "Ese nombre de usuario ya existe escoja otro":
-            return (1,"Error al modificar la cuenta", verif_res)
-        
+        if not verif_state:
+            return (1,"Error al modificar al usuario", verif_res)
         else:
             admin = Admin(name,password)
-            modify_admin_res = update_admin(admin,name_for_id(admin.name))
+            modify_admin_res = update_admin(admin,ide)
 
             if modify_admin_res is not None:
                 return (0,"Error",modify_admin_res)
