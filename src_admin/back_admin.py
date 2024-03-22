@@ -1,4 +1,5 @@
 from clases_admin import *
+from tkinter import messagebox
 from tkinter import *
 from smtplib import *
 from database_admin import *
@@ -218,3 +219,19 @@ def modify_admin(name,password,rep,ide):
                     
             else:
                 return (2,"Administrador modificado","Los datos del administrador fueron modificados con exito")
+
+#
+#
+#
+
+def delete_admin_user(id_admin):
+
+    option = messagebox.askyesno("Ultima confirmacion",f"Desea eliminar al administrador?")
+    if not option:
+        return True,"Se aborto la operacion con exito"
+    else:
+        delete_res = delete_admin(id_admin)
+        if delete_res is not None:
+            return False,delete_res
+        else:
+            return True,"Su pedido fue cancelado con exito"

@@ -529,7 +529,7 @@ class Register(Frame):
                             activeforeground=extra_window.letter_color, 
                             activebackground=extra_window.prim_hl_button, 
                             relief="flat", 
-                            text="Registrarse", 
+                            text="Registrar", 
                             width=8, 
                             height=1, 
                             command= lambda: self.register_admin(user_entry,password_entry,rep_entry,id_text,admins_tree)
@@ -544,6 +544,17 @@ class Register(Frame):
                             width=8, 
                             height=1, 
                             command= lambda: self.edit_admin(user_entry,password_entry,rep_entry,id_text,admins_tree)
+                            )
+        delete_btt = Button(self,
+                            fg=extra_window.letter_color, 
+                            bg=extra_window.secc_bg_button, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.secc_hl_button, 
+                            relief="flat", 
+                            text="Eliminar", 
+                            width=8, 
+                            height=1, 
+                            command= lambda: self.select_admin_delete(admins_tree,user_entry,password_entry,rep_entry,id_text)
                             )
         exit_btt = Button(self,
                             fg=extra_window.letter_color, 
@@ -588,8 +599,9 @@ class Register(Frame):
 
         #button
 
-        confirm_btt.grid(column=2,row=4,sticky="e",padx=10)
-        edit_btt.grid(column=3,row=4,sticky="w",padx=10)
+        confirm_btt.grid(column=2,row=4,sticky="w",columnspan=2)
+        edit_btt.grid(column=2,row=4,columnspan=2,padx=20)
+        delete_btt.grid(column=2,row=4,sticky="e",columnspan=2)
         exit_btt.grid(column=5,row=4)
 
         #tree
@@ -671,11 +683,27 @@ class Register(Frame):
             pass
 
     def delete_fields(self,user_field,pass_field,rep_field,id_field):
+        id_field["state"] = "normal"
         id_field.delete("1.0",END)
+        id_field["state"] = "disabled"
         user_field.delete(0,END)
         pass_field.delete(0,END)
         rep_field.delete(0,END)
 
+    def select_admin_delete(self,tree,user_field,pass_field,rep_field,id_field):
+        select = tree.focus()
+
+        if not select:
+           messagebox.showwarning("No se pudo eliminar el administrador","Seleccione una cuenta para eliminarla")
+        else:
+            values = tree.item(select)["values"]
+            delete_state,delete_result = delete_admin_user(values[0])
+            if not delete_state:
+               messagebox.showerror("Error",delete_result)
+            else:
+                messagebox.showinfo("Accion exitosa",delete_result)
+        
+        self.update_tree(tree,user_field,pass_field,rep_field,id_field)
 #  
 #
 #
@@ -1110,6 +1138,10 @@ def config_style(style,extra_window):
                     foreground=extra_window.letter_color,
                     relief="flat")
     style.map("Treeview.Heading",background=[("active","#44051b")])
+
+#
+#
+#
 
 if __name__ == "__main__":
     Main("Volpe project", (800,600,300,50), True, "#D7D6D2")

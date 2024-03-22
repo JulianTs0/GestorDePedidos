@@ -123,3 +123,24 @@ def update_admin(user,ide):
         print(f"Error al ingresar el ususario {error}")
 
         return "Error al ingresar el ususario"
+
+#
+#
+#
+
+def delete_admin(id):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "delete from admins where admins.id = %s;"
+        data = (id,)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Administrador Eliminado")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al Eliminar el Administrador {error}")
+
+        return "Error al Eliminar el Administrador"
