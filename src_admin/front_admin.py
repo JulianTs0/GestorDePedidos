@@ -163,7 +163,7 @@ class Login(Frame):
     #
 
     def login(self, main_window, user_name, user_password):
-        login_state,login_res = login_user(user_name,user_password)
+        login_state,login_res = login_admin(user_name,user_password)
         if login_state:
             messagebox.showinfo("Inicio de sesion","Inicio de sesion exitoso")
             main_window.status.destroy()
@@ -629,8 +629,14 @@ class Register(Frame):
 
     def edit_admin(self,name,password,rep,id,tree):
 
-        id_content = id.get("1.0","1.1")
+        id_content = id.get("1.0","end-1c")
 
+        print(id_content)
+
+        if id_content == "":
+            messagebox.showwarning("No se selecciono un usuario","No se puede modificar un usuario que no existe")
+            return
+        
         msg = modify_admin(name.get(), password.get(), rep.get(),id_content)
         title = msg[1]
         body = msg[2]
@@ -704,7 +710,199 @@ class Register(Frame):
                 messagebox.showinfo("Accion exitosa",delete_result)
         
         self.update_tree(tree,user_field,pass_field,rep_field,id_field)
+
 #  
+# create_user_frame
+#
+
+class Users(Frame):
+    def __init__(self,extra_window):
+        
+        #setup
+
+        super().__init__(extra_window)
+        self.configure(bg=extra_window.secc_bg,padx=10, pady=10)
+        self.place(relx=0.5, rely=0.5, relwidth=0.95, relheight=0.98, anchor="center")
+
+        #struct
+
+        self.create_user(extra_window)
+    
+    def create_user(self,extra_window):
+
+        #var
+
+        name_user = StringVar()
+        email_user = StringVar()
+        user_columns = ("nombre","email","id")
+
+        #create
+
+        style = ttk.Style(self)
+        config_style(style,extra_window)
+
+        users_tree = ttk.Treeview(self,columns=user_columns,show="headings")
+        users_tree.column("id",width=20)
+        users_tree.column("nombre",width=60)
+        users_tree.column("email",width=140)
+
+        users_tree.heading("id",text="ID")
+        users_tree.heading("nombre",text="Nombre")
+        users_tree.heading("email",text="Email")
+
+        scroll = Scrollbar(self ,orient=VERTICAL ,command=users_tree.yview)
+        users_tree.configure(yscroll=scroll.set)
+
+        main_title = Label(self, 
+                            anchor="center", 
+                            font=("TkMenuFont",18), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Base de usuarios")
+
+        name_label = Label(self, 
+                            anchor="w",
+                            width=16,
+                            font=("Calibri",14), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Nombre del usuario:")
+        email_label = Label(self, 
+                            anchor="w",
+                            width=16,
+                            font=("Calibri",14), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Email del usuario:")
+
+        name_entry = Entry(self,
+                            font=("Calibri",9), 
+                            fg=extra_window.prim_bg_label, 
+                            textvariable=name_user)
+        email_entry = Entry(self,
+                            font=("Calibri",9), 
+                            fg=extra_window.prim_bg_label, 
+                            textvariable=email_user)
+
+        edit_btt = Button(self, 
+                            width=6, 
+                            height=1, 
+                            font=("Calibri",11), 
+                            bg=extra_window.prim_bg_button, 
+                            fg=extra_window.letter_color, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.prim_hl_button, 
+                            relief="flat", 
+                            text="Editar", 
+                            command= lambda: self.edit_user(users_tree,name_entry,email_entry))
+        exit_btt = Button(self, 
+                            width=6, 
+                            height=1, 
+                            font=("Calibri",11), 
+                            bg=extra_window.exit_bg_button, 
+                            fg=extra_window.letter_color, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.exit_hl_button, 
+                            relief="flat", 
+                            text="Volver", 
+                            command= lambda: close(extra_window))
+
+        self.update_tree(users_tree,name_entry,email_entry)
+
+        #configure 
+
+        self.columnconfigure((0,1,2,3),weight=1)
+        self.rowconfigure((0,1,2,3,4),weight=1)
+
+        #title
+
+        main_title.grid(column=0,row=0,columnspan=4,sticky="we")
+
+        #tree
+
+        users_tree.grid(column=0,row=1,columnspan=4,rowspan=2,sticky="nswe")
+        users_tree.bind("<<TreeviewSelect>>",lambda e: self.select_tree(users_tree,name_entry,email_entry))
+
+        #scroll
+
+        scroll.grid(column=0,row=1,columnspan=4,rowspan=2,sticky="nse")
+
+        #label
+
+        name_label.grid(column=0,row=3,sticky="n",pady=15)
+        email_label.grid(column=1,row=3,sticky="n",pady=15)
+
+        #entry
+
+        name_entry.grid(column=0,row=3,sticky="s",pady=15)
+        email_entry.grid(column=1,row=3,sticky="wes",pady=15,padx=35)
+
+        #button
+
+        edit_btt.grid(column=2,row=3,columnspan=2)
+        exit_btt.grid(column=3,row=4,sticky="e",padx=10)
+    
+    def edit_user(self,tree,name,email):
+
+        select = tree.focus()
+        try:
+            selected_value = tree.item(select)["values"]
+            ide = selected_value[2]
+        except:
+            messagebox.showwarning("No hay ningun usuario seleccionado","Seleccione un usuario de la planilla")
+            return
+        
+        msg = modify_user(name.get(), email.get(),ide)
+        title = msg[1]
+        body = msg[2]
+
+        if msg[0] == 0:
+            messagebox.showerror(title,body)
+        elif msg[0] == 1:
+            messagebox.showwarning(title,body)
+        elif msg[0] == 2:
+            messagebox.showinfo(title,body)
+            self.update_tree(tree,name,email)
+
+    def update_tree(self,tree,user_field,email_field):
+
+        for children in tree.get_children():
+            tree.selection_remove(children)
+
+        tree.delete(*tree.get_children())
+        user_state, user_result = get_users()
+
+        if user_state:
+            for item in user_result:
+                tree.insert("" ,END ,values=item)
+            self.delete_fields(user_field,email_field)
+        else:
+            messagebox.showerror("Error",user_result)
+
+    def delete_fields(self,user_field,pass_field):
+        user_field.delete(0,END)
+        pass_field.delete(0,END)
+
+    def select_tree(event,tree,name_entry,email_entry):
+
+        select = tree.focus()
+
+        try:
+
+            selected_value = tree.item(select)["values"]
+
+            name = selected_value[0]
+            email = selected_value[1]
+
+            name_entry.delete(0,END)
+            name_entry.insert(0,name)
+            email_entry.delete(0,END)
+            email_entry.insert(0,email)
+
+        except:
+            pass
+
+#
 #
 #
 
@@ -847,135 +1045,6 @@ class Price(Frame):
         exit_btt.grid(column=4,row=5,sticky="e")
     
     def edit_price(self):
-        pass
-
-#
-#
-#
-
-class Users(Frame):
-    def __init__(self,extra_window):
-        
-        #setup
-
-        super().__init__(extra_window)
-        self.configure(bg=extra_window.secc_bg,padx=10, pady=10)
-        self.place(relx=0.5, rely=0.5, relwidth=0.95, relheight=0.98, anchor="center")
-
-        #struct
-
-        self.create_user(extra_window)
-    
-    def create_user(self,extra_window):
-
-        #var
-
-        name_user = StringVar()
-        email_user = StringVar()
-        user_columns = ("nombre","email")
-
-        #create
-
-        style = ttk.Style(self)
-        config_style(style,extra_window)
-
-        users_tree = ttk.Treeview(self,columns=user_columns,show="headings")
-        users_tree.column("nombre",width=60)
-        users_tree.column("email",width=140)
-
-        users_tree.heading("nombre",text="Nombre")
-        users_tree.heading("email",text="Email")
-
-        scroll = Scrollbar(self ,orient=VERTICAL ,command=users_tree.yview)
-        users_tree.configure(yscroll=scroll.set)
-
-        main_title = Label(self, 
-                            anchor="center", 
-                            font=("TkMenuFont",18), 
-                            bg=extra_window.prim_bg_label, 
-                            fg=extra_window.letter_color, 
-                            text="Base de usuarios")
-
-        name_label = Label(self, 
-                            anchor="w",
-                            width=16,
-                            font=("Calibri",14), 
-                            bg=extra_window.prim_bg_label, 
-                            fg=extra_window.letter_color, 
-                            text="Nombre del usuario:")
-        email_label = Label(self, 
-                            anchor="w",
-                            width=16,
-                            font=("Calibri",14), 
-                            bg=extra_window.prim_bg_label, 
-                            fg=extra_window.letter_color, 
-                            text="Email del usuario:")
-
-        name_entry = Entry(self,
-                            font=("Calibri",9), 
-                            fg=extra_window.prim_bg_label, 
-                            textvariable=name_user)
-        email_entry = Entry(self,
-                            font=("Calibri",9), 
-                            fg=extra_window.prim_bg_label, 
-                            textvariable=email_user)
-
-        edit_btt = Button(self, 
-                            width=6, 
-                            height=1, 
-                            font=("Calibri",11), 
-                            bg=extra_window.prim_bg_button, 
-                            fg=extra_window.letter_color, 
-                            activeforeground=extra_window.letter_color, 
-                            activebackground=extra_window.prim_hl_button, 
-                            relief="flat", 
-                            text="Editar", 
-                            command= lambda: self.edit_user())
-        exit_btt = Button(self, 
-                            width=6, 
-                            height=1, 
-                            font=("Calibri",11), 
-                            bg=extra_window.exit_bg_button, 
-                            fg=extra_window.letter_color, 
-                            activeforeground=extra_window.letter_color, 
-                            activebackground=extra_window.exit_hl_button, 
-                            relief="flat", 
-                            text="Volver", 
-                            command= lambda: close(extra_window))
-
-        #configure 
-
-        self.columnconfigure((0,1,2,3),weight=1)
-        self.rowconfigure((0,1,2,3,4),weight=1)
-
-        #title
-
-        main_title.grid(column=0,row=0,columnspan=4,sticky="we")
-
-        #tree
-
-        users_tree.grid(column=0,row=1,columnspan=4,rowspan=2,sticky="nswe")
-
-        #scroll
-
-        scroll.grid(column=0,row=1,columnspan=4,rowspan=2,sticky="nse")
-
-        #label
-
-        name_label.grid(column=0,row=3,sticky="n",pady=15)
-        email_label.grid(column=1,row=3,sticky="n",pady=15)
-
-        #entry
-
-        name_entry.grid(column=0,row=3,sticky="s",pady=15)
-        email_entry.grid(column=1,row=3,sticky="s",pady=15)
-
-        #button
-
-        edit_btt.grid(column=2,row=3,columnspan=2)
-        exit_btt.grid(column=3,row=4,sticky="e",padx=10)
-    
-    def edit_user(self):
         pass
 
 #

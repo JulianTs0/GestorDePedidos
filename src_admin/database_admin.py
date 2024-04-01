@@ -27,7 +27,8 @@ def conect_DB():
 #   en la variable sql. Si logra insertar los datos exitosamente en la BD retorna None, caso contrario
 #   retorna una string de error.
 
-def select_user():
+def select_admin():
+
     try:
         conect = conect_DB()
         cursor = conect.cursor()
@@ -107,6 +108,7 @@ def get_admin_id():
 #
 #
 #
+
 def update_admin(user,ide):
     try:
         conect = conect_DB()
@@ -144,3 +146,44 @@ def delete_admin(id):
         print(f"Error al Eliminar el Administrador {error}")
 
         return "Error al Eliminar el Administrador"
+
+#
+#
+#
+
+def select_user():
+
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        cursor.execute("select nombre, email, id from usuarios;")
+        data = cursor.fetchall()
+        conect.commit()
+        conect.close()
+        return data
+
+    except mysql.connector.Error as error:
+        print(f"Error al mostrar los datos del usuario {error}")
+
+        return "Error al mostrar los datos del usuario"
+
+#
+#
+#
+
+def update_user(user,ide):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "update usuarios set usuarios.nombre = %s, usuarios.email = %s WHERE usuarios.id = %s;"
+        data = (user.name, user.email, ide)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Usuario ingresado")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al ingresar el ususario {error}")
+
+        return "Error al ingresar el ususario"

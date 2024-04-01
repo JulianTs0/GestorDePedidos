@@ -23,8 +23,8 @@ def is_a_valid_char(word):
 #
 #
 
-def exist_user(user_data_search,parameter):
-    users_data = select_user()
+def exist_admin(user_data_search,parameter):
+    users_data = select_admin()
 
     if users_data == "Error al mostrar los datos del admin":
         return False,users_data
@@ -38,7 +38,7 @@ def exist_user(user_data_search,parameter):
 #
 #
 
-def verify_user(name,password):
+def verify_admin(name,password):
 
     if name == "" or password == "":
         return False,"Complete los campos antes de iniciar sesion"
@@ -56,9 +56,9 @@ def verify_user(name,password):
 #
 #
 
-def login_user(user_name,user_password):
+def login_admin(user_name,user_password):
 
-    verif_state,verif_res  = verify_user(user_name,user_password)
+    verif_state,verif_res  = verify_admin(user_name,user_password)
 
     if not verif_state:
         return False, verif_res
@@ -70,7 +70,7 @@ def login_user(user_name,user_password):
             return False,check_conection
         
         else:
-            state_search,res_search = exist_user(user_name,1)
+            state_search,res_search = exist_admin(user_name,1)
         
             if not state_search:
                 return state_search,res_search
@@ -97,12 +97,12 @@ def login_user(user_name,user_password):
 
 def de_login(user_name):
 
-    state_search,res_search = exist_user(user_name,1)
+    state_search,res_search = exist_admin(user_name,1)
 
     if not state_search:
         return False,"El usuario que incio sesion dejo de estar registrado en la base de datos"
     else:
-        if res_search[2] == "desconectado":
+        if res_search[2] == "desconectado" or res_search[2] is None:
             return False,"La sesion no se puede cerrar porque el usuario no esta conectado"
         else:
             user_state_switch(user_name,False)
@@ -113,7 +113,7 @@ def de_login(user_name):
 # 
 
 def get_admins(user):
-    all_admins = select_user()
+    all_admins = select_admin()
     admins_data = []
 
     if all_admins == "Error al mostrar los datos del admin":
@@ -144,7 +144,7 @@ def verif_admin_data(name,password,password_rep,ide=None):
         error_msg = "Las contraseñas no coinciden"
         return False,error_msg
 
-    status_search,res_search = exist_user(name,1)
+    status_search,res_search = exist_admin(name,1)
 
     if not status_search:
         return status_search,res_search
@@ -153,7 +153,7 @@ def verif_admin_data(name,password,password_rep,ide=None):
         return False,"Ese nombre de usuario ya existe escoja otro"
     
     if ide is not None:
-        return exist_user(ide,0)
+        return exist_admin(ide,0)
     
     user = Admin(name,password)
     return True,user 
@@ -208,8 +208,8 @@ def modify_admin(name,password,rep,ide):
     else:
         verif_state,verif_res = verif_admin_data(name, password, rep, ide)
 
-        if not verif_state:
-            return (1,"Error al modificar al usuario", verif_res)
+        if verif_state:
+            return (1,"Error al modificar al usuario", "No se puede modificar un usuario que no existe")
         else:
             admin = Admin(name,password)
             modify_admin_res = update_admin(admin,ide)
@@ -235,3 +235,84 @@ def delete_admin_user(id_admin):
             return False,delete_res
         else:
             return True,"Su pedido fue cancelado con exito"
+
+#
+#
+#
+
+def exist_user(user_data_search,parameter):
+    users_data = select_user()
+
+    if users_data == "Error al mostrar los datos del usuario":
+        return False,users_data
+    else:
+        for user in users_data:
+            if user[parameter] == user_data_search:
+                return True,user
+        return True,None
+
+#
+#
+#
+
+def get_users():
+    all_users = select_user()
+    users_data = []
+
+    if all_users == "Error al mostrar los datos del usuario":
+        return False,all_users
+    
+    else:
+        for usuario in all_users:
+            usuario = (usuario[0],usuario[1],usuario[2])
+            users_data.append(usuario)
+        return True,users_data
+
+#
+#
+#
+
+def verif_user_data(name,email):
+
+    if name == "" or not is_a_valid_char(name) or len(name) > 30:
+        error_msg = "Ingrese un nombre de usuario valido"
+        return False,error_msg
+    
+    elif "@gmail.com" not in email or len(email) <= 10 or email == "" or len(email) > 40:
+        error_msg = "La estructura del email no es correcta"
+        return False,error_msg
+
+    status_search,res_search = exist_user(name,1)
+
+    if not status_search:
+        return status_search,res_search
+    
+    elif res_search is None:
+        return False,"Ese nombre de usuario ya existe escoja otro"
+    
+    return True,None
+
+#
+#
+#
+
+def modify_user(name,email,ide):
+    check_conection = conect_DB()
+
+    if check_conection == "Error al conectarse a la base de datos":
+        return (0,"Error", str(check_conection))
+    
+    else:
+        verif_state,verif_res = verif_user_data(name, email)
+
+        if verif_state:
+            return (1,"Error al modificar al usuario", "No se puede modificar un usuario que no existe")
+        else:
+            usuario = Usuario(name,email)
+            modify_user_res = update_user(usuario,ide)
+
+            if modify_user_res is not None:
+                return (0,"Error",modify_user_res)
+                    
+            else:
+                return (2,"Usuario modificado","Los datos del Usuario fueron modificados con exito")

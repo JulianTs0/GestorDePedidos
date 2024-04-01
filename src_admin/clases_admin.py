@@ -7,3 +7,10 @@ class Admin:
 
         self.name = name
         self.password = password
+
+class Usuario:
+    def __init__(self, name, email):
+
+        self.name = name
+        self.email = email
+
