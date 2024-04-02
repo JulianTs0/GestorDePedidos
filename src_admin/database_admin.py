@@ -187,3 +187,113 @@ def update_user(user,ide):
         print(f"Error al ingresar el ususario {error}")
 
         return "Error al ingresar el ususario"
+
+#
+#
+#
+
+def select_clothes():
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        cursor.execute("select nombre, precio, id from ropas;")
+        data = cursor.fetchall()
+        conect.commit()
+        conect.close()
+        return data
+
+    except mysql.connector.Error as error:
+        print(f"Error al mostrar los datos del parametro {error}")
+
+        return "Error al mostrar los datos del parametro"
+
+
+
+def select_service():
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        cursor.execute("select nombre, precio, id from servicios;")
+        data = cursor.fetchall()
+        conect.commit()
+        conect.close()
+        return data
+
+    except mysql.connector.Error as error:
+        print(f"Error al mostrar los datos del parametro {error}")
+
+        return "Error al mostrar los datos del parametro"
+
+
+
+def select_priority():
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        cursor.execute("select nombre, precio, id from prioridades;")
+        data = cursor.fetchall()
+        conect.commit()
+        conect.close()
+        return data
+
+    except mysql.connector.Error as error:
+        print(f"Error al mostrar los datos del parametro {error}")
+
+        return "Error al mostrar los datos del parametro"
+
+
+
+def update_clothes(clothe,ide):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "update ropas set ropas.nombre = %s, ropas.precio = %s WHERE ropas.id = %s;"
+        data = (clothe.name, clothe.price, ide)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Ropa ingresada")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al ingresar la Ropa {error}")
+
+        return "Error al ingresar la Ropa"
+
+
+
+def update_service(service,ide):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "update servicios set servicios.nombre = %s, servicios.precio = %s WHERE servicios.id = %s;"
+        data = (service.name, service.price, ide)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Servicio ingresada")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al ingresar la Servicio {error}")
+
+        return "Error al ingresar la Servicio"
+
+
+
+def update_priority(prio,ide):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "update prioridades set prioridades.nombre = %s, prioridades.precio = %s WHERE prioridades.id = %s;"
+        data = (prio.name, prio.price, ide)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Prioridad ingresada")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al ingresar la Prioridad {error}")
+
+        return "Error al ingresar la Prioridad"

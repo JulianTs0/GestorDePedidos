@@ -712,7 +712,7 @@ class Register(Frame):
         self.update_tree(tree,user_field,pass_field,rep_field,id_field)
 
 #  
-# create_user_frame
+#
 #
 
 class Users(Frame):
@@ -925,7 +925,7 @@ class Price(Frame):
 
         param_var = StringVar()
         price_var = StringVar()
-        tree_columns = ("nombre","precio")
+        tree_columns = ("nombre","precio","id")
 
         #create
 
@@ -933,9 +933,11 @@ class Price(Frame):
         config_style(style,extra_window)
 
         price_tree = ttk.Treeview(self,columns=tree_columns,show="headings")
+        price_tree.column("id",width=30)
         price_tree.column("nombre",width=80)
         price_tree.column("precio",width=80)
 
+        price_tree.heading("id",text="Id")
         price_tree.heading("nombre",text="Nombre")
         price_tree.heading("precio",text="Precio")
 
@@ -992,7 +994,7 @@ class Price(Frame):
                             activebackground=extra_window.prim_hl_button, 
                             relief="flat", 
                             text="Editar", 
-                            command= lambda: self.edit_price())
+                            command= lambda: self.edit_price(price_tree,data_cb,param_entry,price_entry))
         exit_btt = Button(self, 
                             width=6, 
                             height=1, 
@@ -1030,10 +1032,12 @@ class Price(Frame):
         data_cb.grid(column=1,row=1)
         data_cb["values"] = ("Ropas","Servicios","Prioridades")
         data_cb["state"] = "readonly"
+        data_cb.bind("<<ComboboxSelected>>", lambda e: self.update_tree(price_tree,param_entry,param_entry,data_cb))
 
         #treeview
 
         price_tree.grid(column=0,row=2,columnspan=4,rowspan=3,sticky="nswe",padx=10)
+        price_tree.bind("<<TreeviewSelect>>",lambda e: self.select_tree(price_tree,param_entry,price_entry))
 
         #scroll
 
@@ -1043,9 +1047,71 @@ class Price(Frame):
 
         edit_btt.grid(column=4,row=4)
         exit_btt.grid(column=4,row=5,sticky="e")
+
+    def edit_price(self,tree,param_cb,name,price):
+        
+        select = tree.focus()
+        option = param_cb.current()
+
+        try:
+            selected_value = tree.item(select)["values"]
+            ide = selected_value[2]
+        except:
+            messagebox.showwarning("No hay ningun parametro seleccionado","Seleccione un parametro de la planilla")
+            return
+
+        msg = modify_params(name.get(), price.get(),ide,option)
+        
+        title = msg[1]
+        body = msg[2]
+
+        if msg[0] == 0:
+            messagebox.showerror(title,body)
+        elif msg[0] == 1:
+            messagebox.showwarning(title,body)
+        elif msg[0] == 2:
+            messagebox.showinfo(title,body)
+            self.update_tree(tree,name,price,param_cb)
+
+    def update_tree(self,tree,name_field,price_field,param_combo):
+
+        option = param_combo.current()
+
+        for children in tree.get_children():
+            tree.selection_remove(children)
+        tree.delete(*tree.get_children())
+
+        param_state, param_result = get_params(option)
+
+        if param_state:
+            for item in param_result:
+                tree.insert("" ,END ,values=item)
+            self.delete_fields(name_field,price_field)
+        else:
+            messagebox.showerror("Error",param_result)
+
+    def delete_fields(self,name_field,price_field):
+        name_field.delete(0,END)
+        price_field.delete(0,END)
     
-    def edit_price(self):
-        pass
+    def select_tree(self,tree,name_entry,price_entry):
+
+        select = tree.focus()
+
+        try:
+
+            selected_value = tree.item(select)["values"]
+
+            name = selected_value[0]
+            price = selected_value[1]
+
+            name_entry.delete(0,END)
+            name_entry.insert(0,name)
+            price_entry.delete(0,END)
+            price_entry.insert(0,price)
+
+        except:
+            pass
 
 #
 #

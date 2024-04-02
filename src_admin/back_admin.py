@@ -8,6 +8,18 @@ from decouple import config
 #   La funcion is_a_number determina si en una palabra esta contiene algun numero, si es asi retorna true
 #   si no false.
 
+def is_a_number(number):
+
+    output = True
+    valid_number = "0123456789"
+
+    for i in number:
+        if i not in valid_number:
+            output = False
+    
+    return output
+
+
 def is_a_valid_char(word):
 
     output = True
@@ -316,3 +328,97 @@ def modify_user(name,email,ide):
                     
             else:
                 return (2,"Usuario modificado","Los datos del Usuario fueron modificados con exito")
+
+#
+#
+#
+
+def get_params(option):
+
+    if option == 0:
+        all_params = select_clothes()
+    elif option == 1:
+        all_params = select_service()
+    else:
+        all_params = select_priority()
+    
+    params_data = []
+
+    if all_params == "Error al mostrar los datos del usuario":
+        return False,all_params
+    
+    else:
+        for param in all_params:
+            param = (param[0],param[1],param[2])
+            params_data.append(param)
+        return True,params_data
+
+
+
+def exist_param(price_data_search,parameter,option):
+
+    if option == 0:
+        price_data = select_clothes()
+    elif option == 1:
+        price_data = select_service()
+    else:
+        price_data = select_priority()
+
+    if price_data == "Error al mostrar los datos del usuario":
+        return False,price_data
+    else:
+        for price in price_data:
+            if price_data[parameter] == price_data_search:
+                return True,price_data
+        return True,None
+
+
+
+def verif_param_data(name,price,option):
+    
+    if name == "" or not is_a_valid_char(name) or len(name) > 30:
+        error_msg = "Ingrese un nombre de parametro valido"
+        return False,error_msg
+    
+    elif is_a_number(price) or len(price) > 40:
+        error_msg = "El precio no es valido"
+        return False,error_msg
+
+    status_search,res_search = exist_param(name,0,option)
+
+    if not status_search:
+        return status_search,res_search
+    
+    elif res_search is None:
+        return False,"Ese parametro no existe"
+    
+    return True,None
+
+
+
+def modify_params(name, price, ide, option):
+    check_conection = conect_DB()
+
+    if check_conection == "Error al conectarse a la base de datos":
+        return (0,"Error", str(check_conection))
+    
+    else:
+        verif_state,verif_res = verif_param_data(name, price, option)
+
+        if verif_state:
+            return (1,"Error al modificar el parametro", "No se puede modificar un parametro que no existe")
+        else:
+            param_select = Parametro(name,price)
+            
+            if option == 0:
+                modify_param_res = update_clothes(param_select,ide)
+            elif option == 1:
+                modify_param_res = update_service(param_select,ide)
+            else:
+                modify_param_res = update_priority(param_select,ide)
+
+            if modify_param_res is not None:
+                return (0,"Error",modify_param_res)
+                    
+            else:
+                return (2,"Parametro modificado","Los datos del Parametro fueron modificados con exito")

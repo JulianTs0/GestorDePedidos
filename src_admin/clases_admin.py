@@ -14,3 +14,8 @@ class Usuario:
         self.name = name
         self.email = email
 
+class Parametro:
+    def __init__(self, name, price):
+
+        self.name = name
+        self.price = price
