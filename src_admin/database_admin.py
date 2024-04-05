@@ -297,3 +297,40 @@ def update_priority(prio,ide):
         print(f"Error al ingresar la Prioridad {error}")
 
         return "Error al ingresar la Prioridad"
+
+
+
+def select_order():
+
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        cursor.execute("select id, usuario, ropa, servicio, prioridad, comentario, precio, estado from pedidos;")
+        data = cursor.fetchall()
+        conect.commit()
+        conect.close()
+        return data
+
+    except mysql.connector.Error as error:
+        print(f"Error al mostrar los datos del pedido {error}")
+
+        return "Error al mostrar los datos del pedido"
+
+
+
+def update_order(status,ide):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "update pedidos set pedidos.estado = %s WHERE pedidos.id = %s;"
+        data = (status, ide)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Pedido ingresado")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al ingresar el Pedido {error}")
+
+        return "Error al ingresar el Pedido"

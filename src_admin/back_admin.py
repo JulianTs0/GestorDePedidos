@@ -422,3 +422,70 @@ def modify_params(name, price, ide, option):
                     
             else:
                 return (2,"Parametro modificado","Los datos del Parametro fueron modificados con exito")
+
+
+
+def get_orders():
+    all_orders = select_order()
+    order_data = []
+
+    if all_orders == "Error al mostrar los datos del usuario":
+        return False,all_orders
+    
+    else:
+        for order in all_orders:
+            order = (order[0],order[1],order[2],order[3],order[4],order[5],order[6],order[7])
+            order_data.append(order)
+        return True,order_data
+
+
+def exist_order(order_data_search,parameter):
+    order_data = select_order()
+
+    if order_data == "Error al mostrar los datos del pedido":
+        return False,order_data
+    else:
+        for order in order_data:
+            if order[parameter] == order_data_search:
+                return True,order
+        return True,None
+
+
+
+def verif_order_data(status,ide):
+    
+    if len(status) < 2:
+        error_msg = "Selecione un estado"
+        return False,error_msg
+
+    status_search,res_search = exist_order(ide,0)
+
+    if not status_search:
+        return status_search,res_search
+    
+    elif res_search is None:
+        return False,"Ese pedido no existe"
+    
+    return True,None
+
+
+
+def modify_orders(status,ide):
+    check_conection = conect_DB()
+
+    if check_conection == "Error al conectarse a la base de datos":
+        return (0,"Error", str(check_conection))
+    
+    else:
+        verif_state,verif_res = verif_order_data(status,ide)
+
+        if not verif_state:
+            return (1,"Error al modificar al pedido", verif_res)
+        else:
+            modify_order_res = update_order(status,ide)
+
+            if modify_order_res is not None:
+                return (0,"Error",modify_order_res)
+                    
+            else:
+                return (2,"Usuario modificado","Los datos del Usuario fueron modificados con exito")    

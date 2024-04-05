@@ -1134,7 +1134,7 @@ class Orders(Frame):
 
         #var
 
-        order_columns = ("usuario","ropa","servicio","prioridad","comentario","precio","estado")
+        order_columns = ("id","usuario","ropa","servicio","prioridad","comentario","precio","estado")
 
         #create
 
@@ -1142,6 +1142,7 @@ class Orders(Frame):
         config_style(style,extra_window)
 
         tree_orders = ttk.Treeview(self,columns=order_columns,show="headings")
+        tree_orders.column("id",width=30)
         tree_orders.column("usuario",width=70)
         tree_orders.column("ropa",width=120)
         tree_orders.column("servicio",width=120)
@@ -1150,6 +1151,7 @@ class Orders(Frame):
         tree_orders.column("precio",width=60)
         tree_orders.column("estado",width=70)
 
+        tree_orders.heading("id",text="ID")
         tree_orders.heading("usuario",text="Usuario")
         tree_orders.heading("ropa",text="Ropa")
         tree_orders.heading("servicio",text="Servicio")
@@ -1188,7 +1190,7 @@ class Orders(Frame):
                             activebackground=extra_window.prim_hl_button, 
                             relief="flat", 
                             text="Establecer", 
-                            command= lambda: self.change_state())
+                            command= lambda: self.change_state(tree_orders,state_cb))
         exit_btt = Button(self, 
                             width=6, 
                             height=1, 
@@ -1200,6 +1202,8 @@ class Orders(Frame):
                             relief="flat", 
                             text="Volver", 
                             command= lambda: close(extra_window))
+        
+        self.update_tree(tree_orders)
 
         #configure
         
@@ -1225,7 +1229,7 @@ class Orders(Frame):
         #combobox
 
         state_cb.grid(column=1,row=4)
-        state_cb["values"] = ("Pausado","En espera","Finalizado")
+        state_cb["values"] = ("Pausado","En proceso","Finalizado")
         state_cb["state"] = "readonly"
 
         #button
@@ -1233,9 +1237,46 @@ class Orders(Frame):
         confirm_btt.grid(column=2,row=4,columnspan=2)
         exit_btt.grid(column=3,row=5)
     
-    def change_state(self):
-        pass
+    def change_state(self,tree,status_combo):
 
+        
+        select = tree.focus()
+        status = status_combo.get()
+
+        try:
+            selected_value = tree.item(select)["values"]
+            ide = selected_value[0]
+        except:
+            messagebox.showwarning("No hay ningun pedido seleccionado","Seleccione un pedido de la planilla")
+            return
+
+        msg = modify_orders(status,ide)
+        
+        title = msg[1]
+        body = msg[2]
+
+        if msg[0] == 0:
+            messagebox.showerror(title,body)
+        elif msg[0] == 1:
+            messagebox.showwarning(title,body)
+        elif msg[0] == 2:
+            messagebox.showinfo(title,body)
+        
+        self.update_tree(tree)
+
+    def update_tree(self,tree):
+
+        for children in tree.get_children():
+            tree.selection_remove(children)
+
+        tree.delete(*tree.get_children())
+        order_state, order_result = get_orders()
+
+        if order_state:
+            for item in order_result:
+                tree.insert("" ,END ,values=item)
+        else:
+            messagebox.showerror("Error",order_result)
 #
 #
 #
