@@ -839,11 +839,11 @@ class ShowOrder(Frame):
 
         exit_btt.grid(column=2 ,row=2, sticky="e")
         delete_btt.grid(column=0 ,row=2)
-  
+
     #
     #
     #
-  
+
     def select_tree(self,tree):
         select = tree.focus()
 

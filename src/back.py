@@ -6,13 +6,6 @@ from database import *
 from decouple import config
 import random
 
-#   Mini es una ventana que se usa exclusivamente para poder verificar el codigo de verificacion de email
-#   con el ingresado por el usuario en esta misma ventana. A esta ventana ademas de pasarle parametros de
-#   inicializacion se le pasa el parametro verif el cual es el numero que fue enviado al email y parent el
-#   cual hace referencia a la estrucutra register la cual posee una variable booleana llamada ok, que determina
-#   si el proceso de registro definitivo esta terminado, sin ningun inconveniente, y listo para ingresar
-#   en la base de datos.
-
 class Mini(Toplevel):
     def __init__(self, tittle, size, resize, back_color, verif_number, register_struct):
 
@@ -34,9 +27,6 @@ class Mini(Toplevel):
         #loop
 
         self.mainloop()
-    
-    #   La funcion aunthrntication es la estructura peronalizada hecha exclusivamente para la ventana Mini
-    #   la cual crea todos los widgets que se van a mostrar.
 
     def authentication(self ,verif_number, register_struct):
 
@@ -60,10 +50,6 @@ class Mini(Toplevel):
         main_label.grid(column=0, row=1, sticky="w", padx=10)
         main_input.grid(column=1, row=1, sticky="we")
         main_button.grid(column=2, row=2)
-    
-    #   La funcion verification lo que hace es comparar el numero ingresado en el entry main_input y la
-    #   variable verif la cual es el numero de verificacion enviado por emial, si coinciden setea en true
-    #   la variable ok y llama a la funcion close, si no simplemente muestra un mensaje de error.
 
     def verification(self,input_code,verif_number,register_struct):
         
@@ -72,15 +58,12 @@ class Mini(Toplevel):
             self.close_mini_window(self)
         else:
             messagebox.showerror("Error al verifcar su email","El codigo ingresado es incorrecto")
-    
-    #   La funcion close cierra y termina definitivamente los procesos de la ventana Mini
 
     def close_mini_window(self,object):
         object.quit()
         object.destroy()
 
-#   La funcion is_a_number determina si en una palabra esta contiene algun numero, si es asi retorna true
-#   si no false.
+
 
 def is_a_valid_char(word):
 
@@ -93,70 +76,50 @@ def is_a_valid_char(word):
     
     return output
 
-#
-#
-#
+
 
 def exist_user(user_data_search,parameter):
     users_data = select_user()
 
-    if users_data == "Error al mostrar los datos del ususario":
-        return False,users_data
-    else:
-        for user in users_data:
-            if user[parameter] == user_data_search:
-                return True,user
-        return True,None
+    for user in users_data:
+        if user[parameter] == user_data_search:
+            return user
+    return None
 
-#   La funcion register_user basicamente es la que se encarga de las validaciones iniciales de los valores
-#   ingresados durante el proceso de registro de una nueva cuenta en la estructura Register. Si todo esta 
-#   correcto devuelve un objeto de tipo Usuario, si no devuelve un string el cual contiene el motivo del
-#   fallo de la validacion.
+
 
 def verif_new_user_data(name,password,password_rep,email):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
         error_msg = "Ingrese un nombre de usuario valido"
-        return False,error_msg
+        return error_msg
     
     elif "@gmail.com" not in email or len(email) <= 10 or email == "" or len(email) > 40:
         error_msg = "La estructura del email no es correcta"
-        return False,error_msg
+        return error_msg
     
     elif password == "" or len(password) > 20:
         error_msg = "No se ha ingresado la contraseña valida"
-        return False,error_msg
+        return error_msg
     
     elif password != password_rep:
         error_msg = "Las contraseñas no coinciden"
-        return False,error_msg
+        return error_msg
 
-
-    status_search,res_search = exist_user(name,0)
-
-    if not status_search:
-        return status_search,res_search
+    res_search = exist_user(name,0)
     
-    elif res_search is not None:
-        return False,"Ese nombre de usuario ya existe escoja otro"
-        
-    status_search,res_search = exist_user(email,2)
-
-    if not status_search:
-        return status_search,res_search
+    if res_search is not None:
+        return "Ese nombre de usuario ya existe escoja otro"
     
-    elif res_search is not None:
-        return False,"Ese email ya esta registrado"
-        
+    res_search = exist_user(email,2)
+    
+    if res_search is not None:
+        return "Ese email ya esta registrado"
+    
     user = Usuario(name,password,email)
-    return True,user 
+    return user 
 
-#   La funcion send_email es la que se encarga de enviar un email que contiene el numero de verificacion
-#   al email del usuario que pretende registrarse. El remitente del email y la contraseña de dicha cuenta 
-#   se acceden a traves del archivo .env donde en USER se encuentra el nombre de la cuenta de email del 
-#   remitente y en PASSWORD se encuentra una contraseña de aplicacion generada para acceder a la cuenta
-#   del remitente. Si logra enviar el email devuelve el numero de verificacion generado, si no devuelve
-#   un string de error.
+
 
 def send_email_autenti(mail):
     try:
@@ -173,41 +136,29 @@ def send_email_autenti(mail):
 
         server.quit()
 
-        return True,autenti_number
+        return autenti_number
     except:
-        return False,"Error al envial el mail, verifique que el remitente o el destinatario"
+        return "Error al envial el mail, verifique que el remitente o el destinatario"
 
-#   La funcion register_in_db es la que se encarga de validar completamente los datos ingresados en la 
-#   operacion de registro de una nueva cuenta, y si todos estan correctos registra los datos en la BD. 
-#   Esta funcion siempre devuelve una tupla de 3 elementos, los cuales son utilizados en la estructura
-#   register para informarle al usuario la situacion del registro de su cuenta, el primer elemento es un
-#   numero que representa si el mensaje es un error, una advertencia o informacion, el segundo elemento
-#   es el titulo del mensaje y el tercero es el cuerpo del mensaje.
-#   Las validaciones se hacen en el siguiente orden:
-#   1. Se verifica si se puede conectar a la base de datos, si se puede se continua
-#   2. Se verifica si los datos ingresados son correctos, si son correctos se continua
-#   3. Se envia el email con el codigo de verifiacion, si se logro enviar el email se continua
-#   4. Se abre la ventana Mini para pedir el codigo de verifiacion, si no se cancela el proceso se continua
-#   5. Se trata de registrar los datos a la BD, si se puede se cierra la ventana Extra asociada al Register
-#   y se finaliza el proceso de registro.
+
 
 def register_in_db(register_struct,main_window,name,password,rep,email):
 
     check_conection = conect_DB()
 
-    if check_conection == "Error al conectarse a la base de datos":
-        return (0,"Error", str(check_conection))
+    if isinstance(check_conection,str):
+        return (0,"Error", check_conection)
     
     else:
-        verif_state,verif_res = verif_new_user_data(name, password, rep, email)
+        verif_res = verif_new_user_data(name, password, rep, email)
 
-        if not verif_state:
+        if isinstance(verif_res,str):
             return (1,"Error al registrar la cuenta", verif_res)
         
         else:
-            email_state,email_res = send_email_autenti(verif_res.email)
+            email_res = send_email_autenti(verif_res.email)
 
-            if not email_state:
+            if isinstance(email_res,str):
                 return (1,"Error de email", email_res)
             
             else:
@@ -229,9 +180,8 @@ def register_in_db(register_struct,main_window,name,password,rep,email):
                         main_window.destroy()
                         return (2,"Usuario registrado","El usuario a sido creado y registrado con exito ingrese sesion en la pagina principal")
 
-#
-#
-#
+
+
 
 def verify_user(name,password):
 
@@ -247,9 +197,7 @@ def verify_user(name,password):
     else:
         return True,None
 
-#
-#
-#
+
 
 def login_user(user_name,user_password):
 
@@ -265,36 +213,31 @@ def login_user(user_name,user_password):
             return False,check_conection
         
         else:
-            state_search,res_search = exist_user(user_name,0)
+            res_search = exist_user(user_name,0)
         
-            if not state_search:
-                return state_search,res_search
-        
-            else:
-                if res_search is None:
-                    return False,"El usuario no existe"
+            if res_search is None:
+                return False,"El usuario no existe"
             
-                else:
-                    if res_search[1] != user_password:
-                        return False,"Contraseña incorrecta"
+            else:
+                if res_search[1] != user_password:
+                    return False,"Contraseña incorrecta"
                 
-                    else:
-                        if res_search[3] == "conectado":
-                            return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
+                else:
+                    if res_search[3] == "conectado":
+                        return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
                     
-                        else:
-                            user_state_switch(res_search[0],True)
-                            return True,Usuario(res_search[0],res_search[1],res_search[2])               
+                    else:
+                        user_state_switch(res_search[0],True)
+                        return True,Usuario(res_search[0],res_search[1],res_search[2])               
 
-#
-#
-# 
+
+
 
 def de_login(user_name):
 
-    state_search,res_search = exist_user(user_name,0)
+    res_search = exist_user(user_name,0)
 
-    if not state_search:
+    if res_search is None:
         return False,"El usuario que incio sesion dejo de estar registrado en la base de datos"
     else:
         if res_search[3] == "desconectado":
@@ -303,10 +246,9 @@ def de_login(user_name):
             user_state_switch(user_name,False)
             return True,"La sesion fue cerrada con exito"
 
-#
-#
-#
-        
+
+
+
 def verifiy_order(ropa,servicio,prioridad,comentario):
 
     if ropa == "" or servicio == "" or prioridad == "":
@@ -316,9 +258,8 @@ def verifiy_order(ropa,servicio,prioridad,comentario):
         order = Pedido(ropa,servicio,prioridad,comentario)
         return True,order
 
-#
-#
-#
+
+
 
 def create_order_db(ropa,servicio,prioridad,conentario,user):
 
@@ -343,9 +284,7 @@ def create_order_db(ropa,servicio,prioridad,conentario,user):
             else:
                 return 2,"Pedido creado","Se pudo realizar el pedido exitosamente"
 
-#
-#
-#
+
 
 def get_user_orders(user):
 
@@ -362,9 +301,7 @@ def get_user_orders(user):
                 display_orders.append(order)
         return True,display_orders
 
-#
-#
-#
+
 
 def delete_order(id_order):
 
@@ -378,10 +315,8 @@ def delete_order(id_order):
         else:
             return True,"Su pedido fue cancelado con exito"
 
-#
-#
-#
-        
+
+
 def get_fields_name():
     ropas = []
     servicios = []
@@ -404,4 +339,3 @@ def get_fields_name():
             prioridades.append(prioridad[0])   
     
         return ropas,servicios,prioridades
-    
