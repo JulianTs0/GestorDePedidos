@@ -4,9 +4,6 @@ from tkinter import messagebox
 from tkinter import font
 from back import *
 
-#   Main es la ventana principal que va a tener el programa mientras se ejecute
-#   solo va a contener las esctructuras Login y MainMenu.
-
 class Main(Tk):
     def __init__(self, tittle, size, resize, back_color):
 
@@ -39,12 +36,7 @@ class Main(Tk):
 
         self.mainloop()
 
-#   Login es una esctructura que se utiliza en la ventana principal Main y es la primera en aparecer
-#   al ejecutar el programa, esta estrucutra nos permite iniciar sesion con los 3 tipos de cuenta
-#   que hay en el programa Usuario,Administrador,Desarrollador, y verificando los datos ingresados con
-#   los almacenados en la base de datos se acepta/denega el acceso al menu principal MainMenu.
-#   Esta estructura tambien nos permite registrar una cuenta de usuario en la base de datos si es 
-#   que no teniamos una antes de abrir el programa.
+
 
 class Login(Frame):
     def __init__(self, main_window):
@@ -59,8 +51,6 @@ class Login(Frame):
 
         self.create_login(main_window)
 
-    #   La funcion createlogin es la funcion que crea todos los widgets de la estructura Login
-    
     def create_login(self, main_window):
 
         #var
@@ -169,28 +159,19 @@ class Login(Frame):
         login_button.grid(column=0, row=7, columnspan=3)
         exit_button.grid(column=2,row=7 ,padx=20 ,sticky="e")
 
-    #
-    #
-    #
-
     def login(self, main_window, user_name, user_password):
-        login_state,login_res = login_user(user_name,user_password)
-        if login_state:
+        login_res = login_user(user_name,user_password)
+        if isinstance(login_res,str):
+            messagebox.showwarning("Error al inciar sesion",login_res)
+        else:
             messagebox.showinfo("Inicio de sesion","Inicio de sesion exitoso")
             main_window.status.destroy()
             main_window.status = MainMenu(main_window, login_res)
-        else:
-            messagebox.showwarning("Error al inciar sesion",login_res)
-         
-    #   La funcion register es la funcion que crea una nueva ventana de tipo Extra, la cual se le
-    #   carga como ultimo parametro "r" el cual selecciona la estructura Register
 
     def register(self,back_color):
         Extra("Registro de cuenta",[450,600,700,50],True,back_color,"r")
 
-#
-#
-#
+
 
 class MainMenu(Frame):
     def __init__(self, main_window, user):
@@ -209,11 +190,7 @@ class MainMenu(Frame):
         #struct
 
         self.create_menu(main_window)
-    
-    #
-    #
-    #
-    
+
     def create_menu(self,main_window):
         
         #create
@@ -295,45 +272,27 @@ class MainMenu(Frame):
         first_btt.grid(column=0 ,row=2 ,columnspan=3)
         secc_btt.grid(column=0 ,row=4 ,columnspan=3)
         exit_btt.grid(column=2 ,row=5 ,sticky="e" ,padx=25)
-    
-    #
-    #
-    #
-    
+
     def order(self,user,back_color):
         Extra("Generador de pedidos",[500,600,700,50],True,back_color,"o",user)
-    
-    #
-    #
-    #
-     
+
     def show_orders(self,user,back_color):
         Extra("Lista de pedidos", (800,600,350,100), True, back_color, "s",user)
-    
-    #
-    #
-    #
-    
+
     def backward(self,main_window,user_name):
-        delogin_state,delogin_res = de_login(user_name)
-        if delogin_state:
-            messagebox.showinfo("Sesion cerrada",delogin_res)
+        delogin_res = de_login(user_name)
+        if delogin_res is not None:
+            messagebox.showerror("Error",delogin_res)
+        else:
+            messagebox.showinfo("Sesion cerrada","La sesion fue cerrada con exito")
             main_window.status.destroy()
             main_window.status = Login(main_window)
-        else:
-            messagebox.showerror("Error",delogin_res)
     
-    #
-    #
-    #
-            
     def close_and_delogin(self,main_window,user_name):
-        de_login(user_name)
+        de_login(user_name,True)
         close(main_window)
 
-#   Extra es una ventana auxiliar que sirve para mostrar esctructuras temporales, estas 
-#   estructuras no estan pensadas para permanecer mucho tiempo y se seleccionan con el 
-#   parametro op.
+
 
 class Extra(Toplevel):
     def __init__(self, tittle, size, resize, back_color, op, user_data=None):
@@ -374,15 +333,7 @@ class Extra(Toplevel):
 
         self.mainloop()
 
-#   Register es una estrcutrua que se utiliza en una ventana auxiliar Extra, esta estructura nos permite
-#   registrar correctamente una cuenta de usuario nueva con un nombre de usuario (que no debe estar vacio ni
-#   poseer un numero) un gmail (que debe ser un email de google es decir terminar con @gmail.com) y una 
-#   contraseña que no tiene muchas validaciones, al tener todos los datos correctos y poder efectuar otras 
-#   validaciones extras (conexion con la base de datos, datos validos de la cuenta remitente de gmail) se 
-#   envia un email a la direccion ingresada con un codigo numerico y se abre otra pestaña para ingresar dicho
-#   codigo, si el usuario ingresa el codigo correcto se finaliza el proceso de registro, se añade la nueva 
-#   cuenta de usuario a la base de datos y se cierran todas las ventanas emergentes volviendo a la ventana
-#   principal.
+
 
 class Register(Frame):
     def __init__(self,extra_window):
@@ -400,8 +351,6 @@ class Register(Frame):
         #struct
 
         self.create_account(extra_window)
-
-    #   La funcion create_account crea todos los widgets de la estructura Register
 
     def create_account(self ,extra_window):
 
@@ -533,13 +482,6 @@ class Register(Frame):
         confirm_btt.grid(column=0, row=5, columnspan=2)
         exit_btt.grid(column=4, row=5)
 
-    #   La funcion register_account muestra distintos tipos de ventanas emergentes (messagebox)
-    #   las cuales muestran si hubo algun error de validacion de datos, problemas con el envio
-    #   de emails, problemas con la conexion a la base de datos o problemas con el registro de
-    #   nuevas cuentas a la base de datos, caso contrario si no hubo ninguna complicacion en 
-    #   el registro, muestra una ventana informando el exito de la operacion y esto garantiza
-    #   el definitivo registro en la base de datos.
-
     def register_account(self, extra_window, name, password, rep, email):
 
         msg = register_in_db(self, extra_window, name, password, rep, email)
@@ -553,9 +495,7 @@ class Register(Frame):
         elif msg[0] == 2:
             messagebox.showinfo(title,body)
 
-#
-#
-#
+
 
 class Order(Frame):
     def __init__(self ,extra_window, user):
@@ -573,10 +513,6 @@ class Order(Frame):
         #struct
 
         self.create_order(extra_window)
-
-    #
-    #
-    #
 
     def create_order(self,extra_window):
 
@@ -703,10 +639,6 @@ class Order(Frame):
         confirm_btt.grid(column=0 ,row=5, columnspan=2)
         exit_btt.grid(column=2, row=5)   
 
-    #
-    #
-    #
-
     def make_order(self,ropa,servicio,prioridad,conentario,user):
 
         msg = create_order_db(ropa,servicio,prioridad,conentario,user)
@@ -718,9 +650,7 @@ class Order(Frame):
         elif msg[0] == 2:
             messagebox.showinfo(msg[1],msg[2]) 
 
-#
-#
-#
+
 
 class ShowOrder(Frame):
     def __init__(self ,extra_window,user):
@@ -738,10 +668,6 @@ class ShowOrder(Frame):
         #struct
 
         self.show_display(extra_window)
-
-    #
-    #
-    #
 
     def show_display(self ,extra_window):
 
@@ -840,41 +766,32 @@ class ShowOrder(Frame):
         exit_btt.grid(column=2 ,row=2, sticky="e")
         delete_btt.grid(column=0 ,row=2)
 
-    #
-    #
-    #
-
     def select_tree(self,tree):
         select = tree.focus()
 
         if not select:
-           messagebox.showwarning("No se pudo cancelar el pedido","Seleccione un pedido para cancelarlo")
+            messagebox.showwarning("No se pudo cancelar el pedido","Seleccione un pedido para cancelarlo")
         else:
             values = tree.item(select)["values"]
-            delete_state,delete_result = delete_order(values[0])
-            if not delete_state:
-               messagebox.showerror("Error",delete_result)
+            delete_result = delete_order(values[0])
+            if delete_result is not None:
+                messagebox.showerror("Error",delete_result)
             else:
-                messagebox.showinfo("Accion exitosa",delete_result)
+                messagebox.showinfo("Accion exitosa","Su pedido fue cancelado con exito")
         
         self.update_tree(tree)
-    
-    #
-    #
-    #
 
     def update_tree(self,tree):
         tree.delete(*tree.get_children())
-        orders_state, orders_result = get_user_orders(self.user)
-        if orders_state:
+        orders_result = get_user_orders(self.user)
+
+        if isinstance(orders_result,str):
+            messagebox.showerror("Error",orders_result)
+        else:
             for item in orders_result:
                 tree.insert("" ,END ,values=item)
-        else:
-            messagebox.showerror("Error",orders_result)
 
 
-#   La funcion setup basicamente tiene una lista de lineas de codigo que inicializan ciertos parametros de
-#   las ventanas como el titulo, el tamaño, el reescalado, el color, etc.
 
 def setup(self, tittle, size, resize, back_color):
     self.title(tittle)
@@ -883,16 +800,13 @@ def setup(self, tittle, size, resize, back_color):
     self.config(bg=back_color)
     self.protocol("WM_DELETE_WINDOW", lambda: close(self))
 
-#   La funcion close se usa en todos los botones de salida y basicamente termina definitivamente
-#   el funcionamiento de las ventanas Extra o MainMenu.
+
 
 def close(object):
     object.quit()
     object.destroy()
 
-#
-#
-#
+
 
 if __name__ == "__main__":
    Main("Volpe project", (800,600,300,50), True, "#D7D6D2")

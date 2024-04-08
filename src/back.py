@@ -173,7 +173,7 @@ def register_in_db(register_struct,main_window,name,password,rep,email):
                     insert_db_res = insert_user(verif_res)
 
                     if insert_db_res is not None:
-                       return (0,"Error",insert_db_res)
+                        return (0,"Error",insert_db_res)
                     
                     else:
                         main_window.quit()
@@ -182,81 +182,81 @@ def register_in_db(register_struct,main_window,name,password,rep,email):
 
 
 
-
 def verify_user(name,password):
 
     if name == "" or password == "":
-        return False,"Complete los campos antes de iniciar sesion"
+        return "Complete los campos antes de iniciar sesion"
     
     elif not is_a_valid_char(name) or len(name) > 30 :
-        return False,"Ingrese un nombre de usuario valido"
+        return "Ingrese un nombre de usuario valido"
     
     elif len(password) > 20:
-        return False,"Ingrese una contraseña valida"
+        return "Ingrese una contraseña valida"
     
     else:
-        return True,None
+        return None
 
 
 
 def login_user(user_name,user_password):
 
-    verif_state,verif_res  = verify_user(user_name,user_password)
+    verif_res  = verify_user(user_name,user_password)
 
-    if not verif_state:
-        return False, verif_res
+    if verif_res is not None:
+        return verif_res
     
     else:
         check_conection = conect_DB()
 
-        if check_conection == "Error al conectarse a la base de datos":
-            return False,check_conection
+        if isinstance(check_conection,str):
+            return check_conection
         
         else:
             res_search = exist_user(user_name,0)
         
             if res_search is None:
-                return False,"El usuario no existe"
+                return "El usuario no existe"
             
             else:
                 if res_search[1] != user_password:
-                    return False,"Contraseña incorrecta"
+                    return "Contraseña incorrecta"
                 
                 else:
                     if res_search[3] == "conectado":
-                        return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
+                        return "El usuario ingresado ya se encuentra logeado en otro dispositivo"
                     
                     else:
                         user_state_switch(res_search[0],True)
-                        return True,Usuario(res_search[0],res_search[1],res_search[2])               
+                        return Usuario(res_search[0],res_search[1],res_search[2])               
 
 
 
+def de_login(user_name,force=False):
 
-def de_login(user_name):
+    if not force:
+        res_search = exist_user(user_name,0)
 
-    res_search = exist_user(user_name,0)
-
-    if res_search is None:
-        return False,"El usuario que incio sesion dejo de estar registrado en la base de datos"
-    else:
-        if res_search[3] == "desconectado":
-            return False,"La sesion no se puede cerrar porque el usuario no esta conectado"
+        if res_search is None:
+            return "El usuario que incio sesion dejo de estar registrado en la base de datos"
         else:
-            user_state_switch(user_name,False)
-            return True,"La sesion fue cerrada con exito"
-
+            if res_search[3] == "desconectado":
+                return "La sesion no se puede cerrar porque el usuario no esta conectado"
+            else:
+                user_state_switch(user_name,False)
+                return None
+    else:
+        user_state_switch(user_name,False)
 
 
 
 def verifiy_order(ropa,servicio,prioridad,comentario):
 
     if ropa == "" or servicio == "" or prioridad == "":
-        return False,"Complete los campos antes de hacer un pedido"
+        return "Complete los campos antes de hacer un pedido"
     
     else:
         order = Pedido(ropa,servicio,prioridad,comentario)
-        return True,order
+        return order
 
 
 
@@ -266,23 +266,23 @@ def create_order_db(ropa,servicio,prioridad,conentario,user):
     if conentario[-1] == "\n":
             conentario = conentario[:-1]
 
-    state_order,res_order = verifiy_order(ropa,servicio,prioridad,conentario)
+    res_order = verifiy_order(ropa,servicio,prioridad,conentario)
 
-    if not state_order:
-       return 1,"Error al realizar el pedido",res_order
+    if isinstance(res_order,str):
+        return (1,"Error al realizar el pedido",res_order)
     
     else:
-        option = messagebox.askyesno("Ultima confirmacion",f"El precio del pedido es de {res_order.precio} desea continuar?")
+        option = messagebox.askyesno("Ultima confirmacion",f"El precio del pedido es de ${res_order.precio} desea continuar?")
         if not option:
-            return 2,"Pedido cancelado","Se cancelo el pedido"
+            return (2,"Pedido cancelado","Se cancelo el pedido")
         
         else:
             insert_res = insert_order(res_order,user)
             if insert_res is not None:
-                return 0,"Error",insert_res
+                return (0,"Error",insert_res)
             
             else:
-                return 2,"Pedido creado","Se pudo realizar el pedido exitosamente"
+                return (2,"Pedido creado","Se pudo realizar el pedido exitosamente")
 
 
 
@@ -291,15 +291,15 @@ def get_user_orders(user):
     all_orders = select_order()
     display_orders = []
 
-    if all_orders == "Error al mostrar los pedidos del ususario":
-        return False,all_orders
-    
+    if isinstance(all_orders,str):
+        return all_orders
+
     else:
         for order in all_orders:
             if order[1] == user.name:
                 order = [order[0],order[2],order[3],order[4],order[5],order[6]]
                 display_orders.append(order)
-        return True,display_orders
+        return display_orders
 
 
 
@@ -307,13 +307,13 @@ def delete_order(id_order):
 
     option = messagebox.askyesno("Ultima confirmacion",f"Desea cancelar su pedido?")
     if not option:
-        return True,"Se aborto la operacion con exito"
+        return "Se aborto la operacion con exito"
     else:
         delete_res = delete_order_db(id_order)
         if delete_res is not None:
-            return False,delete_res
+            return delete_res
         else:
-            return True,"Su pedido fue cancelado con exito"
+            return None
 
 
 
