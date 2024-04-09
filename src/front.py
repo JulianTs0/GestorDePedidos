@@ -287,7 +287,7 @@ class MainMenu(Frame):
             messagebox.showinfo("Sesion cerrada","La sesion fue cerrada con exito")
             main_window.status.destroy()
             main_window.status = Login(main_window)
-    
+
     def close_and_delogin(self,main_window,user_name):
         de_login(user_name,True)
         close(main_window)

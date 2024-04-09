@@ -260,7 +260,6 @@ def verifiy_order(ropa,servicio,prioridad,comentario):
 
 
 
-
 def create_order_db(ropa,servicio,prioridad,conentario,user):
 
     if conentario[-1] == "\n":
@@ -318,9 +317,6 @@ def delete_order(id_order):
 
 
 def get_fields_name():
-    ropas = []
-    servicios = []
-    prioridades = []
     error = "Error al mostrar el stock"
 
     ropas_data = get_service_stock_data("ropas")
@@ -328,14 +324,7 @@ def get_fields_name():
     prioridades_data = get_service_stock_data("prioridades")
 
     if ropas_data == error or servicios_data == error or prioridades_data == error:
-        return "Error","Error","Error"
+        return None
     
     else:
-        for ropa in ropas_data:
-            ropas.append(ropa[0])
-        for servicio in servicios_data:
-            servicios.append(servicio[0])
-        for prioridad in prioridades_data:
-            prioridades.append(prioridad[0])   
-    
-        return ropas,servicios,prioridades
+        return ropas_data,servicios_data,prioridades_data
