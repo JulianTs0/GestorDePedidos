@@ -1,6 +1,6 @@
 from database import *
 
-#   Clase Usuario, usada para crear objetos tipo Usuario y tenes mas comodamente los 3 campos que contiene
+
 
 class Usuario:
     def __init__(self, name, password, email):
@@ -9,21 +9,12 @@ class Usuario:
         self.password = password
         self.email = email
 
-#
-#
-#
 
-class Bien:
-    def __init__(self,ident,precio):
-
-        self.ident = ident
-        self.precio = precio
-
-#
-#
-#
 
 class Pedido:
+    
+    # Validar el error si getfieldstock retorna ""
+
     def __init__(self, ropa, servicio, prioridad, comentario):
         
         self.ropa = ropa
@@ -39,28 +30,25 @@ class Pedido:
         Prioridades = self.get_field_stock("prioridades")
 
         for ropa in Ropas:
-            if ropa.ident == self.ropa:
-                final += ropa.precio
+            if ropa[0] == self.ropa:
+                final += ropa[1]
                 break
         
         for servicio in Servicios:
-            if servicio.ident == self.servicio:
-                final += servicio.precio
+            if servicio[0] == self.servicio:
+                final += servicio[1]
                 break
         
         for prioridad in Prioridades:
-            if prioridad.ident == self.prioridad:
-                final += prioridad.precio
+            if prioridad[0] == self.prioridad:
+                final += prioridad[1]
                 break
         
         return final
 
     def get_field_stock(self,field):
-        bienes = []
         field_stock = get_service_stock_data(field)
         if field_stock == "Error al mostrar el stock":
             return ""
         else:
-            for stock in field_stock:
-                bienes.append(Bien(stock[0],stock[1]))
-            return bienes
+            return field_stock

@@ -122,6 +122,9 @@ def verif_new_user_data(name,password,password_rep,email):
 
 
 def send_email_autenti(mail):
+    
+    #Buscar otra libreria para madnar emials
+
     try:
         autenti_number = random.randint(10000,999999)
         msg = f"Subject: Mensaje de autentificacion de mail\n\nIngrese el siguiente codigo para terminar de registrar su cuenta en el sistema\nEl codigo es : {autenti_number}"
@@ -143,6 +146,8 @@ def send_email_autenti(mail):
 
 
 def register_in_db(register_struct,main_window,name,password,rep,email):
+
+    #Ver otra forma de retornar los valores
 
     check_conection = conect_DB()
 
@@ -262,6 +267,8 @@ def verifiy_order(ropa,servicio,prioridad,comentario):
 
 def create_order_db(ropa,servicio,prioridad,conentario,user):
 
+    #Ver otra forma de retornar los valores
+
     if conentario[-1] == "\n":
             conentario = conentario[:-1]
 
@@ -319,9 +326,9 @@ def delete_order(id_order):
 def get_fields_name():
     error = "Error al mostrar el stock"
 
-    ropas_data = get_service_stock_data("ropas")
-    servicios_data = get_service_stock_data("servicios")
-    prioridades_data = get_service_stock_data("prioridades")
+    ropas_data = get_service_stock_data("ropas",True)
+    servicios_data = get_service_stock_data("servicios",True)
+    prioridades_data = get_service_stock_data("prioridades",True)
 
     if ropas_data == error or servicios_data == error or prioridades_data == error:
         return None

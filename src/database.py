@@ -131,21 +131,24 @@ def user_state_switch(user_name,state):
 
 
 
-def get_service_stock_data(stock_table):
+def get_service_stock_data(stock_table,only_name=False):
 
     try:
-        aux = []
 
         conect = conect_DB()
         cursor = conect.cursor()
-        cursor.execute(f"select nombre from {stock_table};")
+        cursor.execute(f"select nombre, precio from {stock_table};")
         data = cursor.fetchall()
         conect.commit()
         conect.close()
         
-        for i in data:
-            aux.append(i[0])
-        return aux
+        if only_name:
+            aux = []
+            for i in data:
+                aux.append(i[0])
+            return aux
+        else:
+            return data
 
     except mysql.connector.Error as error:
         print(f"Error al mostrar los datos del ususario {error}")
