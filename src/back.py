@@ -123,7 +123,7 @@ def verif_new_user_data(name,password,password_rep,email):
 
 def send_email_autenti(mail):
     
-    #Buscar otra libreria para madnar emials
+    #Averiguar porque tarda tanto en enviar un emial
 
     try:
         autenti_number = random.randint(10000,999999)
@@ -147,24 +147,22 @@ def send_email_autenti(mail):
 
 def register_in_db(register_struct,main_window,name,password,rep,email):
 
-    #Ver otra forma de retornar los valores
-
     check_conection = conect_DB()
 
     if isinstance(check_conection,str):
-        return (0,"Error", check_conection)
+        return f"0|Error|{check_conection}"
     
     else:
         verif_res = verif_new_user_data(name, password, rep, email)
 
         if isinstance(verif_res,str):
-            return (1,"Error al registrar la cuenta", verif_res)
+            return f"1|Error al registrar la cuenta|{verif_res}"
         
         else:
             email_res = send_email_autenti(verif_res.email)
 
             if isinstance(email_res,str):
-                return (1,"Error de email", email_res)
+                return f"1|Error de email|{email_res}"
             
             else:
                 print(email_res)
@@ -172,18 +170,18 @@ def register_in_db(register_struct,main_window,name,password,rep,email):
                 register_struct.lift()
 
                 if register_struct.ok == False:
-                    return (1,"Registro cancelado","Vuelva a ingresar los datos para registrar una cuenta")
+                    return "1|Registro cancelado|Vuelva a ingresar los datos para registrar una cuenta"
                 
                 else:
                     insert_db_res = insert_user(verif_res)
 
                     if insert_db_res is not None:
-                        return (0,"Error",insert_db_res)
+                        return f"0|Error|{insert_db_res}"
                     
                     else:
                         main_window.quit()
                         main_window.destroy()
-                        return (2,"Usuario registrado","El usuario a sido creado y registrado con exito ingrese sesion en la pagina principal")
+                        return "2|Usuario registrado|El usuario a sido creado y registrado con exito ingrese sesion en la pagina principal"
 
 
 
@@ -267,28 +265,26 @@ def verifiy_order(ropa,servicio,prioridad,comentario):
 
 def create_order_db(ropa,servicio,prioridad,conentario,user):
 
-    #Ver otra forma de retornar los valores
-
     if conentario[-1] == "\n":
             conentario = conentario[:-1]
 
     res_order = verifiy_order(ropa,servicio,prioridad,conentario)
 
     if isinstance(res_order,str):
-        return (1,"Error al realizar el pedido",res_order)
+        return f"1|Error al realizar el pedido|{res_order}"
     
     else:
         option = messagebox.askyesno("Ultima confirmacion",f"El precio del pedido es de ${res_order.precio} desea continuar?")
         if not option:
-            return (2,"Pedido cancelado","Se cancelo el pedido")
+            return "2|Pedido cancelado|Se cancelo el pedido"
         
         else:
             insert_res = insert_order(res_order,user)
             if insert_res is not None:
-                return (0,"Error",insert_res)
+                return f"0|Error|{insert_res}"
             
             else:
-                return (2,"Pedido creado","Se pudo realizar el pedido exitosamente")
+                return "2|Pedido creado|Se pudo realizar el pedido exitosamente"
 
 
 

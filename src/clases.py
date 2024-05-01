@@ -12,8 +12,6 @@ class Usuario:
 
 
 class Pedido:
-    
-    # Validar el error si getfieldstock retorna ""
 
     def __init__(self, ropa, servicio, prioridad, comentario):
         

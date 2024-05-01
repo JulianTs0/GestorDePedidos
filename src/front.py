@@ -484,15 +484,13 @@ class Register(Frame):
 
     def register_account(self, extra_window, name, password, rep, email):
 
-        msg = register_in_db(self, extra_window, name, password, rep, email)
-        title = msg[1]
-        body = msg[2]
+        option,title,body = register_in_db(self, extra_window, name, password, rep, email).split("|")
 
-        if msg[0] == 0:
+        if option == "0":
             messagebox.showerror(title,body)
-        elif msg[0] == 1:
+        elif option == "1":
             messagebox.showwarning(title,body)
-        elif msg[0] == 2:
+        elif option == "2":
             messagebox.showinfo(title,body)
 
 
@@ -641,14 +639,14 @@ class Order(Frame):
 
     def make_order(self,ropa,servicio,prioridad,conentario,user):
 
-        msg = create_order_db(ropa,servicio,prioridad,conentario,user)
+        option,title,body = create_order_db(ropa,servicio,prioridad,conentario,user).split("|")
 
-        if msg[0] == 0:
-            messagebox.showerror(msg[1],msg[2])
-        elif msg[0] == 1:
-            messagebox.showwarning(msg[1],msg[2])
-        elif msg[0] == 2:
-            messagebox.showinfo(msg[1],msg[2]) 
+        if option == "0":
+            messagebox.showerror(title,body)
+        elif option == "1":
+            messagebox.showwarning(title,body)
+        elif option == "2":
+            messagebox.showinfo(title,body) 
 
 
 
