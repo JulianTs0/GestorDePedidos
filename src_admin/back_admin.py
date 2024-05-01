@@ -5,8 +5,7 @@ from smtplib import *
 from database_admin import *
 from decouple import config
 
-#   La funcion is_a_number determina si en una palabra esta contiene algun numero, si es asi retorna true
-#   si no false.
+
 
 def is_a_number(number):
 
@@ -20,6 +19,7 @@ def is_a_number(number):
     return output
 
 
+
 def is_a_valid_char(word):
 
     output = True
@@ -31,24 +31,27 @@ def is_a_valid_char(word):
     
     return output
 
-#
-#
-#
+
 
 def exist_admin(user_data_search,parameter):
     users_data = select_admin()
 
-    if users_data == "Error al mostrar los datos del admin":
-        return False,users_data
-    else:
-        for user in users_data:
-            if user[parameter] == user_data_search:
-                return True,user
-        return True,None
+    for user in users_data:
+        if user[parameter] == user_data_search:
+            return user
+    return None
 
-#
-#
-#
+#    users_data = select_admin()
+# 
+#    if users_data == "Error al mostrar los datos del admin":
+#        return False,users_data
+#    else:
+#       for user in users_data:
+#            if user[parameter] == user_data_search:
+#                return True,user
+#        return True,None
+
+
 
 def verify_admin(name,password):
 
@@ -64,9 +67,7 @@ def verify_admin(name,password):
     else:
         return True,None
 
-#
-#
-#
+
 
 def login_admin(user_name,user_password):
 
@@ -82,36 +83,30 @@ def login_admin(user_name,user_password):
             return False,check_conection
         
         else:
-            state_search,res_search = exist_admin(user_name,1)
+            res_search = exist_admin(user_name,1)
         
-            if not state_search:
-                return state_search,res_search
-        
-            else:
-                if res_search is None:
-                    return False,"El usuario no existe"
+            if res_search is None:
+                return "El administrador no existe"
             
-                else:
-                    if res_search[2] != user_password:
-                        return False,"Contraseña incorrecta"
+            else:
+                if res_search[2] != user_password:
+                    return False,"Contraseña incorrecta"
                 
-                    else:
-                        if res_search[3] == "conectado":
-                            return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
+                else:
+                    if res_search[3] == "conectado":
+                        return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
                     
-                        else:
-                            user_state_switch(res_search[1],True)
-                            return True,Admin(res_search[1],res_search[2])               
+                    else:
+                        user_state_switch(res_search[1],True)
+                        return True,Admin(res_search[1],res_search[2])               
 
-#
-#
-# 
+
 
 def de_login(user_name):
 
-    state_search,res_search = exist_admin(user_name,1)
+    res_search = exist_admin(user_name,1)
 
-    if not state_search:
+    if res_search is None:
         return False,"El usuario que incio sesion dejo de estar registrado en la base de datos"
     else:
         if res_search[2] == "desconectado" or res_search[2] is None:
@@ -120,9 +115,7 @@ def de_login(user_name):
             user_state_switch(user_name,False)
             return True,"La sesion fue cerrada con exito"
 
-#
-#
-# 
+
 
 def get_admins(user):
     all_admins = select_admin()
@@ -138,9 +131,7 @@ def get_admins(user):
                 admins_data.append(admin)
         return True,admins_data
 
-#
-#
-#
+
 
 def verif_admin_data(name,password,password_rep,ide=None):
 
@@ -156,12 +147,9 @@ def verif_admin_data(name,password,password_rep,ide=None):
         error_msg = "Las contraseñas no coinciden"
         return False,error_msg
 
-    status_search,res_search = exist_admin(name,1)
-
-    if not status_search:
-        return status_search,res_search
+    res_search = exist_admin(name,1)
     
-    elif res_search is not None:
+    if res_search is not None:
         return False,"Ese nombre de usuario ya existe escoja otro"
     
     if ide is not None:
@@ -170,9 +158,7 @@ def verif_admin_data(name,password,password_rep,ide=None):
     user = Admin(name,password)
     return True,user 
 
-#
-#
-#
+
 
 def register_admin_db(name,password,rep):
 
@@ -196,9 +182,7 @@ def register_admin_db(name,password,rep):
             else:
                 return (2,"Administrador registrado","El Administrador a sido creado y registrado con exito")
 
-#
-#
-#
+
 
 def name_for_id(name):
     ides = get_admin_id()
@@ -207,9 +191,7 @@ def name_for_id(name):
         if data[1] == name:
             return data[0]
 
-#
-#
-#
+
 
 def modify_admin(name,password,rep,ide):
     check_conection = conect_DB()
@@ -232,9 +214,7 @@ def modify_admin(name,password,rep,ide):
             else:
                 return (2,"Administrador modificado","Los datos del administrador fueron modificados con exito")
 
-#
-#
-#
+
 
 def delete_admin_user(id_admin):
 
@@ -248,9 +228,7 @@ def delete_admin_user(id_admin):
         else:
             return True,"Su pedido fue cancelado con exito"
 
-#
-#
-#
+
 
 def exist_user(user_data_search,parameter):
     users_data = select_user()
@@ -263,9 +241,7 @@ def exist_user(user_data_search,parameter):
                 return True,user
         return True,None
 
-#
-#
-#
+
 
 def get_users():
     all_users = select_user()
@@ -280,9 +256,7 @@ def get_users():
             users_data.append(usuario)
         return True,users_data
 
-#
-#
-#
+
 
 def verif_user_data(name,email):
 
@@ -304,9 +278,7 @@ def verif_user_data(name,email):
     
     return True,None
 
-#
-#
-#
+
 
 def modify_user(name,email,ide):
     check_conection = conect_DB()
@@ -329,9 +301,7 @@ def modify_user(name,email,ide):
             else:
                 return (2,"Usuario modificado","Los datos del Usuario fueron modificados con exito")
 
-#
-#
-#
+
 
 def get_params(option):
 
@@ -437,6 +407,7 @@ def get_orders():
             order = (order[0],order[1],order[2],order[3],order[4],order[5],order[6],order[7])
             order_data.append(order)
         return True,order_data
+
 
 
 def exist_order(order_data_search,parameter):

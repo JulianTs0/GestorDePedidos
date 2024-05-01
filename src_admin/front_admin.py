@@ -4,8 +4,7 @@ from tkinter import messagebox
 from tkinter import font
 from back_admin import *
 
-#   Main es la ventana principal que va a tener el programa mientras se ejecute
-#   solo va a contener las esctructuras Login y MainMenu.
+
 
 class Main(Tk):
     def __init__(self, tittle, size, resize, back_color):
@@ -39,12 +38,7 @@ class Main(Tk):
 
         self.mainloop()
 
-#   Login es una esctructura que se utiliza en la ventana principal Main y es la primera en aparecer
-#   al ejecutar el programa, esta estrucutra nos permite iniciar sesion con los 3 tipos de cuenta
-#   que hay en el programa Usuario,Administrador,Desarrollador, y verificando los datos ingresados con
-#   los almacenados en la base de datos se acepta/denega el acceso al menu principal MainMenu.
-#   Esta estructura tambien nos permite registrar una cuenta de usuario en la base de datos si es 
-#   que no teniamos una antes de abrir el programa.
+
 
 class Login(Frame):
     def __init__(self, main_window):
@@ -59,8 +53,6 @@ class Login(Frame):
 
         self.create_login(main_window)
 
-    #   La funcion createlogin es la funcion que crea todos los widgets de la estructura Login
-    
     def create_login(self, main_window):
 
         #var
@@ -158,10 +150,6 @@ class Login(Frame):
         login_button.grid(column=0, row=5, columnspan=3)
         exit_button.grid(column=2,row=7 ,padx=20 ,sticky="e")
 
-    #
-    #
-    #
-
     def login(self, main_window, user_name, user_password):
         login_state,login_res = login_admin(user_name,user_password)
         if login_state:
@@ -171,9 +159,6 @@ class Login(Frame):
         else:
             messagebox.showwarning("Error al inciar sesion",login_res)
 
-#
-#
-#
 
 class MainMenu(Frame):
     def __init__(self, main_window, user):
@@ -192,10 +177,6 @@ class MainMenu(Frame):
         #struct
 
         self.create_menu(main_window)
-    
-    #
-    #
-    #
     
     def create_menu(self,main_window):
         
@@ -321,10 +302,6 @@ class MainMenu(Frame):
         four_btt.grid(column=2,row=6)
         exit_btt.grid(column=0 ,row=8 ,columnspan=4,sticky="e" ,padx=25)
     
-    #
-    #
-    #
-    
     def backward(self,main_window,user_name):
         delogin_state,delogin_res = de_login(user_name)
         if delogin_state:
@@ -333,46 +310,24 @@ class MainMenu(Frame):
             main_window.status = Login(main_window)
         else:
             messagebox.showerror("Error",delogin_res)
-    
-    #
-    #
-    #
-    
+
     def register_account(self,back_color):
         Extra("Registro de cuenta",[650,600,400,50],True,back_color,"r",self.user)
-    
-    #
-    #
-    #
-    
+
     def price_data(self,back_color):
         Extra("Base de precios",[700,600,400,50],True,back_color,"p")
-    
-    #
-    #
-    #
-    
+
     def modify_users(self,back_color):
         Extra("Base de usuarios",[600,600,400,50],True,back_color,"u")
-    
-    #
-    #
-    #
-    
+
     def modify_orders(self,back_color):
         Extra("Base de pedidos",[1000,600,200,50],True,back_color,"o")
-    
-    #
-    #
-    #
-    
+
     def close_and_delogin(self,main_window,user_name):
         de_login(user_name)
         close(main_window)
 
-#   Extra es una ventana auxiliar que sirve para mostrar esctructuras temporales, estas 
-#   estructuras no estan pensadas para permanecer mucho tiempo y se seleccionan con el 
-#   parametro op.
+
 
 class Extra(Toplevel):
     def __init__(self, tittle, size, resize, back_color, op, user_data=None):
@@ -415,9 +370,7 @@ class Extra(Toplevel):
 
         self.mainloop()
 
-#
-#
-#
+
 
 class Register(Frame):
     def __init__(self,extra_window,user):
@@ -711,9 +664,7 @@ class Register(Frame):
         
         self.update_tree(tree,user_field,pass_field,rep_field,id_field)
 
-#  
-#
-#
+
 
 class Users(Frame):
     def __init__(self,extra_window):
@@ -902,9 +853,7 @@ class Users(Frame):
         except:
             pass
 
-#
-#
-#
+
 
 class Price(Frame):
     def __init__(self,extra_window):
@@ -1113,9 +1062,7 @@ class Price(Frame):
         except:
             pass
 
-#
-#
-#
+
 
 class Orders(Frame):
     def __init__(self,extra_window):
@@ -1277,9 +1224,8 @@ class Orders(Frame):
                 tree.insert("" ,END ,values=item)
         else:
             messagebox.showerror("Error",order_result)
-#
-#
-#
+
+
 
 def setup(self, tittle, size, resize, back_color):
     self.title(tittle)
@@ -1288,16 +1234,13 @@ def setup(self, tittle, size, resize, back_color):
     self.config(bg=back_color)
     self.protocol("WM_DELETE_WINDOW", lambda: close(self))
 
-#   La funcion close se usa en todos los botones de salida y basicamente termina definitivamente
-#   el funcionamiento de las ventanas Extra o MainMenu.
+
 
 def close(object):
     object.quit()
     object.destroy()
 
-#
-#
-#
+
 
 def config_style(style,extra_window):
     style.theme_use("clam")
@@ -1315,9 +1258,7 @@ def config_style(style,extra_window):
                     relief="flat")
     style.map("Treeview.Heading",background=[("active","#44051b")])
 
-#
-#
-#
+
 
 if __name__ == "__main__":
     Main("Volpe project", (800,600,300,50), True, "#D7D6D2")
