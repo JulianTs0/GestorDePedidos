@@ -176,50 +176,51 @@ def register_admin_db(name,password,rep):
 def modify_admin(name,password,rep,ide):
     check_conection = conect_DB()
 
-    if check_conection == "Error al conectarse a la base de datos":
-        return (0,"Error", str(check_conection))
+    if isinstance(check_conection,str):
+        return f"0|Error|{check_conection}"
     
     else:
         verif_res = verif_admin_data(name, password, rep, ide)
 
         if not isinstance(verif_res,str):
-            return (1,"Error al modificar al usuario", "No se puede modificar un usuario que no existe")
+            return "1|Error al modificar al usuario|No se puede modificar un usuario que no existe"
+
         else:
             admin = Admin(name,password)
             modify_admin_res = update_admin(admin,ide)
 
             if modify_admin_res is not None:
-                return (0,"Error",modify_admin_res)
-                    
+                return f"0|Error|{modify_admin_res}"
+
             else:
-                return (2,"Administrador modificado","Los datos del administrador fueron modificados con exito")
+                return f"2|Administrador modificado|Los datos del administrador fueron modificados con exito"
 
 
 
 def delete_admin_user(id_admin):
 
     option = messagebox.askyesno("Ultima confirmacion",f"Desea eliminar al administrador?")
+
     if not option:
-        return True,"Se aborto la operacion con exito"
+        return "1|Accion exitosa|Se aborto la operacion con exito"
+
     else:
         delete_res = delete_admin(id_admin)
         if delete_res is not None:
-            return False,delete_res
+            return f"0|Error|{delete_res}"
+        
         else:
-            return True,"Su pedido fue cancelado con exito"
+            return "1|Accion exitosa|Su accion fue cancelada con exito"
 
 
 
 def exist_user(user_data_search,parameter):
     users_data = select_user()
 
-    if users_data == "Error al mostrar los datos del usuario":
-        return False,users_data
-    else:
-        for user in users_data:
-            if user[parameter] == user_data_search:
-                return True,user
-        return True,None
+    for user in users_data:
+        if user[parameter] == user_data_search:
+            return user
+    return None
 
 
 
@@ -227,36 +228,31 @@ def get_users():
     all_users = select_user()
     users_data = []
 
-    if all_users == "Error al mostrar los datos del usuario":
-        return False,all_users
+    if isinstance(all_users,str):
+        return all_users
     
     else:
         for usuario in all_users:
             usuario = (usuario[0],usuario[1],usuario[2])
             users_data.append(usuario)
-        return True,users_data
+        return users_data
 
 
 
 def verif_user_data(name,email):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
-        error_msg = "Ingrese un nombre de usuario valido"
-        return False,error_msg
+        return "Ingrese un nombre de usuario valido"
     
     elif "@gmail.com" not in email or len(email) <= 10 or email == "" or len(email) > 40:
-        error_msg = "La estructura del email no es correcta"
-        return False,error_msg
+        return "La estructura del email no es correcta"
 
-    status_search,res_search = exist_user(name,1)
+    res_search = exist_user(name,1)
 
-    if not status_search:
-        return status_search,res_search
+    if res_search is None:
+        return "Ese nombre de usuario ya existe escoja otro"
     
-    elif res_search is None:
-        return False,"Ese nombre de usuario ya existe escoja otro"
-    
-    return True,None
+    return None
 
 
 
@@ -267,10 +263,11 @@ def modify_user(name,email,ide):
         return (0,"Error", str(check_conection))
     
     else:
-        verif_state,verif_res = verif_user_data(name, email)
+        verif_res = verif_user_data(name, email)
 
-        if verif_state:
-            return (1,"Error al modificar al usuario", "No se puede modificar un usuario que no existe")
+        if isinstance(verif_res,str):
+            return (1,"Error al modificar al usuario", verif_res)
+
         else:
             usuario = Usuario(name,email)
             modify_user_res = update_user(usuario,ide)

@@ -589,15 +589,13 @@ class Register(Frame):
             messagebox.showwarning("No se selecciono un usuario","No se puede modificar un usuario que no existe")
             return
         
-        msg = modify_admin(name.get(), password.get(), rep.get(),id_content)
-        title = msg[1]
-        body = msg[2]
+        option,title,body  = modify_admin(name.get(), password.get(), rep.get(),id_content).split("|")
 
-        if msg[0] == 0:
+        if option == "0":
             messagebox.showerror(title,body)
-        elif msg[0] == 1:
+        elif option == "1":
             messagebox.showwarning(title,body)
-        elif msg[0] == 2:
+        elif option == "2":
             messagebox.showinfo(title,body)
             self.update_tree(tree,name,password,rep,id)
 
@@ -652,15 +650,16 @@ class Register(Frame):
         select = tree.focus()
 
         if not select:
-           messagebox.showwarning("No se pudo eliminar el administrador","Seleccione una cuenta para eliminarla")
+            messagebox.showwarning("No se pudo eliminar el administrador","Seleccione una cuenta para eliminarla")
         else:
             values = tree.item(select)["values"]
-            delete_state,delete_result = delete_admin_user(values[0])
-            if not delete_state:
-               messagebox.showerror("Error",delete_result)
+            option,title,body = delete_admin_user(values[0]).split("|")
+
+            if option == "0":
+                messagebox.showerror(title,body)
             else:
-                messagebox.showinfo("Accion exitosa",delete_result)
-        
+                messagebox.showinfo(title,body)
+
         self.update_tree(tree,user_field,pass_field,rep_field,id_field)
 
 
@@ -820,14 +819,14 @@ class Users(Frame):
             tree.selection_remove(children)
 
         tree.delete(*tree.get_children())
-        user_state, user_result = get_users()
+        user_result = get_users()
 
-        if user_state:
+        if isinstance(user_result,str):
+            messagebox.showerror("Error",user_result)
+        else:
             for item in user_result:
                 tree.insert("" ,END ,values=item)
             self.delete_fields(user_field,email_field)
-        else:
-            messagebox.showerror("Error",user_result)
 
     def delete_fields(self,user_field,pass_field):
         user_field.delete(0,END)
