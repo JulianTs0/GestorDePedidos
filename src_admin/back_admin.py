@@ -44,24 +44,24 @@ def exist_admin(user_data_search,parameter):
 def verify_admin(name,password):
 
     if name == "" or password == "":
-        return False,"Complete los campos antes de iniciar sesion"
+        return "Complete los campos antes de iniciar sesion"
     
     elif not is_a_valid_char(name) or len(name) > 30 :
-        return False,"Ingrese un nombre de usuario valido"
+        return "Ingrese un nombre de usuario valido"
     
     elif len(password) > 20:
-        return False,"Ingrese una contraseña valida"
+        return "Ingrese una contraseña valida"
     
     else:
-        return True,None
+        return None
 
 
 
 def login_admin(user_name,user_password):
 
-    verif_state,verif_res  = verify_admin(user_name,user_password)
+    verif_res  = verify_admin(user_name,user_password)
 
-    if not verif_state:
+    if verif_res is not None:
         return False, verif_res
     
     else:

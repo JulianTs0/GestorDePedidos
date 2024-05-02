@@ -90,20 +90,16 @@ def exist_user(user_data_search,parameter):
 def verif_new_user_data(name,password,password_rep,email):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
-        error_msg = "Ingrese un nombre de usuario valido"
-        return error_msg
+        return "Ingrese un nombre de usuario valido"
     
     elif "@gmail.com" not in email or len(email) <= 10 or email == "" or len(email) > 40:
-        error_msg = "La estructura del email no es correcta"
-        return error_msg
+        return "La estructura del email no es correcta"
     
     elif password == "" or len(password) > 20:
-        error_msg = "No se ha ingresado la contraseña valida"
-        return error_msg
+        return "No se ha ingresado la contraseña valida"
     
     elif password != password_rep:
-        error_msg = "Las contraseñas no coinciden"
-        return error_msg
+        return "Las contraseñas no coinciden"
 
     res_search = exist_user(name,0)
     
