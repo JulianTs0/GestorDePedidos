@@ -160,6 +160,7 @@ class Login(Frame):
             messagebox.showwarning("Error al inciar sesion",login_res)
 
 
+
 class MainMenu(Frame):
     def __init__(self, main_window, user):
 

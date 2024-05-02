@@ -9,27 +9,25 @@ from decouple import config
 
 def is_a_number(number):
 
-    output = True
     valid_number = "0123456789"
 
     for i in number:
         if i not in valid_number:
-            output = False
+            return False
     
-    return output
+    return True
 
 
 
 def is_a_valid_char(word):
 
-    output = True
     valid_char = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZÀÈÌÒÙàèìòù "
 
     for i in word:
         if i not in valid_char:
-            output = False
+            return False
     
-    return output
+    return True
 
 
 
@@ -40,16 +38,6 @@ def exist_admin(user_data_search,parameter):
         if user[parameter] == user_data_search:
             return user
     return None
-
-#    users_data = select_admin()
-# 
-#    if users_data == "Error al mostrar los datos del admin":
-#        return False,users_data
-#    else:
-#       for user in users_data:
-#            if user[parameter] == user_data_search:
-#                return True,user
-#        return True,None
 
 
 

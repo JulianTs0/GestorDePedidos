@@ -67,14 +67,13 @@ class Mini(Toplevel):
 
 def is_a_valid_char(word):
 
-    output = True
     valid_char = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZÀÈÌÒÙàèìòù "
 
     for i in word:
         if i not in valid_char:
-            output = False
+            return False
     
-    return output
+    return True
 
 
 
