@@ -801,15 +801,13 @@ class Users(Frame):
             messagebox.showwarning("No hay ningun usuario seleccionado","Seleccione un usuario de la planilla")
             return
         
-        msg = modify_user(name.get(), email.get(),ide)
-        title = msg[1]
-        body = msg[2]
+        option,title,body = modify_user(name.get(), email.get(),ide).split("|")
 
-        if msg[0] == 0:
+        if option == "0":
             messagebox.showerror(title,body)
-        elif msg[0] == 1:
+        elif option == "1":
             messagebox.showwarning(title,body)
-        elif msg[0] == 2:
+        elif option == "2":
             messagebox.showinfo(title,body)
             self.update_tree(tree,name,email)
 

@@ -247,10 +247,15 @@ def verif_user_data(name,email):
     elif "@gmail.com" not in email or len(email) <= 10 or email == "" or len(email) > 40:
         return "La estructura del email no es correcta"
 
-    res_search = exist_user(name,1)
+    res_search = exist_user(name,0)
 
-    if res_search is None:
+    if res_search is not None:
         return "Ese nombre de usuario ya existe escoja otro"
+    
+    res_search = exist_user(email,1)
+
+    if res_search is not None:
+        return "Ese email ya esta registrado"
     
     return None
 
@@ -259,24 +264,24 @@ def verif_user_data(name,email):
 def modify_user(name,email,ide):
     check_conection = conect_DB()
 
-    if check_conection == "Error al conectarse a la base de datos":
-        return (0,"Error", str(check_conection))
+    if isinstance(check_conection,str):
+        return f"0|Error|{check_conection}"
     
     else:
         verif_res = verif_user_data(name, email)
 
-        if isinstance(verif_res,str):
-            return (1,"Error al modificar al usuario", verif_res)
+        if verif_res is not None:
+            return f"1|Error al modificar al usuario|{verif_res}"
 
         else:
             usuario = Usuario(name,email)
             modify_user_res = update_user(usuario,ide)
 
             if modify_user_res is not None:
-                return (0,"Error",modify_user_res)
+                return f"0|Error|{modify_user_res}"
                     
             else:
-                return (2,"Usuario modificado","Los datos del Usuario fueron modificados con exito")
+                return "2|Usuario modificado|Los datos del Usuario fueron modificados con exito"
 
 
 
