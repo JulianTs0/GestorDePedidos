@@ -269,17 +269,21 @@ def create_order_db(ropa,servicio,prioridad,conentario,user):
         return f"1|Error al realizar el pedido|{res_order}"
     
     else:
-        option = messagebox.askyesno("Ultima confirmacion",f"El precio del pedido es de ${res_order.precio} desea continuar?")
-        if not option:
-            return "2|Pedido cancelado|Se cancelo el pedido"
+        if res_order.precio == 0:
+            return "0|Error|Se produjo un error al intentar cargar los precios"
         
         else:
-            insert_res = insert_order(res_order,user)
-            if insert_res is not None:
-                return f"0|Error|{insert_res}"
-            
+            option = messagebox.askyesno("Ultima confirmacion",f"El precio del pedido es de ${res_order.precio} desea continuar?")
+            if not option:
+                return "2|Pedido cancelado|Se cancelo el pedido"
+        
             else:
-                return "2|Pedido creado|Se pudo realizar el pedido exitosamente"
+                insert_res = insert_order(res_order,user)
+                if insert_res is not None:
+                    return f"0|Error|{insert_res}"
+
+                else:
+                    return "2|Pedido creado|Se pudo realizar el pedido exitosamente"
 
 
 

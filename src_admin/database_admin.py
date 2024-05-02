@@ -50,7 +50,7 @@ def user_state_switch(user_name,state):
     data = (state,user_name)
     cursor.execute(sql,data)
     conect.commit()
-    print(cursor.rowcount,f"Amin {state}")
+    print(cursor.rowcount,f"Admin {state}")
     conect.close()
 
     return
