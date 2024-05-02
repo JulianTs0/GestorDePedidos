@@ -1,11 +1,7 @@
 import mysql.connector
 from decouple import config
 
-#   La funcion conectBD es la que se encarga de intentar conectarse a la base de datos usando
-#   las credenciales que se alojan en el archivo .env siendo USER_DB el usuario PASSWORD_DB la
-#   contraseña HOST_DB la direccion del host DATBASE el nombre de la abse de datos a usar y 
-#   PORT_DB el puerto de dicha conexion. Si logra realizar una conexion exitosa, la funcion
-#   devuelve dicha conexion de tipo mysql.connector si no devuelve un string de error.
+
 
 def conect_DB():
     try:
@@ -22,10 +18,7 @@ def conect_DB():
 
         return "Error al conectarse a la base de datos"
 
-#   La funcion ingresarUsuarios es la que se encarga de insertar en la BD los datos de un
-#   objeto de tipo Usuario llamado usuario, a traves de comandos en lenguaje SQL que se determinan
-#   en la variable sql. Si logra insertar los datos exitosamente en la BD retorna None, caso contrario
-#   retorna una string de error.
+
 
 def select_admin():
 
@@ -43,9 +36,7 @@ def select_admin():
 
         return "Error al mostrar los datos del admin"
 
-#
-#
-#
+
 
 def user_state_switch(user_name,state):
     if state:
@@ -64,9 +55,7 @@ def user_state_switch(user_name,state):
 
     return
 
-#
-#
-#
+
 
 def insert_admin(user):
     state_register_user = "desconectado"
@@ -86,9 +75,7 @@ def insert_admin(user):
 
         return "Error al ingresar el ususario"
 
-#
-#
-#
+
 
 def get_admin_id():
     try:
@@ -105,9 +92,7 @@ def get_admin_id():
 
         return "Error al mostrar los datos del admin"
 
-#
-#
-#
+
 
 def update_admin(user,ide):
     try:
@@ -126,9 +111,7 @@ def update_admin(user,ide):
 
         return "Error al ingresar el ususario"
 
-#
-#
-#
+
 
 def delete_admin(id):
     try:
@@ -147,9 +130,7 @@ def delete_admin(id):
 
         return "Error al Eliminar el Administrador"
 
-#
-#
-#
+
 
 def select_user():
 
@@ -167,9 +148,7 @@ def select_user():
 
         return "Error al mostrar los datos del usuario"
 
-#
-#
-#
+
 
 def update_user(user,ide):
     try:
@@ -188,9 +167,7 @@ def update_user(user,ide):
 
         return "Error al ingresar el ususario"
 
-#
-#
-#
+
 
 def select_clothes():
     try:

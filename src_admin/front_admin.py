@@ -151,13 +151,13 @@ class Login(Frame):
         exit_button.grid(column=2,row=7 ,padx=20 ,sticky="e")
 
     def login(self, main_window, user_name, user_password):
-        login_state,login_res = login_admin(user_name,user_password)
-        if login_state:
+        login_res = login_admin(user_name,user_password)
+        if isinstance(login_res,str):
+            messagebox.showwarning("Error al inciar sesion",login_res)
+        else:
             messagebox.showinfo("Inicio de sesion","Inicio de sesion exitoso")
             main_window.status.destroy()
             main_window.status = MainMenu(main_window, login_res)
-        else:
-            messagebox.showwarning("Error al inciar sesion",login_res)
 
 
 
@@ -304,13 +304,13 @@ class MainMenu(Frame):
         exit_btt.grid(column=0 ,row=8 ,columnspan=4,sticky="e" ,padx=25)
     
     def backward(self,main_window,user_name):
-        delogin_state,delogin_res = de_login(user_name)
-        if delogin_state:
-            messagebox.showinfo("Sesion cerrada",delogin_res)
+        delogin_res = de_login(user_name)
+        if delogin_res is not None:
+            messagebox.showerror("Error",delogin_res)
+        else:
+            messagebox.showinfo("Sesion cerrada","La sesion fue cerrada con exito")
             main_window.status.destroy()
             main_window.status = Login(main_window)
-        else:
-            messagebox.showerror("Error",delogin_res)
 
     def register_account(self,back_color):
         Extra("Registro de cuenta",[650,600,400,50],True,back_color,"r",self.user)
@@ -325,7 +325,7 @@ class MainMenu(Frame):
         Extra("Base de pedidos",[1000,600,200,50],True,back_color,"o")
 
     def close_and_delogin(self,main_window,user_name):
-        de_login(user_name)
+        de_login(user_name,True)
         close(main_window)
 
 
@@ -389,7 +389,7 @@ class Register(Frame):
         #struct
 
         self.create_register(extra_window)
-    
+
     def create_register(self,extra_window):
 
         #var
@@ -569,15 +569,13 @@ class Register(Frame):
 
     def register_admin(self,name,password,rep,id,tree):
 
-        msg = register_admin_db(name.get(), password.get(), rep.get())
-        title = msg[1]
-        body = msg[2]
+        option,title,body = register_admin_db(name.get(), password.get(), rep.get()).split("|")
 
-        if msg[0] == 0:
+        if option == "0":
             messagebox.showerror(title,body)
-        elif msg[0] == 1:
+        elif option == "1":
             messagebox.showwarning(title,body)
-        elif msg[0] == 2:
+        elif option == "2":
             messagebox.showinfo(title,body)
             self.update_tree(tree,name,password,rep,id)
 
@@ -609,14 +607,14 @@ class Register(Frame):
             tree.selection_remove(children)
 
         tree.delete(*tree.get_children())
-        admins_state, admins_result = get_admins(self.user)
+        admins_result = get_admins(self.user)
 
-        if admins_state:
+        if isinstance(admins_result,str):
+            messagebox.showerror("Error",admins_result)
+        else:
             for item in admins_result:
                 tree.insert("" ,END ,values=item)
             self.delete_fields(user_field,pass_field,rep_field,id_field)
-        else:
-            messagebox.showerror("Error",admins_result)
 
     def select_tree(event,tree,name_entry,pass_entry,id_text):
 

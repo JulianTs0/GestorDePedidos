@@ -62,13 +62,13 @@ def login_admin(user_name,user_password):
     verif_res  = verify_admin(user_name,user_password)
 
     if verif_res is not None:
-        return False, verif_res
+        return verif_res
     
     else:
         check_conection = conect_DB()
 
-        if check_conection == "Error al conectarse a la base de datos":
-            return False,check_conection
+        if isinstance(check_conection,str):
+            return check_conection
         
         else:
             res_search = exist_admin(user_name,1)
@@ -78,30 +78,34 @@ def login_admin(user_name,user_password):
             
             else:
                 if res_search[2] != user_password:
-                    return False,"Contraseña incorrecta"
+                    return "Contraseña incorrecta"
                 
                 else:
                     if res_search[3] == "conectado":
-                        return False,"El usuario ingresado ya se encuentra logeado en otro dispositivo"
+                        return "El usuario ingresado ya se encuentra logeado en otro dispositivo"
                     
                     else:
                         user_state_switch(res_search[1],True)
-                        return True,Admin(res_search[1],res_search[2])               
+                        return Admin(res_search[1],res_search[2])               
 
 
 
-def de_login(user_name):
+def de_login(user_name,force=False):
 
-    res_search = exist_admin(user_name,1)
+    if not force:
 
-    if res_search is None:
-        return False,"El usuario que incio sesion dejo de estar registrado en la base de datos"
-    else:
-        if res_search[2] == "desconectado" or res_search[2] is None:
-            return False,"La sesion no se puede cerrar porque el usuario no esta conectado"
+        res_search = exist_admin(user_name,1)
+
+        if res_search is None:
+            return "El usuario que incio sesion dejo de estar registrado en la base de datos"
         else:
-            user_state_switch(user_name,False)
-            return True,"La sesion fue cerrada con exito"
+            if res_search[2] == "desconectado" or res_search[2] is None:
+                return "La sesion no se puede cerrar porque el usuario no esta conectado"
+            else:
+                user_state_switch(user_name,False)
+                return None
+    else:
+        user_state_switch(user_name,False)
 
 
 
@@ -109,42 +113,39 @@ def get_admins(user):
     all_admins = select_admin()
     admins_data = []
 
-    if all_admins == "Error al mostrar los datos del admin":
-        return False,all_admins
-    
+    if isinstance(all_admins,str):
+        return all_admins
+
     else:
         for admin in all_admins:
             if admin[1] != user.name:
                 admin = (admin[0],admin[1],admin[2])
                 admins_data.append(admin)
-        return True,admins_data
+        return admins_data
 
 
 
 def verif_admin_data(name,password,password_rep,ide=None):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
-        error_msg = "Ingrese un nombre de usuario valido"
-        return False,error_msg
+        return "Ingrese un nombre de usuario valido"
     
     elif password == "" or len(password) > 20:
-        error_msg = "No se ha ingresado la contraseña valida"
-        return False,error_msg
+        return "No se ha ingresado la contraseña valida"
     
     elif password != password_rep:
-        error_msg = "Las contraseñas no coinciden"
-        return False,error_msg
+        return "Las contraseñas no coinciden"
 
     res_search = exist_admin(name,1)
     
     if res_search is not None:
-        return False,"Ese nombre de usuario ya existe escoja otro"
+        return "Ese nombre de usuario ya existe escoja otro"
     
     if ide is not None:
         return exist_admin(ide,0)
     
     user = Admin(name,password)
-    return True,user 
+    return user 
 
 
 
@@ -152,32 +153,23 @@ def register_admin_db(name,password,rep):
 
     check_conection = conect_DB()
 
-    if check_conection == "Error al conectarse a la base de datos":
-        return (0,"Error", str(check_conection))
-    
-    else:
-        verif_state,verif_res = verif_admin_data(name, password, rep)
+    if isinstance(check_conection,str):
+        return f"0|Error|{check_conection}"
 
-        if not verif_state:
-            return (1,"Error al registrar la cuenta", verif_res)
+    else:
+        verif_res = verif_admin_data(name, password, rep)
+
+        if isinstance(verif_res,str):
+            return f"1|Error al registrar la cuenta|{verif_res}"
         
         else:
             insert_db_res = insert_admin(verif_res)
 
             if insert_db_res is not None:
-                return (0,"Error",insert_db_res)
-                    
+                return f"0|Error|{insert_db_res}"
+                
             else:
-                return (2,"Administrador registrado","El Administrador a sido creado y registrado con exito")
-
-
-
-def name_for_id(name):
-    ides = get_admin_id()
-
-    for data in ides:
-        if data[1] == name:
-            return data[0]
+                return "2|Administrador registrado|El Administrador a sido creado y registrado con exito"
 
 
 
@@ -188,9 +180,9 @@ def modify_admin(name,password,rep,ide):
         return (0,"Error", str(check_conection))
     
     else:
-        verif_state,verif_res = verif_admin_data(name, password, rep, ide)
+        verif_res = verif_admin_data(name, password, rep, ide)
 
-        if verif_state:
+        if not isinstance(verif_res,str):
             return (1,"Error al modificar al usuario", "No se puede modificar un usuario que no existe")
         else:
             admin = Admin(name,password)
