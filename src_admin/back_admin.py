@@ -307,7 +307,7 @@ def get_params(option):
 
 
 
-def exist_param(price_data_search,parameter,option):
+def exist_param(option,price_data_search,parameter):
 
     if option == 0:
         price_data = select_clothes()
@@ -333,12 +333,13 @@ def verif_param_data(name,price,option):
     if not is_a_number(price) or len(str(price)) > 20:
         return "El precio no es valido"
 
-    res_search = exist_param(name,0,option)
+    res_search = exist_param(option,name,0)
 
     if res_search is not None:
         return "Ese nombre de parametro ya existe"
     
-    return None
+    param = Parametro(name,price)
+    return param
 
 
 
@@ -354,14 +355,13 @@ def modify_params(name, price, ide, option):
         if verif_res is not None:
             return f"1|Error al modificar el parametro|{verif_res}"
         else:
-            param_select = Parametro(name,price)
             
             if option == 0:
-                modify_param_res = update_clothes(param_select,ide)
+                modify_param_res = update_clothes(verif_res,ide)
             elif option == 1:
-                modify_param_res = update_service(param_select,ide)
+                modify_param_res = update_service(verif_res,ide)
             else:
-                modify_param_res = update_priority(param_select,ide)
+                modify_param_res = update_priority(verif_res,ide)
 
             if modify_param_res is not None:
                 return f"0|Error|{modify_param_res}"
