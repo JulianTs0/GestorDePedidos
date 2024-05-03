@@ -1005,16 +1005,13 @@ class Price(Frame):
             messagebox.showwarning("No hay ningun parametro seleccionado","Seleccione un parametro de la planilla")
             return
 
-        msg = modify_params(name.get(), price.get(),ide,option)
-        
-        title = msg[1]
-        body = msg[2]
+        option,title,body = modify_params(name.get(), price.get(),ide,option).split("|")
 
-        if msg[0] == 0:
+        if option == "0":
             messagebox.showerror(title,body)
-        elif msg[0] == 1:
+        elif option == "1":
             messagebox.showwarning(title,body)
-        elif msg[0] == 2:
+        elif option == "2":
             messagebox.showinfo(title,body)
             self.update_tree(tree,name,price,param_cb)
 
@@ -1026,14 +1023,14 @@ class Price(Frame):
             tree.selection_remove(children)
         tree.delete(*tree.get_children())
 
-        param_state, param_result = get_params(option)
+        param_result = get_params(option)
 
-        if param_state:
+        if isinstance(param_result,str):
+            messagebox.showerror("Error",param_result)
+        else:
             for item in param_result:
                 tree.insert("" ,END ,values=item)
             self.delete_fields(name_field,price_field)
-        else:
-            messagebox.showerror("Error",param_result)
 
     def delete_fields(self,name_field,price_field):
         name_field.delete(0,END)

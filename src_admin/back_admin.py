@@ -287,24 +287,25 @@ def modify_user(name,email,ide):
 
 def get_params(option):
 
+    params_data = []
+
     if option == 0:
         all_params = select_clothes()
     elif option == 1:
         all_params = select_service()
-    else:
+    elif option == 2:
         all_params = select_priority()
-    
-    params_data = []
+    else:
+        return "Error de estructura interna"
 
-    if all_params == "Error al mostrar los datos del usuario":
-        return False,all_params
+    if isinstance(all_params,str):
+        return all_params
     
     else:
         for param in all_params:
             param = (param[0],param[1],param[2])
             params_data.append(param)
-        return True,params_data
-
+        return params_data
 
 
 def exist_param(price_data_search,parameter,option):
@@ -313,52 +314,45 @@ def exist_param(price_data_search,parameter,option):
         price_data = select_clothes()
     elif option == 1:
         price_data = select_service()
-    else:
+    elif option == 2:
         price_data = select_priority()
-
-    if price_data == "Error al mostrar los datos del usuario":
-        return False,price_data
     else:
-        for price in price_data:
-            if price_data[parameter] == price_data_search:
-                return True,price_data
-        return True,None
+        return None
 
+    for price in price_data:
+        if price[parameter] == price_data_search:
+            return price
+    return None
 
 
 def verif_param_data(name,price,option):
     
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
-        error_msg = "Ingrese un nombre de parametro valido"
-        return False,error_msg
+        return "Ingrese un nombre de parametro valido"
     
     elif is_a_number(price) or len(price) > 40:
-        error_msg = "El precio no es valido"
-        return False,error_msg
+        return "El precio no es valido"
 
-    status_search,res_search = exist_param(name,0,option)
+    res_search = exist_param(name,0,option)
 
-    if not status_search:
-        return status_search,res_search
+    if res_search is None:
+        return "Ese parametro no existe"
     
-    elif res_search is None:
-        return False,"Ese parametro no existe"
-    
-    return True,None
+    return None
 
 
 
 def modify_params(name, price, ide, option):
     check_conection = conect_DB()
 
-    if check_conection == "Error al conectarse a la base de datos":
-        return (0,"Error", str(check_conection))
+    if isinstance(check_conection,str):
+        return f"0|Error|{check_conection}"
     
     else:
-        verif_state,verif_res = verif_param_data(name, price, option)
+        verif_res = verif_param_data(name, price, option)
 
-        if verif_state:
-            return (1,"Error al modificar el parametro", "No se puede modificar un parametro que no existe")
+        if verif_res is not None:
+            return f"1|Error al modificar el parametro|{verif_res}"
         else:
             param_select = Parametro(name,price)
             
@@ -370,10 +364,10 @@ def modify_params(name, price, ide, option):
                 modify_param_res = update_priority(param_select,ide)
 
             if modify_param_res is not None:
-                return (0,"Error",modify_param_res)
+                return f"0|Error|{modify_param_res}"
                     
             else:
-                return (2,"Parametro modificado","Los datos del Parametro fueron modificados con exito")
+                return "2|Parametro modificado|Los datos del Parametro fueron modificados con exito"
 
 
 
