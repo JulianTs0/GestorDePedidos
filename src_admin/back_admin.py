@@ -308,6 +308,7 @@ def get_params(option):
         return params_data
 
 
+
 def exist_param(price_data_search,parameter,option):
 
     if option == 0:
@@ -325,18 +326,19 @@ def exist_param(price_data_search,parameter,option):
     return None
 
 
+
 def verif_param_data(name,price,option):
     
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
         return "Ingrese un nombre de parametro valido"
     
-    elif is_a_number(price) or len(price) > 40:
+    if not is_a_number(price) or len(str(price)) > 20:
         return "El precio no es valido"
 
     res_search = exist_param(name,0,option)
 
-    if res_search is None:
-        return "Ese parametro no existe"
+    if res_search is not None:
+        return "Ese nombre de parametro ya existe"
     
     return None
 
