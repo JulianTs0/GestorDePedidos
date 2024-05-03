@@ -125,7 +125,9 @@ def get_admins(user):
 
 
 
-def verif_admin_data(name,password,password_rep,ide=None):
+# Reducir las exigencias para crear un nuevo administrador, esta funcion esta
+# haciendo dos cosas distintas
+def verif_new_admin_data(name,password,password_rep,ide=None):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
         return "Ingrese un nombre de usuario valido"
@@ -157,7 +159,7 @@ def register_admin_db(name,password,rep):
         return f"0|Error|{check_conection}"
 
     else:
-        verif_res = verif_admin_data(name, password, rep)
+        verif_res = verif_new_admin_data(name, password, rep)
 
         if isinstance(verif_res,str):
             return f"1|Error al registrar la cuenta|{verif_res}"
@@ -180,7 +182,7 @@ def modify_admin(name,password,rep,ide):
         return f"0|Error|{check_conection}"
     
     else:
-        verif_res = verif_admin_data(name, password, rep, ide)
+        verif_res = verif_new_admin_data(name, password, rep, ide)
 
         if not isinstance(verif_res,str):
             return "1|Error al modificar al usuario|No se puede modificar un usuario que no existe"
@@ -239,6 +241,7 @@ def get_users():
 
 
 
+# Esta funcion no tiene en cuenta que el email nuevo ya exista
 def verif_user_data(name,email):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
@@ -252,12 +255,8 @@ def verif_user_data(name,email):
     if res_search is not None:
         return "Ese nombre de usuario ya existe escoja otro"
     
-    res_search = exist_user(email,1)
-
-    if res_search is not None:
-        return "Ese email ya esta registrado"
-    
-    return None
+    user = Usuario(name,email)
+    return user
 
 
 
@@ -270,12 +269,11 @@ def modify_user(name,email,ide):
     else:
         verif_res = verif_user_data(name, email)
 
-        if verif_res is not None:
+        if isinstance(verif_res,str):
             return f"1|Error al modificar al usuario|{verif_res}"
 
         else:
-            usuario = Usuario(name,email)
-            modify_user_res = update_user(usuario,ide)
+            modify_user_res = update_user(verif_res,ide)
 
             if modify_user_res is not None:
                 return f"0|Error|{modify_user_res}"
