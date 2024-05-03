@@ -1190,16 +1190,13 @@ class Orders(Frame):
             messagebox.showwarning("No hay ningun pedido seleccionado","Seleccione un pedido de la planilla")
             return
 
-        msg = modify_orders(status,ide)
-        
-        title = msg[1]
-        body = msg[2]
+        option,title,body = modify_orders(status,ide).split("|")
 
-        if msg[0] == 0:
+        if option == "0":
             messagebox.showerror(title,body)
-        elif msg[0] == 1:
+        elif option == "1":
             messagebox.showwarning(title,body)
-        elif msg[0] == 2:
+        elif option == "2":
             messagebox.showinfo(title,body)
         
         self.update_tree(tree)
@@ -1210,13 +1207,13 @@ class Orders(Frame):
             tree.selection_remove(children)
 
         tree.delete(*tree.get_children())
-        order_state, order_result = get_orders()
+        order_result = get_orders()
 
-        if order_state:
+        if isinstance(order_result,str):
+            messagebox.showerror("Error",order_result)
+        else:
             for item in order_result:
                 tree.insert("" ,END ,values=item)
-        else:
-            messagebox.showerror("Error",order_result)
 
 
 
