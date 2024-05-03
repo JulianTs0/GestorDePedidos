@@ -38,6 +38,8 @@ class Main(Tk):
 
 
 
+# Nivelar los imputs
+# Bindear el enter al ingresar
 class Login(Frame):
     def __init__(self, main_window):
 
@@ -650,6 +652,8 @@ class Order(Frame):
 
 
 
+# Hacer que los pedidos en proceso o finalizados no se puedan cancelar
+# Cambiar de lugar los botones
 class ShowOrder(Frame):
     def __init__(self ,extra_window,user):
 

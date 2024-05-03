@@ -31,6 +31,7 @@ def is_a_valid_char(word):
 
 
 
+# Retornar tambien el msg de error
 def exist_admin(user_data_search,parameter):
     users_data = select_admin()
 
@@ -41,6 +42,7 @@ def exist_admin(user_data_search,parameter):
 
 
 
+# Retornar tambien el msg de error
 def verify_admin(name,password):
 
     if name == "" or password == "":
@@ -57,6 +59,7 @@ def verify_admin(name,password):
 
 
 
+# Usar el check_conection
 def login_admin(user_name,user_password):
 
     verif_res  = verify_admin(user_name,user_password)
@@ -127,6 +130,7 @@ def get_admins(user):
 
 # Reducir las exigencias para crear un nuevo administrador, esta funcion esta
 # haciendo dos cosas distintas
+# Retornar tambien el msg de error
 def verif_new_admin_data(name,password,password_rep,ide=None):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
@@ -151,6 +155,7 @@ def verif_new_admin_data(name,password,password_rep,ide=None):
 
 
 
+# Usar el check_conection
 def register_admin_db(name,password,rep):
 
     check_conection = conect_DB()
@@ -175,6 +180,7 @@ def register_admin_db(name,password,rep):
 
 
 
+# Usar el check_conection
 def modify_admin(name,password,rep,ide):
     check_conection = conect_DB()
 
@@ -216,6 +222,7 @@ def delete_admin_user(id_admin):
 
 
 
+# Retornar tambien el msg de error
 def exist_user(user_data_search,parameter):
     users_data = select_user()
 
@@ -242,6 +249,7 @@ def get_users():
 
 
 # Esta funcion no tiene en cuenta que el email modificado ya exista
+# Retornar tambien el msg de error
 def verif_user_data(name,email):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
@@ -260,6 +268,7 @@ def verif_user_data(name,email):
 
 
 
+# Usar el check_conection
 def modify_user(name,email,ide):
     check_conection = conect_DB()
 
@@ -307,6 +316,7 @@ def get_params(option):
 
 
 
+# Retornar tambien el msg de error
 def exist_param(option,price_data_search,parameter):
 
     if option == 0:
@@ -325,6 +335,7 @@ def exist_param(option,price_data_search,parameter):
 
 
 
+# Retornar tambien el msg de error
 def verif_param_data(name,price,option):
     
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
@@ -343,6 +354,7 @@ def verif_param_data(name,price,option):
 
 
 
+# Usar el check_conection
 def modify_params(name, price, ide, option):
     check_conection = conect_DB()
 
@@ -385,6 +397,7 @@ def get_orders():
 
 
 
+# Retornar tambien el msg de error
 def exist_order(order_data_search,parameter):
     order_data = select_order()
 
@@ -398,6 +411,7 @@ def exist_order(order_data_search,parameter):
 
 
 
+# Retornar tambien el msg de error
 def verif_order_data(status,ide):
     
     if len(status) < 2:
@@ -415,6 +429,7 @@ def verif_order_data(status,ide):
 
 
 
+# Usar el check_conection
 def modify_orders(status,ide):
     check_conection = conect_DB()
 

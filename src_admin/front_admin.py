@@ -40,6 +40,7 @@ class Main(Tk):
 
 
 
+# Bindear el enter al ingresar
 class Login(Frame):
     def __init__(self, main_window):
 
@@ -373,6 +374,8 @@ class Extra(Toplevel):
 
 
 
+# Quitar la necesidad de doble contraseña
+# Ordenar los arboles al hacer click en las cabeceras
 class Register(Frame):
     def __init__(self,extra_window,user):
 
@@ -664,6 +667,9 @@ class Register(Frame):
 
 
 
+# Añadir la cantidad de pedidos que tiene cada usuario
+# Solo permitir cambiar el nombre
+# Ordenar los arboles al hacer click en las cabeceras
 class Users(Frame):
     def __init__(self,extra_window):
         
@@ -851,6 +857,9 @@ class Users(Frame):
 
 
 
+# Añadir precios
+# Eliminar precios
+# Ordenar los arboles al hacer click en las cabeceras
 class Price(Frame):
     def __init__(self,extra_window):
         
@@ -1057,6 +1066,7 @@ class Price(Frame):
 
 
 
+# Ordenar los arboles al hacer click en las cabeceras
 class Orders(Frame):
     def __init__(self,extra_window):
         

@@ -76,7 +76,7 @@ def is_a_valid_char(word):
     return True
 
 
-
+# Retornar tambien el msg de error
 def exist_user(user_data_search,parameter):
     users_data = select_user()
 
@@ -86,7 +86,7 @@ def exist_user(user_data_search,parameter):
     return None
 
 
-
+# Retornar tambien el msg de error
 def verif_new_user_data(name,password,password_rep,email):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
@@ -115,10 +115,8 @@ def verif_new_user_data(name,password,password_rep,email):
     return user 
 
 
-
+#Averiguar porque tarda tanto en enviar un emial
 def send_email_autenti(mail):
-    
-    #Averiguar porque tarda tanto en enviar un emial
 
     try:
         autenti_number = random.randint(10000,999999)
@@ -140,6 +138,7 @@ def send_email_autenti(mail):
 
 
 
+# Usar el check_conection
 def register_in_db(register_struct,main_window,name,password,rep,email):
 
     check_conection = conect_DB()
@@ -195,7 +194,7 @@ def verify_user(name,password):
         return None
 
 
-
+# Usar el check_conection
 def login_user(user_name,user_password):
 
     verif_res  = verify_user(user_name,user_password)
