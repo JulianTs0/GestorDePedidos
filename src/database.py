@@ -11,9 +11,9 @@ def conect_DB():
                                             port=config("PORT_DB"))
         
         return conection
-    except mysql.connector.Error as error:
+    except:
 
-        print(f"Error DB connect {error}")
+        print(f"Error DB connect {mysql.connector.Error}")
 
         return "Error al conectarse a la base de datos"
 
@@ -32,8 +32,8 @@ def insert_user(user):
         conect.close()
 
         return None
-    except mysql.connector.Error as error:
-        print(f"Error al ingresar el ususario {error}")
+    except:
+        print(f"Error al ingresar el ususario {mysql.connector.Error}")
 
         return "Error al ingresar el ususario"
 
@@ -49,8 +49,8 @@ def select_user():
         conect.close()
         return data
 
-    except mysql.connector.Error as error:
-        print(f"Error al mostrar los datos del ususario {error}")
+    except: 
+        print(f"Error al mostrar los datos del ususario {mysql.connector.Error}") 
 
         return "Error al mostrar los datos del ususario"
 
@@ -69,8 +69,8 @@ def insert_order(order,user):
         conect.close()
 
         return None
-    except mysql.connector.Error as error:
-        print(f"Error al ingresar el Pedido {error}")
+    except:
+        print(f"Error al ingresar el Pedido {mysql.connector.Error}")
 
         return "Error al ingresar el Pedido"
 
@@ -86,8 +86,8 @@ def select_order():
         conect.close()
         return data
 
-    except mysql.connector.Error as error:
-        print(f"Error al mostrar los peiddos del ususario {error}")
+    except:
+        print(f"Error al mostrar los peiddos del ususario {mysql.connector.Error}")
 
         return "Error al mostrar los pedidos del ususario"
 
@@ -105,8 +105,8 @@ def delete_order_db(id):
         conect.close()
 
         return None
-    except mysql.connector.Error as error:
-        print(f"Error al Eliminar el pedido {error}")
+    except:
+        print(f"Error al Eliminar el pedido {mysql.connector.Error}")
 
         return "Error al Eliminar el pedido"
 
@@ -131,6 +131,7 @@ def user_state_switch(user_name,state):
 
 
 
+# Esta haciendo cosas de mas
 def get_service_stock_data(stock_table,only_name=False):
 
     try:
@@ -150,7 +151,7 @@ def get_service_stock_data(stock_table,only_name=False):
         else:
             return data
 
-    except mysql.connector.Error as error:
-        print(f"Error al mostrar los datos del ususario {error}")
+    except:
+        print(f"Error al mostrar los datos del ususario {mysql.connector.Error}")
 
         return "Error al mostrar el stock"

@@ -6,6 +6,8 @@ from database import *
 from decouple import config
 import random
 
+
+
 class Mini(Toplevel):
     def __init__(self, tittle, size, resize, back_color, verif_number, register_struct):
 
@@ -76,17 +78,20 @@ def is_a_valid_char(word):
     return True
 
 
-# Retornar tambien el msg de error
+
 def exist_user(user_data_search,parameter):
     users_data = select_user()
 
-    for user in users_data:
-        if user[parameter] == user_data_search:
-            return user
-    return None
+    if isinstance(users_data,str):
+        return users_data
+    else:
+        for user in users_data:
+            if user[parameter] == user_data_search:
+                return user
+        return None
 
 
-# Retornar tambien el msg de error
+
 def verif_new_user_data(name,password,password_rep,email):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
@@ -103,11 +108,15 @@ def verif_new_user_data(name,password,password_rep,email):
 
     res_search = exist_user(name,0)
     
-    if res_search is not None:
+    if isinstance(res_search,str):
+        return res_search
+    elif res_search is not None:
         return "Ese nombre de usuario ya existe escoja otro"
     
     res_search = exist_user(email,2)
     
+    if isinstance(res_search,str):
+        return res_search
     if res_search is not None:
         return "Ese email ya esta registrado"
     
@@ -139,6 +148,7 @@ def send_email_autenti(mail):
 
 
 # Usar el check_conection
+# Eliminar el print(autenti)
 def register_in_db(register_struct,main_window,name,password,rep,email):
 
     check_conection = conect_DB()
@@ -214,6 +224,9 @@ def login_user(user_name,user_password):
             if res_search is None:
                 return "El usuario no existe"
             
+            elif isinstance(res_search,str):
+                return res_search
+
             else:
                 if res_search[1] != user_password:
                     return "Contraseña incorrecta"
@@ -235,12 +248,18 @@ def de_login(user_name,force=False):
 
         if res_search is None:
             return "El usuario que incio sesion dejo de estar registrado en la base de datos"
+
+        elif isinstance(res_search,str):
+            return res_search
+
         else:
             if res_search[3] == "desconectado":
                 return "La sesion no se puede cerrar porque el usuario no esta conectado"
+
             else:
                 user_state_switch(user_name,False)
                 return None
+
     else:
         user_state_switch(user_name,False)
 
@@ -317,15 +336,15 @@ def delete_order(id_order):
 
 
 
+# Cuestionable etica
 def get_fields_name():
-    error = "Error al mostrar el stock"
 
     ropas_data = get_service_stock_data("ropas",True)
     servicios_data = get_service_stock_data("servicios",True)
     prioridades_data = get_service_stock_data("prioridades",True)
 
-    if ropas_data == error or servicios_data == error or prioridades_data == error:
-        return None
+    if isinstance(ropas_data,str) or isinstance(servicios_data,str) or isinstance(prioridades_data,str):
+        return (),(),()
     
     else:
         return ropas_data,servicios_data,prioridades_data
