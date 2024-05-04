@@ -43,6 +43,7 @@ def exist_admin(user_data_search,parameter):
 
 
 # Retornar tambien el msg de error
+# Usar las clases
 def verify_admin(name,password):
 
     if name == "" or password == "":
@@ -131,6 +132,7 @@ def get_admins(user):
 # Reducir las exigencias para crear un nuevo administrador, esta funcion esta
 # haciendo dos cosas distintas
 # Retornar tambien el msg de error
+# Usar las clases
 def verif_new_admin_data(name,password,password_rep,ide=None):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
@@ -250,6 +252,7 @@ def get_users():
 
 # Esta funcion no tiene en cuenta que el email modificado ya exista
 # Retornar tambien el msg de error
+# Usar las clases
 def verif_user_data(name,email):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
@@ -336,6 +339,7 @@ def exist_param(option,price_data_search,parameter):
 
 
 # Retornar tambien el msg de error
+# Usar las clases
 def verif_param_data(name,price,option):
     
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
@@ -412,6 +416,7 @@ def exist_order(order_data_search,parameter):
 
 
 # Retornar tambien el msg de error
+# Usar las clases
 def verif_order_data(status,ide):
     
     if len(status) < 2:
