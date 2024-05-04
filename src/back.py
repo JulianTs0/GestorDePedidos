@@ -124,7 +124,7 @@ def verif_new_user_data(name,password,password_rep,email):
     return user 
 
 
-#Averiguar porque tarda tanto en enviar un emial
+
 def send_email_autenti(mail):
 
     try:
@@ -202,6 +202,7 @@ def verify_user(name,password):
     
     else:
         return None
+
 
 
 # Usar el check_conection
@@ -336,15 +337,23 @@ def delete_order(id_order):
 
 
 
-# Cuestionable etica
-def get_fields_name():
+def get_fields_name(name):
 
-    ropas_data = get_service_stock_data("ropas",True)
-    servicios_data = get_service_stock_data("servicios",True)
-    prioridades_data = get_service_stock_data("prioridades",True)
+    conect = conect_DB()
 
-    if isinstance(ropas_data,str) or isinstance(servicios_data,str) or isinstance(prioridades_data,str):
-        return (),(),()
-    
+    if isinstance(conect,str):
+        return None
+
     else:
-        return ropas_data,servicios_data,prioridades_data
+        field_data = get_service_stock_data(name)
+
+        if isinstance(field_data,str):
+            return None
+
+        else:
+
+            aux = []
+            for i in field_data:
+                aux.append(i[0])
+
+            return aux

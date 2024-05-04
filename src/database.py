@@ -131,8 +131,7 @@ def user_state_switch(user_name,state):
 
 
 
-# Esta haciendo cosas de mas
-def get_service_stock_data(stock_table,only_name=False):
+def get_service_stock_data(stock_table):
 
     try:
 
@@ -143,13 +142,7 @@ def get_service_stock_data(stock_table,only_name=False):
         conect.commit()
         conect.close()
         
-        if only_name:
-            aux = []
-            for i in data:
-                aux.append(i[0])
-            return aux
-        else:
-            return data
+        return data
 
     except:
         print(f"Error al mostrar los datos del ususario {mysql.connector.Error}")

@@ -518,7 +518,9 @@ class Order(Frame):
 
         #var
 
-        ropa_stock,servicio_stock,prioridad_available = get_fields_name()
+        ropa_stock = get_fields_name("ropas")
+        servicio_stock = get_fields_name("servicios")
+        prioridad_available = get_fields_name("prioridades")
 
         #create
 
