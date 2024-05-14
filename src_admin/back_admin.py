@@ -94,6 +94,7 @@ def login_admin(user_name,user_password):
 
 
 
+#Crear una nueva funcion para eliminar el parametro force
 def de_login(user_name,force=False):
 
     if not force:

@@ -242,6 +242,7 @@ def login_user(user_name,user_password):
 
 
 
+#Crear una nueva funcion para eliminar el parametro force (localstorage)
 def de_login(user_name,force=False):
 
     if not force:

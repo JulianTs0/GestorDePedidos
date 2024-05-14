@@ -38,8 +38,6 @@ class Main(Tk):
 
 
 
-# Nivelar los imputs
-# Bindear el enter al ingresar
 class Login(Frame):
     def __init__(self, main_window):
 
@@ -138,7 +136,7 @@ class Login(Frame):
 
         self.columnconfigure((0,2), weight=1)
         self.columnconfigure(1, weight=0)
-        self.rowconfigure((0,1,2,3,4,5,6,7), weight=1)
+        self.rowconfigure((0,1,2,3,4,5,6), weight=1)
 
         #title
 
@@ -147,19 +145,24 @@ class Login(Frame):
         #label
 
         user_label.grid(column=0, row=2, sticky="e", padx=30)
-        password_label.grid(column=0, row=4, sticky="e", padx=30)
-        register_label.grid(column=0, row=5, columnspan=4, sticky="s",padx=20)
+        password_label.grid(column=0, row=3, sticky="e", padx=30)
+        register_label.grid(column=0, row=4, columnspan=4, sticky="s",padx=20)
         register_label.bind("<Button-1>", lambda e: self.register(main_window.extra_bg))
+
 
         #entry
 
         user_input.grid(column=1, row=2, sticky="we")
-        password_input.grid(column=1, row=4, sticky="we")
+        password_input.grid(column=1, row=3, sticky="we")
 
         #button
 
-        login_button.grid(column=0, row=7, columnspan=3)
-        exit_button.grid(column=2,row=7 ,padx=20 ,sticky="e")
+        login_button.grid(column=0, row=6, columnspan=3)
+        exit_button.grid(column=2,row=6 ,padx=20 ,sticky="e")
+
+        #binds
+
+        main_window.bind("<Return>", lambda e : self.login(main_window,user_name.get(),user_password.get()))
 
     def login(self, main_window, user_name, user_password):
         login_res = login_user(user_name,user_password)
@@ -184,6 +187,7 @@ class MainMenu(Frame):
         self.configure(bg=main_window.secc_bg,padx=10, pady=10)
         self.place(relx=0.5, rely=0.5, relwidth=0.98, relheight=0.95, anchor="center")
         main_window.protocol("WM_DELETE_WINDOW", lambda: self.close_and_delogin(main_window,user.name))
+        main_window.unbind("<Return>")
 
         #var
 
