@@ -324,17 +324,36 @@ def get_user_orders(user):
 
 
 
+def state_order(id_order):
+    all_orders = select_order()
+
+    if isinstance(all_orders,str):
+        return all_orders
+
+    else:
+        for order in all_orders:
+            if order[0] == id_order and order[6] == "Espera":
+                return None
+        return "No se puede cancelar el pedido ya que fue aceptado"
+
+
+
 def delete_order(id_order):
 
-    option = messagebox.askyesno("Ultima confirmacion",f"Desea cancelar su pedido?")
-    if not option:
-        return "Se aborto la operacion con exito"
+    search_res = state_order(id_order)
+
+    if search_res is not None:
+        return search_res
     else:
-        delete_res = delete_order_db(id_order)
-        if delete_res is not None:
-            return delete_res
+        option = messagebox.askyesno("Ultima confirmacion",f"Desea cancelar su pedido?")
+        if not option:
+            return "Se aborto la operacion con exito"
         else:
-            return None
+            delete_res = delete_order_db(id_order)
+            if delete_res is not None:
+                return delete_res
+            else:
+                return None
 
 
 

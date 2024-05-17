@@ -4,6 +4,8 @@ from tkinter import messagebox
 from tkinter import font
 from back import *
 
+
+
 class Main(Tk):
     def __init__(self, tittle, size, resize, back_color):
 
@@ -658,8 +660,6 @@ class Order(Frame):
 
 
 
-# Hacer que los pedidos en proceso o finalizados no se puedan cancelar
-# Cambiar de lugar los botones
 class ShowOrder(Frame):
     def __init__(self ,extra_window,user):
 
@@ -771,8 +771,8 @@ class ShowOrder(Frame):
 
         #button
 
-        exit_btt.grid(column=2 ,row=2, sticky="e")
-        delete_btt.grid(column=0 ,row=2)
+        exit_btt.grid(column=2 ,row=2, sticky="e", padx=20)
+        delete_btt.grid(column=0 ,row=2, sticky="w", padx=20)
 
     def select_tree(self,tree):
         select = tree.focus()
