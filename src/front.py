@@ -49,9 +49,18 @@ class Login(Frame):
         self.configure(bg=main_window.secc_bg,padx=10, pady=10)
         self.place(relx=0.5, rely=0.5, relwidth=0.98, relheight=0.95, anchor="center")
 
-        #struct
+        #init func
 
-        self.create_login(main_window)
+        result = unexpected_delogin()
+
+        if result != "":
+            title,msg = result.split("|")
+            messagebox.showerror(title,msg)
+            close(main_window)
+
+        else:
+            #struct
+            self.create_login(main_window)
 
     def create_login(self, main_window):
 
@@ -167,9 +176,12 @@ class Login(Frame):
         main_window.bind("<Return>", lambda e : self.login(main_window,user_name.get(),user_password.get()))
 
     def login(self, main_window, user_name, user_password):
+
         login_res = login_user(user_name,user_password)
+
         if isinstance(login_res,str):
             messagebox.showwarning("Error al inciar sesion",login_res)
+
         else:
             messagebox.showinfo("Inicio de sesion","Inicio de sesion exitoso")
             main_window.status.destroy()
@@ -288,16 +300,21 @@ class MainMenu(Frame):
         Extra("Lista de pedidos", (800,600,350,100), True, back_color, "s",user)
 
     def backward(self,main_window,user_name):
+
         delogin_res = de_login(user_name)
+
         if delogin_res is not None:
             messagebox.showerror("Error",delogin_res)
+            close(main_window)
+
         else:
             messagebox.showinfo("Sesion cerrada","La sesion fue cerrada con exito")
             main_window.status.destroy()
             main_window.status = Login(main_window)
 
     def close_and_delogin(self,main_window,user_name):
-        de_login(user_name,True)
+
+        de_login(user_name)
         close(main_window)
 
 

@@ -5,6 +5,7 @@ from smtplib import *
 from database import *
 from decouple import config
 import random
+import os
 
 
 
@@ -147,7 +148,6 @@ def send_email_autenti(mail):
 
 
 
-# Usar el check_conection
 # Eliminar el print(autenti)
 def register_in_db(register_struct,main_window,name,password,rep,email):
 
@@ -205,7 +205,6 @@ def verify_user(name,password):
 
 
 
-# Usar el check_conection
 def login_user(user_name,user_password):
 
     verif_res  = verify_user(user_name,user_password)
@@ -242,10 +241,46 @@ def login_user(user_name,user_password):
 
 
 
-#Crear una nueva funcion para eliminar el parametro force (localstorage)
-def de_login(user_name,force=False):
+def unexpected_delogin():
 
-    if not force:
+    check_conection = conect_DB()
+
+    if isinstance(check_conection,str):
+        return "Error|Error al conectarse a la base de datos ingrese a la aplicacion mas tarde"
+
+    else:
+        if not os.path.exists("local_storage.txt"):
+            return ""
+
+        else:
+            archivo = open("local_storage.txt","rt")
+            user_name = archivo.read()
+
+            if user_name == "":
+                return ""
+
+            else:
+                user_state_switch(user_name,False)
+                archivo = open("local_storage.txt","wt")
+                archivo.write("")
+                archivo.close()
+                return ""
+
+
+
+#Revisar los casos de deslogeo
+def de_login(user_name):
+
+    check_conection = conect_DB()
+
+    if isinstance(check_conection,str):
+
+        archivo = open("local_storage.txt","wt")
+        archivo.write(f"{user_name}")
+        archivo.close()
+        return "La base de datos se deconecto, se guardo su cierre de sesion"
+
+    else:
         res_search = exist_user(user_name,0)
 
         if res_search is None:
@@ -261,9 +296,6 @@ def de_login(user_name,force=False):
             else:
                 user_state_switch(user_name,False)
                 return None
-
-    else:
-        user_state_switch(user_name,False)
 
 
 
