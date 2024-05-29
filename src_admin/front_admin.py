@@ -40,7 +40,6 @@ class Main(Tk):
 
 
 
-# Bindear el enter al ingresar
 class Login(Frame):
     def __init__(self, main_window):
 
@@ -150,6 +149,10 @@ class Login(Frame):
 
         login_button.grid(column=0, row=5, columnspan=3)
         exit_button.grid(column=2,row=7 ,padx=20 ,sticky="e")
+
+        #binds
+
+        main_window.bind("<Return>", lambda e : self.login(main_window,user_input.get(),password_input.get()))
 
     def login(self, main_window, user_name, user_password):
         login_res = login_admin(user_name,user_password)
@@ -374,8 +377,8 @@ class Extra(Toplevel):
 
 
 
-# Quitar la necesidad de doble contraseña
 # Ordenar los arboles al hacer click en las cabeceras
+# Sacar el print(id_content)
 class Register(Frame):
     def __init__(self,extra_window,user):
 
@@ -399,7 +402,6 @@ class Register(Frame):
 
         admin_name = StringVar()
         admin_pass = StringVar()
-        admin_rep = StringVar()
         tree_columns = ("id","nombre","contra")
         
         #create
@@ -450,18 +452,10 @@ class Register(Frame):
                                 text="Ingrese una contraseña: ", 
                                 width=20, 
                                 wraplength=150)
-        rep_label = Label(self,
-                            anchor="center", 
-                            font=("Calibri",11), 
-                            bg=extra_window.prim_bg_label, 
-                            fg=extra_window.letter_color, 
-                            text="Vuelva a ingresar su contraseña: ", 
-                            width=20, 
-                            wraplength=150)
 
         id_text = Text(self,
                         height=1, 
-                        width=2,
+                        width=4,
                         fg=extra_window.prim_bg_label
                         )
 
@@ -474,11 +468,6 @@ class Register(Frame):
                             fg=extra_window.prim_bg_label, 
                             textvariable=admin_pass,
                             show="*")
-        rep_entry = Entry(self,
-                            font=("Calibri",9), 
-                            fg=extra_window.prim_bg_label, 
-                            textvariable=admin_rep,
-                            show="*")
 
         confirm_btt = Button(self,
                             fg=extra_window.letter_color, 
@@ -489,7 +478,7 @@ class Register(Frame):
                             text="Registrar", 
                             width=8, 
                             height=1, 
-                            command= lambda: self.register_admin(user_entry,password_entry,rep_entry,id_text,admins_tree)
+                            command= lambda: self.register_admin(user_entry,password_entry,id_text,admins_tree)
                             )
         edit_btt = Button(self,
                             fg=extra_window.letter_color, 
@@ -500,7 +489,7 @@ class Register(Frame):
                             text="Modificar", 
                             width=8, 
                             height=1, 
-                            command= lambda: self.edit_admin(user_entry,password_entry,rep_entry,id_text,admins_tree)
+                            command= lambda: self.edit_admin(user_entry,password_entry,id_text,admins_tree)
                             )
         delete_btt = Button(self,
                             fg=extra_window.letter_color, 
@@ -511,7 +500,7 @@ class Register(Frame):
                             text="Eliminar", 
                             width=8, 
                             height=1, 
-                            command= lambda: self.select_admin_delete(admins_tree,user_entry,password_entry,rep_entry,id_text)
+                            command= lambda: self.select_admin_delete(admins_tree,user_entry,password_entry,id_text)
                             )
         exit_btt = Button(self,
                             fg=extra_window.letter_color, 
@@ -525,7 +514,7 @@ class Register(Frame):
                             command= lambda: close(extra_window)
                             )
 
-        self.update_tree(admins_tree,user_entry,password_entry,rep_entry,id_text)
+        self.update_tree(admins_tree,user_entry,password_entry,id_text)
 
         #configure
 
@@ -538,27 +527,25 @@ class Register(Frame):
 
         #label
 
-        id_label.grid(column=4,row=1,sticky="n",padx=5)
-        user_label.grid(column=3,row=1,sticky="n",padx=5)
-        password_label.grid(column=3,row=2,sticky="n",columnspan=2)
-        rep_label.grid(column=3,row=3,sticky="n",columnspan=2)
+        id_label.grid(column=3,row=1,sticky="n",columnspan=2)
+        user_label.grid(column=3,row=2,sticky="n",columnspan=2)
+        password_label.grid(column=3,row=3,sticky="n",columnspan=2)
 
         #text
 
-        id_text.grid(column=4,row=1,padx=5)
+        id_text.grid(column=3,row=1,columnspan=2)
         id_text["state"] = "disabled"
 
         #entry
 
-        user_entry.grid(column=3,row=1,padx=5)
-        password_entry.grid(column=3,row=2,columnspan=2)
-        rep_entry.grid(column=3,row=3,columnspan=2)
+        user_entry.grid(column=3,row=2,columnspan=2)
+        password_entry.grid(column=3,row=3,columnspan=2)
 
         #button
 
-        confirm_btt.grid(column=2,row=4,sticky="w",columnspan=2)
-        edit_btt.grid(column=2,row=4,columnspan=2,padx=20)
-        delete_btt.grid(column=2,row=4,sticky="e",columnspan=2)
+        confirm_btt.grid(column=1,row=4,sticky="e")
+        edit_btt.grid(column=2,row=4,padx=20)
+        delete_btt.grid(column=3,row=4,sticky="w")
         exit_btt.grid(column=5,row=4)
 
         #tree
@@ -570,9 +557,9 @@ class Register(Frame):
 
         scroll.grid(column=2,row=1,rowspan=3,sticky="nsw")
 
-    def register_admin(self,name,password,rep,id,tree):
+    def register_admin(self,name,password,id,tree):
 
-        option,title,body = register_admin_db(name.get(), password.get(), rep.get()).split("|")
+        option,title,body = register_admin_db(name.get(), password.get()).split("|")
 
         if option == "0":
             messagebox.showerror(title,body)
@@ -580,9 +567,9 @@ class Register(Frame):
             messagebox.showwarning(title,body)
         elif option == "2":
             messagebox.showinfo(title,body)
-            self.update_tree(tree,name,password,rep,id)
+            self.update_tree(tree,name,password,id)
 
-    def edit_admin(self,name,password,rep,id,tree):
+    def edit_admin(self,name,password,id,tree):
 
         id_content = id.get("1.0","end-1c")
 
@@ -592,7 +579,7 @@ class Register(Frame):
             messagebox.showwarning("No se selecciono un usuario","No se puede modificar un usuario que no existe")
             return
         
-        option,title,body  = modify_admin(name.get(), password.get(), rep.get(),id_content).split("|")
+        option,title,body  = modify_admin(name.get(), password.get(),id_content).split("|")
 
         if option == "0":
             messagebox.showerror(title,body)
@@ -600,9 +587,9 @@ class Register(Frame):
             messagebox.showwarning(title,body)
         elif option == "2":
             messagebox.showinfo(title,body)
-            self.update_tree(tree,name,password,rep,id)
+            self.update_tree(tree,name,password,id)
 
-    def update_tree(self,tree,user_field,pass_field,rep_field,id_field):
+    def update_tree(self,tree,user_field,pass_field,id_field):
 
         for children in tree.get_children():
             tree.selection_remove(children)
@@ -615,7 +602,7 @@ class Register(Frame):
         else:
             for item in admins_result:
                 tree.insert("" ,END ,values=item)
-            self.delete_fields(user_field,pass_field,rep_field,id_field)
+            self.delete_fields(user_field,pass_field,id_field)
 
     def select_tree(event,tree,name_entry,pass_entry,id_text):
 
@@ -641,15 +628,14 @@ class Register(Frame):
         except:
             pass
 
-    def delete_fields(self,user_field,pass_field,rep_field,id_field):
+    def delete_fields(self,user_field,pass_field,id_field):
         id_field["state"] = "normal"
         id_field.delete("1.0",END)
         id_field["state"] = "disabled"
         user_field.delete(0,END)
         pass_field.delete(0,END)
-        rep_field.delete(0,END)
 
-    def select_admin_delete(self,tree,user_field,pass_field,rep_field,id_field):
+    def select_admin_delete(self,tree,user_field,pass_field,id_field):
         select = tree.focus()
 
         if not select:
@@ -663,7 +649,7 @@ class Register(Frame):
             else:
                 messagebox.showinfo(title,body)
 
-        self.update_tree(tree,user_field,pass_field,rep_field,id_field)
+        self.update_tree(tree,user_field,pass_field,id_field)
 
 
 

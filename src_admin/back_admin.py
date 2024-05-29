@@ -134,16 +134,13 @@ def get_admins(user):
 # haciendo dos cosas distintas
 # Retornar tambien el msg de error
 # Usar las clases
-def verif_new_admin_data(name,password,password_rep,ide=None):
+def verif_admin_data(name,password,ide=None):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
         return "Ingrese un nombre de usuario valido"
     
     elif password == "" or len(password) > 20:
         return "No se ha ingresado la contraseña valida"
-    
-    elif password != password_rep:
-        return "Las contraseñas no coinciden"
 
     res_search = exist_admin(name,1)
     
@@ -159,7 +156,7 @@ def verif_new_admin_data(name,password,password_rep,ide=None):
 
 
 # Usar el check_conection
-def register_admin_db(name,password,rep):
+def register_admin_db(name,password):
 
     check_conection = conect_DB()
 
@@ -167,7 +164,7 @@ def register_admin_db(name,password,rep):
         return f"0|Error|{check_conection}"
 
     else:
-        verif_res = verif_new_admin_data(name, password, rep)
+        verif_res = verif_admin_data(name, password)
 
         if isinstance(verif_res,str):
             return f"1|Error al registrar la cuenta|{verif_res}"
@@ -184,14 +181,14 @@ def register_admin_db(name,password,rep):
 
 
 # Usar el check_conection
-def modify_admin(name,password,rep,ide):
+def modify_admin(name,password,ide):
     check_conection = conect_DB()
 
     if isinstance(check_conection,str):
         return f"0|Error|{check_conection}"
     
     else:
-        verif_res = verif_new_admin_data(name, password, rep, ide)
+        verif_res = verif_admin_data(name, password, ide)
 
         if not isinstance(verif_res,str):
             return "1|Error al modificar al usuario|No se puede modificar un usuario que no existe"
