@@ -181,6 +181,7 @@ def register_admin_db(name,password):
 
 
 # Usar el check_conection
+# Esta funcion no esta pudiendo modifcar un usuario con su id, revisar el caso
 def modify_admin(name,password,ide):
     check_conection = conect_DB()
 

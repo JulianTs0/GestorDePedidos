@@ -2,6 +2,7 @@ from database import *
 
 
 
+#Aprovechar mas el uso de las clases
 class Usuario:
     def __init__(self, name, password, email):
 

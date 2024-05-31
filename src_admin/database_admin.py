@@ -25,7 +25,7 @@ def select_admin():
     try:
         conect = conect_DB()
         cursor = conect.cursor()
-        cursor.execute("select id, nombre, contra, estado from admins;")
+        cursor.execute("select id, nombre, contra, estado from admins order by nombre;")
         data = cursor.fetchall()
         conect.commit()
         conect.close()
@@ -137,7 +137,7 @@ def select_user():
     try:
         conect = conect_DB()
         cursor = conect.cursor()
-        cursor.execute("select nombre, email, id from usuarios;")
+        cursor.execute("select nombre, email, id from usuarios order by nombre;")
         data = cursor.fetchall()
         conect.commit()
         conect.close()

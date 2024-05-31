@@ -377,7 +377,6 @@ class Extra(Toplevel):
 
 
 
-# Ordenar los arboles al hacer click en las cabeceras
 # Sacar el print(id_content)
 class Register(Frame):
     def __init__(self,extra_window,user):
@@ -654,8 +653,7 @@ class Register(Frame):
 
 
 # Añadir la cantidad de pedidos que tiene cada usuario
-# Solo permitir cambiar el nombre
-# Ordenar los arboles al hacer click en las cabeceras
+# Eliminar la funcionalidad de EDITAR
 class Users(Frame):
     def __init__(self,extra_window):
         

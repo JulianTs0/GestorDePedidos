@@ -1,6 +1,8 @@
 from database_admin import *
 
 
+
+#Aprovechar mas el uso de las clases
 class Admin:
     def __init__(self, name, password):
 
