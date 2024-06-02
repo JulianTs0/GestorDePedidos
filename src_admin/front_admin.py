@@ -652,7 +652,6 @@ class Register(Frame):
 
 
 
-# Añadir la cantidad de pedidos que tiene cada usuario
 class Users(Frame):
     def __init__(self,extra_window):
         

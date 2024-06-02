@@ -358,6 +358,7 @@ def modify_params(name, price, ide, option):
 
 def get_orders():
     all_orders = select_order()
+    priorities = ["Baja","Media","Alta"]
     order_data = []
 
     if isinstance(all_orders,str):
@@ -365,7 +366,7 @@ def get_orders():
     
     else:
         for order in all_orders:
-            order_data.append(order)
+            order_data.append((order[0],order[1],order[2],order[3],priorities[int(order[4])],order[5],order[6],order[7]))
         return order_data
 
 

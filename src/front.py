@@ -613,7 +613,7 @@ class Order(Frame):
                              activebackground=extra_window.prim_hl_button, 
                              relief="flat",
                              text="Hacer pedido",
-                             command= lambda: self.make_order(ropa_cb.get(),servicio_cb.get(),prioridad_cb.get(),comentario_input.get("1.0","end"),self.user)
+                             command= lambda: self.make_order(ropa_cb.get(),servicio_cb.get(),prioridad_cb.current(),comentario_input.get("1.0","end"),self.user)
                              )
         exit_btt = Button(self, 
                           width=8,

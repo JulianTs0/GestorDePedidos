@@ -263,7 +263,7 @@ def select_order():
     try:
         conect = conect_DB()
         cursor = conect.cursor()
-        cursor.execute("select id, usuario, ropa, servicio, prioridad, comentario, precio, estado from pedidos;")
+        cursor.execute("select id, usuario, ropa, servicio, prioridad, comentario, precio, estado from pedidos order by prioridad desc;")
         data = cursor.fetchall()
         conect.commit()
         conect.close()

@@ -342,6 +342,7 @@ def create_order_db(ropa,servicio,prioridad,conentario,user):
 def get_user_orders(user):
 
     all_orders = select_order()
+    priorities = ["Baja","Media","Alta"]
     display_orders = []
 
     if isinstance(all_orders,str):
@@ -350,8 +351,7 @@ def get_user_orders(user):
     else:
         for order in all_orders:
             if order[1] == user.name:
-                order = [order[0],order[2],order[3],order[4],order[5],order[6]]
-                display_orders.append(order)
+                display_orders.append((order[0],order[2],order[3],priorities[int(order[4])],order[5],order[6]))
         return display_orders
 
 
