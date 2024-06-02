@@ -234,6 +234,21 @@ def exist_user(user_data_search,parameter):
 
 
 
+def orders_amount(user_name):
+    all_orders = select_order()
+    amount = 0
+
+    if isinstance(all_orders,str):
+        return -1
+    
+    else:
+        for order in all_orders:
+            if order[1] == user_name:
+                amount += 1
+        return amount
+
+
+
 def get_users():
     all_users = select_user()
     users_data = []
@@ -243,7 +258,7 @@ def get_users():
     
     else:
         for usuario in all_users:
-            usuario = (usuario[0],usuario[1],usuario[2])
+            usuario = (usuario[0],usuario[1],usuario[2],orders_amount(usuario[0]))
             users_data.append(usuario)
         return users_data
 

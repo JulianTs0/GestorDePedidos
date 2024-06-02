@@ -670,7 +670,7 @@ class Users(Frame):
 
         #var
 
-        user_columns = ("nombre","email","id")
+        user_columns = ("nombre","email","id","pedidos")
 
         #create
 
@@ -681,10 +681,12 @@ class Users(Frame):
         users_tree.column("id",width=20)
         users_tree.column("nombre",width=60)
         users_tree.column("email",width=140)
+        users_tree.column("pedidos",width=50)
 
         users_tree.heading("id",text="ID")
         users_tree.heading("nombre",text="Nombre")
         users_tree.heading("email",text="Email")
+        users_tree.heading("pedidos",text="Nº Pedidos")
 
         scroll = Scrollbar(self ,orient=VERTICAL ,command=users_tree.yview)
         users_tree.configure(yscroll=scroll.set)
