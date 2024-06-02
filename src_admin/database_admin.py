@@ -150,25 +150,6 @@ def select_user():
 
 
 
-def update_user(user,ide):
-    try:
-        conect = conect_DB()
-        cursor = conect.cursor()
-        sql = "update usuarios set usuarios.nombre = %s, usuarios.email = %s WHERE usuarios.id = %s;"
-        data = (user.name, user.email, ide)
-        cursor.execute(sql,data)
-        conect.commit()
-        print(cursor.rowcount,"Usuario ingresado")
-        conect.close()
-
-        return None
-    except mysql.connector.Error as error:
-        print(f"Error al ingresar el ususario {error}")
-
-        return "Error al ingresar el ususario"
-
-
-
 def select_clothes():
     try:
         conect = conect_DB()

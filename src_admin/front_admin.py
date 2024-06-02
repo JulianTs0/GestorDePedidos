@@ -653,7 +653,6 @@ class Register(Frame):
 
 
 # Añadir la cantidad de pedidos que tiene cada usuario
-# Eliminar la funcionalidad de EDITAR
 class Users(Frame):
     def __init__(self,extra_window):
         
@@ -671,8 +670,6 @@ class Users(Frame):
 
         #var
 
-        name_user = StringVar()
-        email_user = StringVar()
         user_columns = ("nombre","email","id")
 
         #create
@@ -699,41 +696,6 @@ class Users(Frame):
                             fg=extra_window.letter_color, 
                             text="Base de usuarios")
 
-        name_label = Label(self, 
-                            anchor="w",
-                            width=16,
-                            font=("Calibri",14), 
-                            bg=extra_window.prim_bg_label, 
-                            fg=extra_window.letter_color, 
-                            text="Nombre del usuario:")
-        email_label = Label(self, 
-                            anchor="w",
-                            width=16,
-                            font=("Calibri",14), 
-                            bg=extra_window.prim_bg_label, 
-                            fg=extra_window.letter_color, 
-                            text="Email del usuario:")
-
-        name_entry = Entry(self,
-                            font=("Calibri",9), 
-                            fg=extra_window.prim_bg_label, 
-                            textvariable=name_user)
-        email_entry = Entry(self,
-                            font=("Calibri",9), 
-                            fg=extra_window.prim_bg_label, 
-                            textvariable=email_user)
-
-        edit_btt = Button(self, 
-                            width=6, 
-                            height=1, 
-                            font=("Calibri",11), 
-                            bg=extra_window.prim_bg_button, 
-                            fg=extra_window.letter_color, 
-                            activeforeground=extra_window.letter_color, 
-                            activebackground=extra_window.prim_hl_button, 
-                            relief="flat", 
-                            text="Editar", 
-                            command= lambda: self.edit_user(users_tree,name_entry,email_entry))
         exit_btt = Button(self, 
                             width=6, 
                             height=1, 
@@ -746,7 +708,7 @@ class Users(Frame):
                             text="Volver", 
                             command= lambda: close(extra_window))
 
-        self.update_tree(users_tree,name_entry,email_entry)
+        self.update_tree(users_tree)
 
         #configure 
 
@@ -759,49 +721,17 @@ class Users(Frame):
 
         #tree
 
-        users_tree.grid(column=0,row=1,columnspan=4,rowspan=2,sticky="nswe")
-        users_tree.bind("<<TreeviewSelect>>",lambda e: self.select_tree(users_tree,name_entry,email_entry))
+        users_tree.grid(column=0,row=1,columnspan=4,rowspan=3,sticky="nswe")
 
         #scroll
 
-        scroll.grid(column=0,row=1,columnspan=4,rowspan=2,sticky="nse")
-
-        #label
-
-        name_label.grid(column=0,row=3,sticky="n",pady=15)
-        email_label.grid(column=1,row=3,sticky="n",pady=15)
-
-        #entry
-
-        name_entry.grid(column=0,row=3,sticky="s",pady=15)
-        email_entry.grid(column=1,row=3,sticky="wes",pady=15,padx=35)
+        scroll.grid(column=0,row=1,columnspan=4,rowspan=3,sticky="nse")
 
         #button
 
-        edit_btt.grid(column=2,row=3,columnspan=2)
-        exit_btt.grid(column=3,row=4,sticky="e",padx=10)
-    
-    def edit_user(self,tree,name,email):
+        exit_btt.grid(column=0,row=4,padx=10,columnspan=4)
 
-        select = tree.focus()
-        try:
-            selected_value = tree.item(select)["values"]
-            ide = selected_value[2]
-        except:
-            messagebox.showwarning("No hay ningun usuario seleccionado","Seleccione un usuario de la planilla")
-            return
-        
-        option,title,body = modify_user(name.get(), email.get(),ide).split("|")
-
-        if option == "0":
-            messagebox.showerror(title,body)
-        elif option == "1":
-            messagebox.showwarning(title,body)
-        elif option == "2":
-            messagebox.showinfo(title,body)
-            self.update_tree(tree,name,email)
-
-    def update_tree(self,tree,user_field,email_field):
+    def update_tree(self,tree):
 
         for children in tree.get_children():
             tree.selection_remove(children)
@@ -814,30 +744,6 @@ class Users(Frame):
         else:
             for item in user_result:
                 tree.insert("" ,END ,values=item)
-            self.delete_fields(user_field,email_field)
-
-    def delete_fields(self,user_field,pass_field):
-        user_field.delete(0,END)
-        pass_field.delete(0,END)
-
-    def select_tree(event,tree,name_entry,email_entry):
-
-        select = tree.focus()
-
-        try:
-
-            selected_value = tree.item(select)["values"]
-
-            name = selected_value[0]
-            email = selected_value[1]
-
-            name_entry.delete(0,END)
-            name_entry.insert(0,name)
-            email_entry.delete(0,END)
-            email_entry.insert(0,email)
-
-        except:
-            pass
 
 
 

@@ -249,51 +249,6 @@ def get_users():
 
 
 
-# Esta funcion no tiene en cuenta que el email modificado ya exista
-# Retornar tambien el msg de error
-# Usar las clases
-def verif_user_data(name,email):
-
-    if name == "" or not is_a_valid_char(name) or len(name) > 30:
-        return "Ingrese un nombre de usuario valido"
-    
-    elif "@gmail.com" not in email or len(email) <= 10 or email == "" or len(email) > 40:
-        return "La estructura del email no es correcta"
-
-    res_search = exist_user(name,0)
-
-    if res_search is not None:
-        return "Ese nombre de usuario ya existe escoja otro"
-    
-    user = Usuario(name,email)
-    return user
-
-
-
-# Usar el check_conection
-def modify_user(name,email,ide):
-    check_conection = conect_DB()
-
-    if isinstance(check_conection,str):
-        return f"0|Error|{check_conection}"
-    
-    else:
-        verif_res = verif_user_data(name, email)
-
-        if isinstance(verif_res,str):
-            return f"1|Error al modificar al usuario|{verif_res}"
-
-        else:
-            modify_user_res = update_user(verif_res,ide)
-
-            if modify_user_res is not None:
-                return f"0|Error|{modify_user_res}"
-                    
-            else:
-                return "2|Usuario modificado|Los datos del Usuario fueron modificados con exito"
-
-
-
 def get_params(option):
 
     params_data = []
