@@ -492,9 +492,9 @@ class Register(Frame):
                             )
         delete_btt = Button(self,
                             fg=extra_window.letter_color, 
-                            bg=extra_window.secc_bg_button, 
+                            bg=extra_window.prim_hl_button, 
                             activeforeground=extra_window.letter_color, 
-                            activebackground=extra_window.secc_hl_button, 
+                            activebackground=extra_window.prim_bg_button, 
                             relief="flat", 
                             text="Eliminar", 
                             width=8, 
@@ -748,9 +748,6 @@ class Users(Frame):
 
 
 
-# Añadir precios
-# Eliminar precios
-# Ordenar los arboles al hacer click en las cabeceras
 class Price(Frame):
     def __init__(self,extra_window):
         
@@ -796,20 +793,28 @@ class Price(Frame):
                             fg=extra_window.letter_color, 
                             text="Base de precios")
 
+        id_label = Label(self, 
+                            width=9,
+                            font=("Calibri",12), 
+                            bg=extra_window.prim_bg_label, 
+                            fg=extra_window.letter_color, 
+                            text="Id:")
         param_label = Label(self, 
-                            anchor="w",
-                            width=18,
-                            font=("Calibri",14), 
+                            width=14,
+                            wraplength=80,
+                            font=("Calibri",12), 
                             bg=extra_window.prim_bg_label, 
                             fg=extra_window.letter_color, 
-                            text="Nombre del parametro:")
+                            text="Nombre del parametro:",
+                            padx=10)
         price_label = Label(self, 
-                            anchor="w",
-                            width=18,
-                            font=("Calibri",14), 
+                            width=14,
+                            wraplength=80,
+                            font=("Calibri",12), 
                             bg=extra_window.prim_bg_label, 
                             fg=extra_window.letter_color, 
-                            text="Precio del parametro:")
+                            text="Precio del parametro:",
+                            padx=10)
         cb_label = Label(self, 
                             anchor="w",
                             width=18,
@@ -817,6 +822,12 @@ class Price(Frame):
                             bg=extra_window.prim_bg_label, 
                             fg=extra_window.letter_color, 
                             text="Eliga un parametro:")
+
+        id_text = Text(self,
+                        height=1, 
+                        width=4,
+                        fg=extra_window.prim_bg_label
+                        )
 
         param_entry = Entry(self,
                             font=("Calibri",9), 
@@ -829,8 +840,8 @@ class Price(Frame):
 
         data_cb = ttk.Combobox(self)
 
-        edit_btt = Button(self, 
-                            width=6, 
+        confirm_btt = Button(self, 
+                            width=8, 
                             height=1, 
                             font=("Calibri",11), 
                             bg=extra_window.prim_bg_button, 
@@ -838,8 +849,30 @@ class Price(Frame):
                             activeforeground=extra_window.letter_color, 
                             activebackground=extra_window.prim_hl_button, 
                             relief="flat", 
+                            text="Añadir", 
+                            command= lambda: self.register_price(price_tree,data_cb,param_entry,price_entry,id_text))
+        edit_btt = Button(self, 
+                            width=6, 
+                            height=1, 
+                            font=("Calibri",11), 
+                            bg=extra_window.secc_bg_button, 
+                            fg=extra_window.letter_color, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.secc_hl_button, 
+                            relief="flat", 
                             text="Editar", 
-                            command= lambda: self.edit_price(price_tree,data_cb,param_entry,price_entry))
+                            command= lambda: self.edit_price(price_tree,data_cb,param_entry,price_entry,id_text))
+        delete_btt = Button(self, 
+                            width=8, 
+                            height=1, 
+                            font=("Calibri",11), 
+                            bg=extra_window.prim_hl_button, 
+                            fg=extra_window.letter_color, 
+                            activeforeground=extra_window.letter_color, 
+                            activebackground=extra_window.prim_bg_button, 
+                            relief="flat", 
+                            text="Eliminar", 
+                            command= lambda: self.select_param_delete(price_tree,data_cb,param_entry,price_entry,id_text))
         exit_btt = Button(self, 
                             width=6, 
                             height=1, 
@@ -854,46 +887,53 @@ class Price(Frame):
 
         #configure
 
-        self.columnconfigure((0,1,2,3,4),weight=1)
+        self.columnconfigure((0,1,2,3,4,5),weight=1)
         self.rowconfigure((0,1,2,3,4,5),weight=1)
 
         #title
 
-        main_title.grid(column=0,row=0,columnspan=5,sticky="we")
+        main_title.grid(column=0,row=0,columnspan=6,sticky="we")
 
         #label
 
-        param_label.grid(column=4,row=2,sticky="n")
-        price_label.grid(column=4,row=3,sticky="n")
+        id_label.grid(column=5,row=2,sticky="n")
+        param_label.grid(column=5,row=3,sticky="n")
+        price_label.grid(column=5,row=4,sticky="n")
         cb_label.grid(column=0,row=1)
+
+        #text
+        id_text.grid(column=5,row=2)
+        id_text["state"] = "disabled"
 
         #entry
 
-        param_entry.grid(column=4,row=2)
-        price_entry.grid(column=4,row=3)
+        param_entry.grid(column=5,row=3)
+        price_entry.grid(column=5,row=4)
 
         #combobox
 
         data_cb.grid(column=1,row=1)
         data_cb["values"] = ("Ropas","Servicios","Prioridades")
         data_cb["state"] = "readonly"
-        data_cb.bind("<<ComboboxSelected>>", lambda e: self.update_tree(price_tree,param_entry,param_entry,data_cb))
+        data_cb.bind("<<ComboboxSelected>>", lambda e: self.update_tree(price_tree,param_entry,param_entry,data_cb,id_text))
 
         #treeview
 
-        price_tree.grid(column=0,row=2,columnspan=4,rowspan=3,sticky="nswe",padx=10)
-        price_tree.bind("<<TreeviewSelect>>",lambda e: self.select_tree(price_tree,param_entry,price_entry))
+        price_tree.grid(column=0,row=2,columnspan=5,rowspan=3,sticky="nswe",padx=10)
+        price_tree.bind("<<TreeviewSelect>>",lambda e: self.select_tree(price_tree,param_entry,price_entry,id_text))
 
         #scroll
 
-        scroll.grid(column=0,row=2,columnspan=4,rowspan=3,sticky="nse")
+        scroll.grid(column=0,row=2,columnspan=5,rowspan=3,sticky="nse")
 
         #button
 
-        edit_btt.grid(column=4,row=4)
-        exit_btt.grid(column=4,row=5,sticky="e")
+        confirm_btt.grid(column=0,row=5,sticky="e")
+        edit_btt.grid(column=1,row=5)
+        delete_btt.grid(column=2,row=5,sticky="w")
+        exit_btt.grid(column=5,row=5)
 
-    def edit_price(self,tree,param_cb,name,price):
+    def edit_price(self,tree,param_cb,name,price,id_field):
         
         select = tree.focus()
         option = param_cb.current()
@@ -913,9 +953,9 @@ class Price(Frame):
             messagebox.showwarning(title,body)
         elif option == "2":
             messagebox.showinfo(title,body)
-            self.update_tree(tree,name,price,param_cb)
+            self.update_tree(tree,name,price,param_cb,id_field)
 
-    def update_tree(self,tree,name_field,price_field,param_combo):
+    def update_tree(self,tree,name_field,price_field,param_combo,id_field):
 
         option = param_combo.current()
 
@@ -930,13 +970,17 @@ class Price(Frame):
         else:
             for item in param_result:
                 tree.insert("" ,END ,values=item)
-            self.delete_fields(name_field,price_field)
+            self.delete_fields(name_field,price_field,id_field)
 
-    def delete_fields(self,name_field,price_field):
+    def delete_fields(self,name_field,price_field,id_field):
+
+        id_field["state"] = "normal"
+        id_field.delete("1.0",END)
+        id_field["state"] = "disabled"
         name_field.delete(0,END)
         price_field.delete(0,END)
     
-    def select_tree(self,tree,name_entry,price_entry):
+    def select_tree(self,tree,name_entry,price_entry,id_text):
 
         select = tree.focus()
 
@@ -946,7 +990,12 @@ class Price(Frame):
 
             name = selected_value[0]
             price = selected_value[1]
+            id = selected_value[2]
 
+            id_text["state"] = "normal"
+            id_text.delete("1.0",END)
+            id_text.insert("1.0",id)
+            id_text["state"] = "disabled"
             name_entry.delete(0,END)
             name_entry.insert(0,name)
             price_entry.delete(0,END)
@@ -955,9 +1004,36 @@ class Price(Frame):
         except:
             pass
 
+    def register_price(self,tree,param_cb,name,price,id_field):
+
+        option,title,body = register_param_db(name.get(), price.get(),param_cb.current()).split("|")
+
+        if option == "0":
+            messagebox.showerror(title,body)
+        elif option == "1":
+            messagebox.showwarning(title,body)
+        elif option == "2":
+            messagebox.showinfo(title,body)
+            self.update_tree(tree,name,price,param_cb,id_field)
+
+    def select_param_delete(self,tree,param_cb,name_field,price_field,id_field):
+        select = tree.focus()
+
+        if not select:
+            messagebox.showwarning("No se pudo eliminar el parametro","Seleccione uno para eliminarla")
+        else:
+            values = tree.item(select)["values"]
+            option,title,body = delete_param(values[2],param_cb.current()).split("|")
+
+            if option == "0":
+                messagebox.showerror(title,body)
+            else:
+                messagebox.showinfo(title,body)
+
+            self.update_tree(tree,name_field,price_field,param_cb,id_field)
 
 
-# Ordenar los arboles al hacer click en las cabeceras
+
 class Orders(Frame):
     def __init__(self,extra_window):
         

@@ -94,6 +94,7 @@ def get_admin_id():
 
 
 
+#Usar clases
 def update_admin(user,ide):
     try:
         conect = conect_DB()
@@ -154,7 +155,7 @@ def select_clothes():
     try:
         conect = conect_DB()
         cursor = conect.cursor()
-        cursor.execute("select nombre, precio, id from ropas;")
+        cursor.execute("select nombre, precio, id from ropas order by precio desc;")
         data = cursor.fetchall()
         conect.commit()
         conect.close()
@@ -171,7 +172,7 @@ def select_service():
     try:
         conect = conect_DB()
         cursor = conect.cursor()
-        cursor.execute("select nombre, precio, id from servicios;")
+        cursor.execute("select nombre, precio, id from servicios order by precio desc;")
         data = cursor.fetchall()
         conect.commit()
         conect.close()
@@ -188,7 +189,7 @@ def select_priority():
     try:
         conect = conect_DB()
         cursor = conect.cursor()
-        cursor.execute("select nombre, precio, id from prioridades;")
+        cursor.execute("select nombre, precio, id from prioridades order by precio desc;")
         data = cursor.fetchall()
         conect.commit()
         conect.close()
@@ -255,6 +256,120 @@ def update_priority(prio,ide):
         print(f"Error al ingresar la Prioridad {error}")
 
         return "Error al ingresar la Prioridad"
+
+
+
+def insert_clothes(clothe):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "insert into ropas values(null,%s,%s);"
+        data = (clothe.name, clothe.price)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Ropa ingresada")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al ingresar la Ropa {error}")
+
+        return "Error al ingresar la Ropa"
+
+
+
+def insert_service(service):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "insert into servicios values(null,%s,%s);"
+        data = (service.name, service.price)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Servicio ingresado")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al ingresar el Servicio {error}")
+
+        return "Error al ingresar el Servicio"
+
+
+
+def insert_priority(priority):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "insert into prioridades values(null,%s,%s);"
+        data = (priority.name, priority.price)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Prioridad ingresada")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al ingresar la Prioridad {error}")
+
+        return "Error al ingresar la Prioridad"
+
+
+
+def delete_clothes(id):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "delete from ropas where ropas.id = %s;"
+        data = (id,)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Ropa Eliminada")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al Eliminar la ropa {error}")
+
+        return "Error al Eliminar la ropa"
+
+
+
+def delete_service(id):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "delete from servicios where servicios.id = %s;"
+        data = (id,)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Servicio Eliminado")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al Eliminar el servicio {error}")
+
+        return "Error al Eliminar el servicio"
+
+
+
+def delete_priority(id):
+    try:
+        conect = conect_DB()
+        cursor = conect.cursor()
+        sql = "delete from prioridades where prioridades.id = %s;"
+        data = (id,)
+        cursor.execute(sql,data)
+        conect.commit()
+        print(cursor.rowcount,"Prioridad Eliminado")
+        conect.close()
+
+        return None
+    except mysql.connector.Error as error:
+        print(f"Error al Eliminar el prioridad {error}")
+
+        return "Error al Eliminar el prioridad"
 
 
 

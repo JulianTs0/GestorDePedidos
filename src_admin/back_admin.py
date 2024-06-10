@@ -264,6 +264,7 @@ def get_users():
 
 
 
+# Usar match case
 def get_params(option):
 
     params_data = []
@@ -288,6 +289,66 @@ def get_params(option):
 
 
 
+# Usar match case
+def register_param_db(name,price,option):
+
+    check_conection = conect_DB()
+
+    if isinstance(check_conection,str):
+        return f"0|Error|{check_conection}"
+
+    else:
+        verif_res = verif_param_data(name, price,option)
+
+        if isinstance(verif_res,str):
+            return f"1|Error al ingresar un nuevo parametro |{verif_res}"
+        
+        else:
+
+            if option == 0:
+                insert_db_res = insert_clothes(verif_res)
+            elif option == 1:
+                insert_db_res = insert_service(verif_res)
+            elif option == 2:
+                insert_db_res = insert_priority(verif_res)
+            else:
+                insert_db_res = "Error de estructura interna"
+
+            if insert_db_res is not None:
+                return f"0|Error|{insert_db_res}"
+                
+            else:
+                return "2|Parametro creado|El Parametro a sido creado y registrado con exito"
+
+
+
+# Usar match case
+def delete_param(id_param,option_param):
+
+    option = messagebox.askyesno("Ultima confirmacion",f"Desea eliminar el parametro?")
+
+    if not option:
+        return "1|Accion exitosa|Se aborto la operacion con exito"
+
+    else:
+        if option_param == 0:
+            delete_res = delete_clothes(id_param)
+        elif option_param == 1:
+            delete_res = delete_service(id_param)
+        elif option_param == 2:
+            delete_res = delete_priority(id_param)
+        else:
+            delete_res = "Error de estructura interna"
+        
+        if delete_res is not None:
+            return f"0|Error|{delete_res}"
+        
+        else:
+            return "1|Accion exitosa|Su accion fue cancelada con exito"
+
+
+
+# Usar match case
 # Retornar tambien el msg de error
 def exist_param(option,price_data_search,parameter):
 
@@ -314,7 +375,7 @@ def verif_param_data(name,price,option):
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
         return "Ingrese un nombre de parametro valido"
     
-    if not is_a_number(price) or len(str(price)) > 20:
+    if price == "" or not is_a_number(price) or len(price) > 20 or price == "0":
         return "El precio no es valido"
 
     res_search = exist_param(option,name,0)
@@ -328,6 +389,7 @@ def verif_param_data(name,price,option):
 
 
 # Usar el check_conection
+# Usar match case
 def modify_params(name, price, ide, option):
     check_conection = conect_DB()
 
@@ -337,10 +399,10 @@ def modify_params(name, price, ide, option):
     else:
         verif_res = verif_param_data(name, price, option)
 
-        if verif_res is not None:
+        if isinstance(verif_res,str):
             return f"1|Error al modificar el parametro|{verif_res}"
         else:
-            
+
             if option == 0:
                 modify_param_res = update_clothes(verif_res,ide)
             elif option == 1:
