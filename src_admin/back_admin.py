@@ -35,10 +35,13 @@ def is_a_valid_char(word):
 def exist_admin(user_data_search,parameter):
     users_data = select_admin()
 
-    for user in users_data:
-        if user[parameter] == user_data_search:
-            return user
-    return None
+    if isinstance(users_data,str):
+        return "Error al conectarse a la base de datos"
+    else:
+        for user in users_data:
+            if user[parameter] == user_data_search:
+                return user
+        return "El administrador no existe"
 
 
 
@@ -77,8 +80,8 @@ def login_admin(user_name,user_password):
         else:
             res_search = exist_admin(user_name,1)
         
-            if res_search is None:
-                return "El administrador no existe"
+            if isinstance(res_search,str):
+                return res_search
             
             else:
                 if res_search[2] != user_password:
@@ -101,8 +104,8 @@ def de_login(user_name,force=False):
 
         res_search = exist_admin(user_name,1)
 
-        if res_search is None:
-            return "El usuario que incio sesion dejo de estar registrado en la base de datos"
+        if isinstance(res_search,str):
+            return res_search
         else:
             if res_search[2] == "desconectado" or res_search[2] is None:
                 return "La sesion no se puede cerrar porque el usuario no esta conectado"
@@ -144,7 +147,7 @@ def verif_admin_data(name,password,ide=None):
 
     res_search = exist_admin(name,1)
     
-    if res_search is not None:
+    if not isinstance(res_search,str):
         return "Ese nombre de usuario ya existe escoja otro"
     
     if ide is not None:
@@ -192,7 +195,7 @@ def modify_admin(name,password,ide):
         verif_res = verif_admin_data(name, password, ide)
 
         if not isinstance(verif_res,str):
-            return "1|Error al modificar al usuario|No se puede modificar un usuario que no existe"
+            return "1|Error al modificar al usuario|Seleccione devuelta al usuario para modificarlo"
 
         else:
             admin = Admin(name,password)
