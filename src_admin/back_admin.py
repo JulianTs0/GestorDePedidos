@@ -31,7 +31,6 @@ def is_a_valid_char(word):
 
 
 
-# Retornar tambien el msg de error
 def exist_admin(user_data_search,parameter):
     users_data = select_admin()
 
@@ -45,17 +44,15 @@ def exist_admin(user_data_search,parameter):
 
 
 
-# Retornar tambien el msg de error
-# Usar las clases
-def verify_admin(name,password):
+def verify_admin(admin_user):
 
-    if name == "" or password == "":
+    if admin_user.name == "" or admin_user.password == "":
         return "Complete los campos antes de iniciar sesion"
     
-    elif not is_a_valid_char(name) or len(name) > 30 :
+    elif not is_a_valid_char(admin_user.name) or len(admin_user.name) > 30 :
         return "Ingrese un nombre de usuario valido"
     
-    elif len(password) > 20:
+    elif len(admin_user.password) > 20:
         return "Ingrese una contraseña valida"
     
     else:
@@ -63,10 +60,10 @@ def verify_admin(name,password):
 
 
 
-# Usar el check_conection
-def login_admin(user_name,user_password):
 
-    verif_res  = verify_admin(user_name,user_password)
+def login_admin(admin_user):
+
+    verif_res  = verify_admin(admin_user)
 
     if verif_res is not None:
         return verif_res
@@ -78,13 +75,13 @@ def login_admin(user_name,user_password):
             return check_conection
         
         else:
-            res_search = exist_admin(user_name,1)
+            res_search = exist_admin(admin_user.name,1)
         
             if isinstance(res_search,str):
                 return res_search
             
             else:
-                if res_search[2] != user_password:
+                if res_search[2] != admin_user.password:
                     return "Contraseña incorrecta"
                 
                 else:

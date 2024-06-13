@@ -155,7 +155,10 @@ class Login(Frame):
         main_window.bind("<Return>", lambda e : self.login(main_window,user_input.get(),password_input.get()))
 
     def login(self, main_window, user_name, user_password):
-        login_res = login_admin(user_name,user_password)
+
+        admin_user = Admin(user_name, user_password)
+
+        login_res = login_admin(admin_user)
         if isinstance(login_res,str):
             messagebox.showwarning("Error al inciar sesion",login_res)
         else:
