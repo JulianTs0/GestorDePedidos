@@ -268,7 +268,6 @@ def unexpected_delogin():
 
 
 
-#Revisar los casos de deslogeo
 def de_login(user_name):
 
     check_conection = conect_DB()
@@ -281,6 +280,7 @@ def de_login(user_name):
         return "La base de datos se deconecto, se guardo su cierre de sesion"
 
     else:
+
         res_search = exist_user(user_name,0)
 
         if res_search is None:

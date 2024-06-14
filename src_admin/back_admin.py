@@ -4,6 +4,7 @@ from tkinter import *
 from smtplib import *
 from database_admin import *
 from decouple import config
+import os
 
 
 
@@ -60,7 +61,6 @@ def verify_admin(admin_user):
 
 
 
-
 def login_admin(admin_user):
 
     verif_res  = verify_admin(admin_user)
@@ -94,23 +94,58 @@ def login_admin(admin_user):
 
 
 
-#Crear una nueva funcion para eliminar el parametro force
-def de_login(user_name,force=False):
+def unexpected_delogin():
 
-    if not force:
+    check_conection = conect_DB()
+
+    if isinstance(check_conection,str):
+        return "Error|Error al conectarse a la base de datos ingrese a la aplicacion mas tarde"
+
+    else:
+        if not os.path.exists("local_storage_admin.txt"):
+            return ""
+
+        else:
+            archivo = open("local_storage_admin.txt","rt")
+            user_name = archivo.read()
+
+            if user_name == "":
+                return ""
+
+            else:
+                user_state_switch(user_name,False)
+                archivo = open("local_storage_admin.txt","wt")
+                archivo.write("")
+                archivo.close()
+                return ""
+
+
+
+def de_login(user_name):
+
+    check_conection = conect_DB()
+
+    if isinstance(check_conection,str):
+
+        archivo = open("local_storage_admin.txt","wt")
+        archivo.write(f"{user_name}")
+        archivo.close()
+        return "La base de datos se deconecto, se guardo su cierre de sesion"
+
+    else:
 
         res_search = exist_admin(user_name,1)
 
         if isinstance(res_search,str):
             return res_search
+
         else:
             if res_search[2] == "desconectado" or res_search[2] is None:
                 return "La sesion no se puede cerrar porque el usuario no esta conectado"
+
             else:
                 user_state_switch(user_name,False)
                 return None
-    else:
-        user_state_switch(user_name,False)
 
 
 
@@ -130,10 +165,6 @@ def get_admins(user):
 
 
 
-# Reducir las exigencias para crear un nuevo administrador, esta funcion esta
-# haciendo dos cosas distintas
-# Retornar tambien el msg de error
-# Usar las clases
 def verif_admin_data(name,password,ide=None):
 
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
@@ -155,7 +186,6 @@ def verif_admin_data(name,password,ide=None):
 
 
 
-# Usar el check_conection
 def register_admin_db(name,password):
 
     check_conection = conect_DB()
@@ -180,7 +210,6 @@ def register_admin_db(name,password):
 
 
 
-# Usar el check_conection
 # Esta funcion no esta pudiendo modifcar un usuario con su id, revisar el caso
 def modify_admin(name,password,ide):
     check_conection = conect_DB()
@@ -219,7 +248,7 @@ def delete_admin_user(id_admin):
             return f"0|Error|{delete_res}"
         
         else:
-            return "1|Accion exitosa|Su accion fue cancelada con exito"
+            return "1|Accion exitosa|Su accion fue realizada con exito"
 
 
 
@@ -388,7 +417,6 @@ def verif_param_data(name,price,option):
 
 
 
-# Usar el check_conection
 # Usar match case
 def modify_params(name, price, ide, option):
     check_conection = conect_DB()
@@ -466,7 +494,6 @@ def verif_order_data(status,ide):
 
 
 
-# Usar el check_conection
 def modify_orders(status,ide):
     check_conection = conect_DB()
 

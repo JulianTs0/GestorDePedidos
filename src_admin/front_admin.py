@@ -49,9 +49,18 @@ class Login(Frame):
         self.configure(bg=main_window.secc_bg,padx=10, pady=10)
         self.place(relx=0.5, rely=0.5, relwidth=0.98, relheight=0.95, anchor="center")
 
-        #struct
+        #init func
 
-        self.create_login(main_window)
+        result = unexpected_delogin()
+
+        if result != "":
+            title,msg = result.split("|")
+            messagebox.showerror(title,msg)
+            close(main_window)
+
+        else:
+            #struct
+            self.create_login(main_window)
 
     def create_login(self, main_window):
 
@@ -311,9 +320,13 @@ class MainMenu(Frame):
         exit_btt.grid(column=0 ,row=8 ,columnspan=4,sticky="e" ,padx=25)
     
     def backward(self,main_window,user_name):
+
         delogin_res = de_login(user_name)
+
         if delogin_res is not None:
             messagebox.showerror("Error",delogin_res)
+            close(main_window)
+
         else:
             messagebox.showinfo("Sesion cerrada","La sesion fue cerrada con exito")
             main_window.status.destroy()
@@ -332,7 +345,7 @@ class MainMenu(Frame):
         Extra("Base de pedidos",[1000,600,200,50],True,back_color,"o")
 
     def close_and_delogin(self,main_window,user_name):
-        de_login(user_name,True)
+        de_login(user_name)
         close(main_window)
 
 
