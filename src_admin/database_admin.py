@@ -94,7 +94,6 @@ def get_admin_id():
 
 
 
-#Usar clases
 def update_admin(user,ide):
     try:
         conect = conect_DB()
