@@ -41,7 +41,7 @@ def exist_admin(user_data_search,parameter):
         for user in users_data:
             if user[parameter] == user_data_search:
                 return user
-        return "El administrador no existe"
+        return None
 
 
 
@@ -76,8 +76,11 @@ def login_admin(admin_user):
         
         else:
             res_search = exist_admin(admin_user.name,1)
-        
-            if isinstance(res_search,str):
+
+            if res_search is None:
+                return "El Administrador no existe"
+            
+            elif isinstance(res_search,str):
                 return res_search
             
             else:
@@ -136,7 +139,10 @@ def de_login(user_name):
 
         res_search = exist_admin(user_name,1)
 
-        if isinstance(res_search,str):
+        if res_search is None:
+            return "El Administrador que incio sesion dejo de estar registrado en la base de datos"
+
+        elif isinstance(res_search,str):
             return res_search
 
         else:
@@ -174,9 +180,12 @@ def verif_admin_data(name,password,ide=None):
         return "No se ha ingresado la contraseña valida"
 
     res_search = exist_admin(name,1)
-    
-    if not isinstance(res_search,str):
-        return "Ese nombre de usuario ya existe escoja otro"
+
+    if isinstance(res_search,str):
+        return res_search
+
+    elif res_search is not None:
+        return "Ese nombre de administrador ya existe escoja otro"
     
     if ide is not None:
         return exist_admin(ide,0)
@@ -210,7 +219,6 @@ def register_admin_db(name,password):
 
 
 
-# Esta funcion no esta pudiendo modifcar un usuario con su id, revisar el caso
 def modify_admin(name,password,ide):
     check_conection = conect_DB()
 
@@ -220,12 +228,11 @@ def modify_admin(name,password,ide):
     else:
         verif_res = verif_admin_data(name, password, ide)
 
-        if not isinstance(verif_res,str):
+        if isinstance(verif_res,str):
             return "1|Error al modificar al usuario|Seleccione devuelta al usuario para modificarlo"
 
         else:
-            admin = Admin(name,password)
-            modify_admin_res = update_admin(admin,ide)
+            modify_admin_res = update_admin(verif_res,ide)
 
             if modify_admin_res is not None:
                 return f"0|Error|{modify_admin_res}"
@@ -366,28 +373,28 @@ def delete_param(id_param,option_param):
 
 
 
-# Usar match case
-# Retornar tambien el msg de error
 def exist_param(option,price_data_search,parameter):
 
-    if option == 0:
-        price_data = select_clothes()
-    elif option == 1:
-        price_data = select_service()
-    elif option == 2:
-        price_data = select_priority()
+    match option:
+        case 0:
+            price_data = select_clothes()
+        case 1:
+            price_data = select_service()
+        case 2:
+            price_data = select_priority()
+        case _:
+            return "Error de estructura interna"
+
+    if isinstance(price_data,str):
+        return price_data
     else:
+        for price in price_data:
+            if price[parameter] == price_data_search:
+                return price
         return None
 
-    for price in price_data:
-        if price[parameter] == price_data_search:
-            return price
-    return None
 
 
-
-# Retornar tambien el msg de error
-# Usar las clases
 def verif_param_data(name,price,option):
     
     if name == "" or not is_a_valid_char(name) or len(name) > 30:
@@ -398,6 +405,9 @@ def verif_param_data(name,price,option):
 
     res_search = exist_param(option,name,0)
 
+    if isinstance(res_search,str):
+        return res_search
+
     if res_search is not None:
         return "Ese nombre de parametro ya existe"
     
@@ -406,7 +416,6 @@ def verif_param_data(name,price,option):
 
 
 
-# Usar match case
 def modify_params(name, price, ide, option):
     check_conection = conect_DB()
 
@@ -418,14 +427,17 @@ def modify_params(name, price, ide, option):
 
         if isinstance(verif_res,str):
             return f"1|Error al modificar el parametro|{verif_res}"
-        else:
 
-            if option == 0:
-                modify_param_res = update_clothes(verif_res,ide)
-            elif option == 1:
-                modify_param_res = update_service(verif_res,ide)
-            else:
-                modify_param_res = update_priority(verif_res,ide)
+        else:
+            match option:
+                case 0:
+                    modify_param_res = update_clothes(verif_res,ide)
+                case 1:
+                    modify_param_res = update_service(verif_res,ide)
+                case 2:
+                    modify_param_res = update_priority(verif_res,ide)
+                case _:
+                    return f"0|Error|Error de estructura interna"
 
             if modify_param_res is not None:
                 return f"0|Error|{modify_param_res}"
@@ -450,7 +462,6 @@ def get_orders():
 
 
 
-# Retornar tambien el msg de error
 def exist_order(order_data_search,parameter):
     order_data = select_order()
 
@@ -464,8 +475,6 @@ def exist_order(order_data_search,parameter):
 
 
 
-# Retornar tambien el msg de error
-# Usar las clases
 def verif_order_data(status,ide):
     
     if len(status) < 2:

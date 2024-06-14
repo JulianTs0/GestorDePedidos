@@ -111,6 +111,7 @@ def verif_new_user_data(name,password,password_rep,email):
     
     if isinstance(res_search,str):
         return res_search
+
     elif res_search is not None:
         return "Ese nombre de usuario ya existe escoja otro"
     
