@@ -252,17 +252,6 @@ def delete_admin_user(id_admin):
 
 
 
-# Retornar tambien el msg de error
-def exist_user(user_data_search,parameter):
-    users_data = select_user()
-
-    for user in users_data:
-        if user[parameter] == user_data_search:
-            return user
-    return None
-
-
-
 def orders_amount(user_name):
     all_orders = select_order()
     amount = 0
@@ -293,19 +282,19 @@ def get_users():
 
 
 
-# Usar match case
 def get_params(option):
 
     params_data = []
 
-    if option == 0:
-        all_params = select_clothes()
-    elif option == 1:
-        all_params = select_service()
-    elif option == 2:
-        all_params = select_priority()
-    else:
-        return "Error de estructura interna"
+    match option:
+        case 0:
+            all_params = select_clothes()
+        case 1:
+            all_params = select_service()
+        case 2:
+            all_params = select_priority()
+        case _:
+            return "Error de estructura interna"
 
     if isinstance(all_params,str):
         return all_params
@@ -318,7 +307,6 @@ def get_params(option):
 
 
 
-# Usar match case
 def register_param_db(name,price,option):
 
     check_conection = conect_DB()
@@ -333,15 +321,16 @@ def register_param_db(name,price,option):
             return f"1|Error al ingresar un nuevo parametro |{verif_res}"
         
         else:
-
-            if option == 0:
-                insert_db_res = insert_clothes(verif_res)
-            elif option == 1:
-                insert_db_res = insert_service(verif_res)
-            elif option == 2:
-                insert_db_res = insert_priority(verif_res)
-            else:
-                insert_db_res = "Error de estructura interna"
+            
+            match option:
+                case 0:
+                    insert_db_res = insert_clothes(verif_res)
+                case 1:
+                    insert_db_res = insert_service(verif_res)
+                case 2:
+                    insert_db_res = insert_priority(verif_res)
+                case _:
+                    return f"0|Error|Error de estructura interna"
 
             if insert_db_res is not None:
                 return f"0|Error|{insert_db_res}"
@@ -351,7 +340,6 @@ def register_param_db(name,price,option):
 
 
 
-# Usar match case
 def delete_param(id_param,option_param):
 
     option = messagebox.askyesno("Ultima confirmacion",f"Desea eliminar el parametro?")
@@ -360,15 +348,16 @@ def delete_param(id_param,option_param):
         return "1|Accion exitosa|Se aborto la operacion con exito"
 
     else:
-        if option_param == 0:
-            delete_res = delete_clothes(id_param)
-        elif option_param == 1:
-            delete_res = delete_service(id_param)
-        elif option_param == 2:
-            delete_res = delete_priority(id_param)
-        else:
-            delete_res = "Error de estructura interna"
-        
+        match option_param:
+            case 0:
+                delete_res = delete_clothes(id_param)
+            case 1:
+                delete_res = delete_service(id_param)
+            case 2:
+                delete_res = delete_priority(id_param)
+            case _:
+                return f"0|Error|Error de estructura interna"
+
         if delete_res is not None:
             return f"0|Error|{delete_res}"
         
