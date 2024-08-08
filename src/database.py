@@ -11,9 +11,9 @@ def conect_DB():
                                             port=config("PORT_DB"))
         
         return conection
-    except:
+    except mysql.connector.Error as error:
 
-        print(f"Error DB connect {mysql.connector.Error}")
+        print(f"Error DB connect {error}")
 
         return "Error al conectarse a la base de datos"
 

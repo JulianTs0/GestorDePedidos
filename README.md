@@ -4,7 +4,13 @@ Para ejecutar el projecto se debe crear un entorno virtual con los requerimiento
 
 y para activar el entorno virual se debe tipear:
 
+Windows con git bash:
+
 ### .\env\Scripts\activate
+
+Linux:
+
+### source .\env\bin\activate
 
 Para instalar todas las dependencias del proyecto se translada el archivo requirements.txt a la carpeta raiz, luego se procede directamente en el terminal de powershell con el entorno activado ingresando el siguiente comando: 
 
